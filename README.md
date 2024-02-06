@@ -10,7 +10,7 @@
 - NodeJS
 - Sequelize (ORM)
 - Driver adapter: mysql2
-- Jest (Unit test)
+- jest (Unit test), supertest (support test for http/rest api)
 
 ## Features:
 
