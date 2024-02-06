@@ -1,0 +1,29 @@
+# Front end
+
+# Logs
+/front_end/logs
+/front_end/*.log
+/front_end/npm-debug.log*
+/front_end/yarn-debug.log*
+/front_end/yarn-error.log*
+/front_end/pnpm-debug.log*
+/front_end/lerna-debug.log*
+
+/front_end/node_modules
+/front_end/dist
+/front_end/dist-ssr
+/front_end/*.local
+
+# Editor directories and files
+/front_end/.vscode/*
+/front_end/!.vscode/extensions.json
+/front_end/.idea
+/front_end/.DS_Store
+/front_end/*.suo
+/front_end/*.ntvs*
+/front_end/*.njsproj
+/front_end/*.sln
+/front_end/*.sw?
+
+# Back end
+/back_end/node_modules
