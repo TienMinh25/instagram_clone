@@ -1,0 +1,184 @@
+"use strict";
+const { Model } = require("sequelize");
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+
+      // quan he n-n cua user voi user thong qua model User_friend
+      // 1 user co the co nhieu ban be
+      User.belongsToMany(User, {
+        through: models.User_friend,
+        foreignKey: "targetId",
+        otherKey: "sourceId",
+        as: "Friend",
+      });
+
+      User.belongsToMany(User, {
+        through: models.User_friend,
+        foreignKey: "sourceId",
+        otherKey: "targetId",
+        as: "User",
+      });
+
+      // quan he n-n cuar user voi user thong qua model User_message (1 user co the nhan tin voi nhieu user)
+      User.belongsToMany(User, {
+        through: models.User_message,
+        foreignKey: "sourceId",
+        otherKey: "targetId",
+        as: "UserSend",
+      });
+
+      User.belongsToMany(User, {
+        through: models.User_message,
+        foreignKey: "targetId",
+        otherKey: "sourceId",
+        as: "UserReceive",
+      });
+
+      // quan he 1 - n: 1 user co the co 0, 1, n bai post
+      User.hasMany(models.User_post);
+
+      // quan he n - n giua cac user, 1 user co the follow nhieu user
+      User.belongsToMany(User, {
+        through: models.User_follow,
+        foreignKey: "sourceId",
+        otherKey: "targetId",
+        as: "UserFollower",
+      });
+
+      User.belongsToMany(User, {
+        through: models.User_follow,
+        foreignKey: "targetId",
+        otherKey: "sourceId",
+        as: "UserFollowing",
+      });
+
+      // quan he 1-n voi group, 1 user co the tao ra 0, 1 hoac nhieu group
+      User.hasMany(models.Group, {
+        foreignKey: "createdBy",
+        as: "GroupCreated",
+      });
+
+      // quan he 1-n voi group, 1 user co the cap nhat 0, 1 hoac nhieu group
+      User.hasMany(models.Group, {
+        foreignKey: "updatedBy",
+        as: "GroupUpdated",
+      });
+
+      // quan he n-n cua 1 user co the co nhieu group, 1 group co the co nhieu user
+      User.belongsToMany(models.Group, {
+        through: models.Group_message,
+        foreignKey: "userId",
+        otherKey: "groupId",
+      });
+
+      // quan he n-n cua 1 user co the co trong nhieu group,
+      // 1 group co the co nhieu user
+      User.belongsToMany(models.User, {
+        through: models.Group_member,
+        foreignKey: "userId",
+        otherKey: "groupId",
+      });
+
+      // quan he 1 - n cua user voi group post
+      User.hasMany(models.Group_post);
+
+      // quan he n-n cua group va user, 1 user co the follow nhieu group
+      // 1 group co the co nhieu user follow
+      User.belongsToMany(models.Group, {
+        through: models.Group_follower,
+        foreignKey: "userId",
+        otherKey: "groupId",
+      });
+    }
+  }
+  User.init(
+    {
+      id: {
+        type: DataTypes.BIGINT(20),
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      firstName: {
+        type: DataTypes.STRING(50),
+        defaultValue: null,
+        allowNull: true,
+      },
+      middleName: {
+        type: DataTypes.STRING(50),
+        defaultValue: null,
+        allowNull: true,
+      },
+      lastName: DataTypes.STRING(50),
+      userName: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
+      mobile: {
+        type: DataTypes.STRING(15),
+        allowNull: true,
+      },
+      email: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+      },
+      passwordHash: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
+      registerdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+          isDate: true,
+        },
+      },
+      lastLogin: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null,
+      },
+      intro: DataTypes.TEXT("tiny"),
+      profile: DataTypes.TEXT("medium"),
+      avatar: DataTypes.BLOB("medium"),
+      createdAt: DataTypes.DATE,
+      updatedAt: DataTypes.DATE,
+    },
+    {
+      sequelize,
+      modelName: "User",
+      tableName: "users",
+      indexes: [
+        {
+          fields: ["userName"],
+          name: "uq_username",
+          unique: true,
+        },
+        {
+          fields: ["mobile"],
+          name: "uq_mobile",
+          unique: true,
+        },
+        {
+          fields: ["email"],
+          name: "uq_email",
+          unique: true,
+        },
+      ],
+    }
+  );
+  return User;
+};

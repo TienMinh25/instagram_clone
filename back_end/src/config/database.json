@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "root",
+    "password": "Alopicasso1",
+    "database": "instagram_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port": "3306"
+  },
+  "test": {
+    "username": "root",
+    "password": "Alopicasso1",
+    "database": "instagram_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port": "3306"
+  },
+  "production": {
+    "username": "root",
+    "password": "Alopicasso1",
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port": "3306"
+  }
+}
