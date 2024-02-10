@@ -40,10 +40,6 @@ module.exports = {
         type: Sequelize.STRING(255),
         allowNull: false,
       },
-      registeredAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
       lastLogin: {
         type: Sequelize.DATE,
         allowNull: true,
@@ -80,7 +76,6 @@ module.exports = {
 
     await queryInterface.addIndex("users", ["mobile"], {
       name: "uq_mobile",
-      unique: true,
     });
 
     await queryInterface.addIndex("users", ["email"], {

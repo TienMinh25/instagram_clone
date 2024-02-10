@@ -14,7 +14,6 @@ const { User } = sequelize.models;
  * @param {import("express").NextFunction} next
  */
 
-const secretKey = "test@123";
 module.exports = async (req, res, next) => {
   try {
     if (Object.keys(req.cookies).length === 0) {
@@ -37,16 +36,16 @@ module.exports = async (req, res, next) => {
 
         if (result) {
           // sinh jwt va tra ve cho user (expire 30 days)
-          const token = jwt.sign(result.id, secretKey, {
-            algorithm: "RS384",
-            expiresIn: "30 days",
+          const token = jwt.sign({username: result.username}, process.env.SECRET_KEY, {
+            algorithm: "HS256",
+            expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
           });
 
           // tra ve cho browser status 200 + set cookie co key = 'login_jwt_string'
           res
             .status(200)
             .cookie("login_jwt_string", token, {
-              expires: new Date(Date.now() + 24 * 60 * 60 * 30),
+              expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
             })
             .json({ message: "Bạn đã đăng nhập thành công" });
         } else {
