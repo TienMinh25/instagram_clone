@@ -11,28 +11,28 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
 
       // quan he 1 - nhieu giua group post va user
-      Group_post.belongsToMany(models.User, {
+      Group_post.belongsTo(models.User, {
         foreignKey: "userId",
       });
 
       // quan he 1 - nhieu giua group post va group
-      Group_post.belongsToMany(models.Group, {
+      Group_post.belongsTo(models.Group, {
         foreignKey: "groupId",
       });
     }
   }
   Group_post.init(
     {
-      id: DataTypes.BIGINT(20),
-      groupId: DataTypes.BIGINT(20),
-      userId: DataTypes.BIGINT(20),
+      id: { type: DataTypes.BIGINT, primaryKey: true },
+      groupId: DataTypes.BIGINT,
+      userId: DataTypes.BIGINT,
       content: DataTypes.TEXT,
       createdAd: DataTypes.DATE,
       updatedAt: DataTypes.DATE,
     },
     {
       sequelize,
-      modelName: "group_post",
+      modelName: "Group_post",
       tableName: "group_posts",
     }
   );

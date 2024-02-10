@@ -14,16 +14,16 @@ module.exports = (sequelize, DataTypes) => {
   }
   User_follow.init(
     {
-      id: DataTypes.BIGINT(20),
+      id: { type: DataTypes.BIGINT, primaryKey: true },
       sourceId: {
-        type: DataTypes.BIGINT(20),
+        type: DataTypes.BIGINT,
         references: {
           model: User,
           key: "id",
         },
       },
       targetId: {
-        type: DataTypes.BIGINT(20),
+        type: DataTypes.BIGINT,
         references: {
           model: User,
           key: "id",

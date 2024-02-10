@@ -20,8 +20,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   User_post.init(
     {
-      id: DataTypes.BIGINT(20),
-      userId: DataTypes.BIGINT(20),
+      id: { type: DataTypes.BIGINT, primaryKey: true },
+      userId: DataTypes.BIGINT,
       message: DataTypes.TEXT,
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE,

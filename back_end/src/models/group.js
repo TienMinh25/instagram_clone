@@ -49,15 +49,18 @@ module.exports = (sequelize, DataTypes) => {
       Group.belongsToMany(models.User, {
         through: models.Group_follower,
         foreignKey: "groupId",
-        otherKey: "userId"
-      })
+        otherKey: "userId",
+      });
     }
   }
   Group.init(
     {
-      id: DataTypes.BIGINT(20),
-      createdBy: DataTypes.BIGINT(20),
-      updatedBy: DataTypes.BIGINT(20),
+      id: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+      },
+      createdBy: DataTypes.BIGINT,
+      updatedBy: DataTypes.BIGINT,
       title: DataTypes.STRING(75),
       metaTitle: DataTypes.STRING,
       slug: DataTypes.STRING,

@@ -14,16 +14,16 @@ module.exports = (sequelize, DataTypes) => {
   }
   User_friend.init(
     {
-      id: DataTypes.BIGINT(20),
+      id: { type: DataTypes.BIGINT, primaryKey: true },
       sourceId: {
-        type: DataTypes.BIGINT(20),
+        type: DataTypes.BIGINT,
         references: {
           model: User,
           key: "id",
         },
       },
       targetId: {
-        type: DataTypes.BIGINT(20),
+        type: DataTypes.BIGINT,
         references: {
           model: User,
           key: "id",
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "user_friend",
+      modelName: "User_friend",
       tableName: "user_friends",
       indexes: [
         {
