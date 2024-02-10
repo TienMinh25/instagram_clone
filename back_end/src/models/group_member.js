@@ -15,16 +15,16 @@ module.exports = (sequelize, DataTypes) => {
   }
   Group_member.init(
     {
-      id: DataTypes.BIGINT(20),
+      id: { type: DataTypes.BIGINT, primaryKey: true },
       groupId: {
-        type: DataTypes.BIGINT(20),
+        type: DataTypes.BIGINT,
         references: {
           model: Group,
           key: "id",
         },
       },
       userId: {
-        type: DataTypes.BIGINT(20),
+        type: DataTypes.BIGINT,
         references: {
           model: User,
           key: "id",

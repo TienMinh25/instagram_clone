@@ -13,9 +13,9 @@ module.exports = (sequelize, DataTypes) => {
   }
   User_message.init(
     {
-      id: DataTypes.BIGINT(20),
-      sourceId: DataTypes.BIGINT(20),
-      targetId: DataTypes.BIGINT(20),
+      id: { type: DataTypes.BIGINT, primaryKey: true },
+      sourceId: DataTypes.BIGINT,
+      targetId: DataTypes.BIGINT,
       message: DataTypes.TEXT("tiny"),
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE,

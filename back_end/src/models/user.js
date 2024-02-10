@@ -80,7 +80,7 @@ module.exports = (sequelize, DataTypes) => {
 
       // quan he n-n cua 1 user co the co trong nhieu group,
       // 1 group co the co nhieu user
-      User.belongsToMany(models.User, {
+      User.belongsToMany(models.Group, {
         through: models.Group_member,
         foreignKey: "userId",
         otherKey: "groupId",
@@ -101,7 +101,7 @@ module.exports = (sequelize, DataTypes) => {
   User.init(
     {
       id: {
-        type: DataTypes.BIGINT(20),
+        type: DataTypes.BIGINT,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -139,7 +139,7 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
-      registerdAt: {
+      registeredAt: {
         type: DataTypes.DATE,
         allowNull: false,
         validate: {

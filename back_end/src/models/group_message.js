@@ -13,9 +13,9 @@ module.exports = (sequelize, DataTypes) => {
   }
   Group_message.init(
     {
-      id: DataTypes.BIGINT(20),
-      groupId: DataTypes.BIGINT(20),
-      userId: DataTypes.BIGINT(20),
+      id: { type: DataTypes.BIGINT, primaryKey: true },
+      groupId: DataTypes.BIGINT,
+      userId: DataTypes.BIGINT,
       message: DataTypes.TEXT("tiny"),
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE,
@@ -46,5 +46,5 @@ module.exports = (sequelize, DataTypes) => {
       ],
     }
   );
-  return Group_member;
+  return Group_message;
 };

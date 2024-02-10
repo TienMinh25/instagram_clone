@@ -17,8 +17,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Group_meta.init(
     {
-      id: DataTypes.BIGINT(20),
-      groupId: DataTypes.BIGINT(20),
+      id: { type: DataTypes.BIGINT, primaryKey: true },
+      groupId: DataTypes.BIGINT,
       key: DataTypes.STRING,
       content: DataTypes.TEXT,
       createdAt: DataTypes.DATE,

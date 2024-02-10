@@ -4,17 +4,25 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.9.1",
     "sequelize": "^6.36.0"
   },
   "devDependencies": {
+    "dotenv": "^16.4.1",
     "jest": "^29.7.0",
+    "nodemon": "^3.0.3",
     "sequelize-cli": "^6.6.2",
     "supertest": "^6.3.4"
   }
