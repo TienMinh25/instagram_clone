@@ -3,9 +3,7 @@ const jwt = require("jsonwebtoken");
 const { sequelize } = require("../models/index.js");
 const { User } = sequelize.models;
 
-const saltRounds = 10;
-
-const register = async (req, res) => {
+const registerController = async (req, res) => {
   // khong can check password va confirmPassword ==> front end lo
   const { lastName, middleName, firstName, username, password, email, mobile } =
     req.body;
@@ -16,7 +14,7 @@ const register = async (req, res) => {
     });
 
     if (userCheck === null) {
-      bcrypt.genSalt(saltRounds, function (err, salt) {
+      bcrypt.genSalt(process.env.SALT_ROUNDS, function (err, salt) {
         bcrypt.hash(password, salt, function (err, hashedPassword) {
           let newUser = User.build({
             firstName: firstName,
@@ -32,25 +30,32 @@ const register = async (req, res) => {
 
           newUser
             .save()
-            .then(async () => {
-              await newUser.reload();
+            .then(async (userSave) => {
               // sinh jwt va tra ve cho user (expire 30 days)
-              const token = jwt.sign({username: newUser.username}, process.env.SECRET_KEY, {
-                algorithm: "HS256",
-                expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
-              });
+              const token = jwt.sign(
+                { username: userSave.username },
+                process.env.SECRET_KEY,
+                {
+                  algorithm: "HS256",
+                  expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
+                }
+              );
 
+              const { passwordHash, ...userReturned } = userSave;
               // tra ve cho browser status 200 + set cookie co key = 'login_jwt_string'
               return res
                 .status(201)
                 .cookie("login_jwt_string", token, {
-                  expires: new Date(new Date().getTime() + 24 * 60 * 60 * 30 * 1000),
+                  expires: new Date(
+                    new Date().getTime() + 24 * 60 * 60 * 30 * 1000
+                  ),
                 })
-                .json({ message: "Bạn đã tạo tài khoản thành công" });
+                .json({
+                  ...userReturned,
+                  message: "Bạn đã tạo tài khoản thành công",
+                });
             })
             .catch((err) => {
-              console.log(err);
-              console.log(err.message);
               return res
                 .status(500)
                 .json({ message: "Không thể xử lý yêu cầu" });
@@ -63,8 +68,8 @@ const register = async (req, res) => {
         .json({ message: "Tài khoản đã tồn tại, vui lòng thử lại!" });
     }
   } catch (error) {
-    return res.status(500).json({ message: "Không thể xử lý yêu cầu 1" });
+    return res.status(500).json({ message: "Không thể xử lý yêu cầu" });
   }
 };
 
-module.exports = register;
+module.exports = registerController;
