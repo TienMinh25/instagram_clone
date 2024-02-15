@@ -8,7 +8,7 @@
 - **NodeJS (expressJS)**
 - **Sequelize (ORM) (sequelize, sequelize-cli)**
 - Driver adapter: **mysql2**
-- **jest** (Unit test), **supertest** (support test for http/rest api)
+- **jest** (Unit test), **suppertest** (support test for http/rest api), **sequelize-test-helpers, sinon, chai**(test for db)
 - **body-parser** - use to parse incoming request bodies in a middleware before your handlers, available under the req.body property.
 - **cookie-parser** - use to parse **Cookie header** and populate **req.cookies** with an object keyed by the cookie names.
 - **jsonwebtoken** - in order to use JWT for authentication.

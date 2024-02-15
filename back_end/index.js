@@ -3,19 +3,12 @@ var cors = require("cors");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var dotenv = require("dotenv");
-const bcrypt = require("bcrypt");
 
 const app = express();
 dotenv.config();
 const { sequelize } = require("./src/models/index.js");
 const { authentication } = require("./src/middleware/authentication.js");
-
-// declare salt
-const saltRounds = 10;
-var salt;
-(async () => {
-  salt = await bcrypt.genSalt(saltRounds);
-})();
+const routerRegister = require("./src/routes/register.js");
 
 const corOptions = {
   // use origin * for development purpose
@@ -58,13 +51,10 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // use middleware authentication
-app.use(authentication);
+// app.use("/api/v1", authentication);
 
-// routes
-app.get("/", (req, res) => {
-  console.log(Object.keys(req.cookies).length === 0);
-  res.json("Hello");
-});
+// register router
+app.use(routerRegister);
 
 app.listen(process.env.BACKEND_PORT, () => {
   console.log("CORS-enabled web server");

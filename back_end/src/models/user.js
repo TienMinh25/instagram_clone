@@ -117,7 +117,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       lastName: DataTypes.STRING(50),
-      userName: {
+      username: {
         type: DataTypes.STRING(50),
         allowNull: false,
         validate: {
@@ -139,23 +139,28 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
-      registeredAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        validate: {
-          isDate: true,
-        },
-      },
       lastLogin: {
         type: DataTypes.DATE,
         allowNull: true,
         defaultValue: null,
       },
-      intro: DataTypes.TEXT("tiny"),
-      profile: DataTypes.TEXT("medium"),
-      avatar: DataTypes.BLOB("medium"),
-      createdAt: DataTypes.DATE,
-      updatedAt: DataTypes.DATE,
+      intro: {
+        type: DataTypes.TEXT("tiny"),
+        allowNull: true,
+        defaultValue: null,
+      },
+      profile: {
+        type: DataTypes.TEXT("medium"),
+        allowNull: true,
+        defaultValue: null,
+      },
+      avatar: {
+        type: DataTypes.BLOB("medium"),
+        defaultValue: null,
+        allowNull: true,
+      },
+      createdAt: { type: DataTypes.DATE, defaultValue: Date.now() },
+      updatedAt: { type: DataTypes.DATE, defaultValue: Date.now() },
     },
     {
       sequelize,
@@ -170,7 +175,6 @@ module.exports = (sequelize, DataTypes) => {
         {
           fields: ["mobile"],
           name: "uq_mobile",
-          unique: true,
         },
         {
           fields: ["email"],

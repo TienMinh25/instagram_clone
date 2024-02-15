@@ -7,6 +7,17 @@
     "test": "jest",
     "start": "nodemon index.js"
   },
+  "keywords": [
+    "sequelize",
+    "mock",
+    "mocking",
+    "unit-testing",
+    "jest",
+    "sinon",
+    "chai",
+    "express",
+    "supertest"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -20,10 +31,13 @@
     "sequelize": "^6.36.0"
   },
   "devDependencies": {
+    "chai": "^4.4.1",
     "dotenv": "^16.4.1",
     "jest": "^29.7.0",
     "nodemon": "^3.0.3",
     "sequelize-cli": "^6.6.2",
+    "sequelize-test-helpers": "^1.4.3",
+    "sinon": "^17.0.1",
     "supertest": "^6.3.4"
   }
 }
