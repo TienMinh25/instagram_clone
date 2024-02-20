@@ -6,7 +6,6 @@ var dotenv = require("dotenv");
 
 const app = express();
 dotenv.config();
-const { sequelize } = require("./src/models/index.js");
 const { authentication } = require("./src/middleware/authentication.js");
 const routerRegister = require("./src/routes/register.js");
 

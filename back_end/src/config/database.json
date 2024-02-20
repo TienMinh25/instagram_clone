@@ -5,7 +5,11 @@
     "database": "instagram_development",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "port": "3306"
+    "port": "3306",
+    "define": {
+      "charset": "utf8mb4",
+      "collate": "utf8mb4_unicode_ci"
+    }
   },
   "test": {
     "username": "root",
@@ -13,7 +17,11 @@
     "database": "instagram_test",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "port": "3306"
+    "port": "3306",
+    "define": {
+      "charset": "utf8mb4",
+      "collate": "utf8mb4_unicode_ci"
+    }
   },
   "production": {
     "username": "root",
@@ -21,6 +29,10 @@
     "database": "database_production",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "port": "3306"
+    "port": "3306",
+    "define": {
+      "charset": "utf8mb4",
+      "collate": "utf8mb4_unicode_ci"
+    }
   }
 }
