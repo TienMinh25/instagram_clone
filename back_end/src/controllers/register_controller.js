@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { sequelize } = require("../models/index.js");
-const { User } = sequelize.models;
+const { Op } = require("sequelize");
+const db = require("../models/index.js");
 
 const registerController = async (req, res) => {
   // khong can check password va confirmPassword ==> front end lo
@@ -9,14 +9,21 @@ const registerController = async (req, res) => {
     req.body;
 
   try {
-    const userCheck = await User.findOne({
-      where: { username: username },
+    const userCheck = await db.User.findOne({
+      where: { [Op.or]: [{ username: username }, { email: email }] },
     });
 
     if (userCheck === null) {
-      bcrypt.genSalt(process.env.SALT_ROUNDS, function (err, salt) {
-        bcrypt.hash(password, salt, function (err, hashedPassword) {
-          let newUser = User.build({
+      bcrypt.hash(
+        password,
+        parseInt(process.env.SALT_ROUNDS),
+        async function (err, hashedPassword) {
+          if (err) {
+            return res
+              .status(500)
+              .json({ message: "Không thể mã hoá mật khẩu" });
+          }
+          let newUser = db.User.build({
             firstName: firstName,
             middleName: middleName,
             lastName: lastName,
@@ -28,40 +35,31 @@ const registerController = async (req, res) => {
             updatedAt: Date.now(),
           });
 
-          newUser
-            .save()
-            .then(async (userSave) => {
-              // sinh jwt va tra ve cho user (expire 30 days)
-              const token = jwt.sign(
-                { username: userSave.username },
-                process.env.SECRET_KEY,
-                {
-                  algorithm: "HS256",
-                  expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
-                }
-              );
-
-              const { passwordHash, ...userReturned } = userSave;
-              // tra ve cho browser status 200 + set cookie co key = 'login_jwt_string'
-              return res
-                .status(201)
-                .cookie("login_jwt_string", token, {
-                  expires: new Date(
-                    new Date().getTime() + 24 * 60 * 60 * 30 * 1000
-                  ),
-                })
-                .json({
-                  ...userReturned,
-                  message: "Bạn đã tạo tài khoản thành công",
-                });
+          await newUser.save();
+          const token = jwt.sign(
+            { username: newUser.dataValues.username },
+            process.env.SECRET_KEY,
+            {
+              algorithm: "HS256",
+              expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
+            }
+          );
+          const { passwordHash, createdAt, updatedAt, ...userReturned } =
+            newUser.dataValues;
+          // tra ve cho browser status 200 + set cookie co key = 'login_jwt_string'
+          return res
+            .status(201)
+            .cookie("authCookie", token, {
+              expires: new Date(
+                new Date().getTime() + 24 * 60 * 60 * 30 * 1000
+              ),
             })
-            .catch((err) => {
-              return res
-                .status(500)
-                .json({ message: "Không thể xử lý yêu cầu" });
+            .json({
+              ...userReturned,
+              message: "Bạn đã tạo tài khoản thành công",
             });
-        });
-      });
+        }
+      );
     } else {
       return res
         .status(409)

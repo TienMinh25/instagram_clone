@@ -2,8 +2,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const { sequelize } = require(path.resolve(__dirname, "../models/index.js"));
-const { User } = sequelize.models;
+const db = require(path.resolve(__dirname, "../models/index.js"));
 
 /**
  * Middleware authentication for web login
@@ -23,11 +22,12 @@ module.exports = async (req, res, next) => {
       next();
     } else {
       const { usernameCheck, passwordCheck } = req.body;
-      const userCheck = await User.findOne({
+      const userCheck = await db.User.findOne({
         where: { username: usernameCheck },
       });
+
       if (userCheck === null) {
-        res.status(400).json({ message: "Không tìm thấy tài khoản" });
+        return res.status(400).json({ message: "Không tìm thấy tài khoản" });
       } else {
         const result = await bcrypt.compare(
           passwordCheck,
@@ -36,15 +36,20 @@ module.exports = async (req, res, next) => {
 
         if (result) {
           // sinh jwt va tra ve cho user (expire 30 days)
-          const token = jwt.sign({username: result.username}, process.env.SECRET_KEY, {
-            algorithm: "HS256",
-            expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
-          });
+          const token = jwt.sign(
+            { username: result.username },
+            process.env.SECRET_KEY,
+            {
+              algorithm: "HS256",
+              expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
+            }
+          );
 
-          // tra ve cho browser status 200 + set cookie co key = 'login_jwt_string'
+          // tra ve cho browser status 200 + set cookie co key = 'authCookie'
+
           res
             .status(200)
-            .cookie("login_jwt_string", token, {
+            .cookie("authCookie", token, {
               expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
             })
             .json({ message: "Bạn đã đăng nhập thành công" });
@@ -56,6 +61,6 @@ module.exports = async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log(error.message);
+    res.status(500).json({ message: "Không thể xử lí yêu cầu!" });
   }
 };

@@ -1,11 +1,14 @@
+require("iconv-lite").encodingExists("foo");
 const chai = require("chai");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sinon = require("sinon");
-
+const { Op } = require("sequelize");
 const { sequelize } = require("../../models/index.js");
 const registerController = require("../../controllers/register_controller.js");
 const { User } = sequelize.models;
+
+jest.useFakeTimers();
 
 describe("registerController", () => {
   let mockUser;
@@ -23,15 +26,14 @@ describe("registerController", () => {
       mobile: "1231241242",
       email: "johndoe@example.com",
       password: "check123",
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
     };
     mockHashPassword = "hashedPassword";
     mockToken = "jwtToken";
 
-    const { save, reload, password, ...info } = mockUser;
+    const { password, ...info } = mockUser;
 
-    req = { body: { ...info, password: mockUser.password } };
+    req = { body: { ...mockUser } };
+
     res = {
       status: sinon.stub().returnsThis(),
       cookie: sinon.stub().returnsThis(),
@@ -41,20 +43,11 @@ describe("registerController", () => {
 
   afterEach(() => {
     sinon.restore();
+    jest.clearAllMocks();
   });
 
   describe("successful registration", () => {
     it("should create a new user with hashed password and return success response 201 with a JWT token", async () => {
-      const buildUser = {
-        ...info,
-        passwordHash: mockHashPassword,
-        lastLogin: null,
-        intro: null,
-        profile: null,
-        avatar: null,
-        save: async () => {},
-      };
-
       const saveUser = {
         ...info,
         passwordHash: mockHashPassword,
@@ -62,6 +55,8 @@ describe("registerController", () => {
         intro: null,
         profile: null,
         avatar: null,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       };
 
       const responseUser = {
@@ -73,59 +68,51 @@ describe("registerController", () => {
       };
 
       // Stub/mock dependencies (arrange)
-      const findOneStub = sinon.stub(User, "findOne").resolves(null); // User not found
-      const genSaltStub = sinon
-        .stub(bcrypt, "genSalt")
-        .resolves("generatedSalt");
-      const hashStub = sinon.stub(bcrypt, "hash").resolves(mockHashPassword);
-      const buildStub = sinon.stub(User, "build").returns(buildUser);
-      const saveStub = sinon.stub(buildUser, "save").resolves(saveUser);
-      const signStub = sinon.stub(jwt, "sign").resolves(mockToken);
+      const findOneSpy = jest.spyOn(User, "findOne").mockResolvedValue(null); // User not found
+      const hashSpy = jest.spyOn(bcrypt, "hash");
+      const buildSpy = jest.fn(User.prototype, "build");
+      const saveSpy = jest.fn(User.prototype, "save");
+      const signSpy = jest.fn(jwt, "sign").mockResolvedValue(mockToken);
 
+      hashSpy.mockImplementationOnce((password, salt, callback) =>
+        callback(null, mockHashPassword)
+      );
       // act
       await registerController(req, res);
 
-      // assert
-      chai.expect(
-        findOneStub.calledWithExactly({
-          where: { username: mockUser.username },
-        })
-      ).to.be.true;
-
-      // them check khi assert tim thi ra null
-
-      chai.expect(buildStub()).to.be.deep.equal(buildUser);
-
-      genSaltStub().then((generatedSalt) => {
-        chai.expect(generatedSalt).to.be.equal("generatedSalt");
+      expect(findOneSpy).toHaveBeenCalledWith({
+        where: {
+          [Op.or]: [{ username: mockUser.username }, { email: mockUser.email }],
+        },
       });
 
-      hashStub().then((hashPassword) => {
-        chai.expect(hashPassword).to.be.equal(mockHashPassword);
-      });
+      expect(hashSpy).toHaveBeenCalled();
+      expect(buildSpy).toHaveBeenCalled();
+      expect(saveSpy).toHaveBeenCalled();
 
-      saveStub().then((result) => {
-        chai.expect(result).to.be.deep.equal(saveUser);
-      });
+      // expect(signSpy).toHaveBeenCalledWith(
+      //   { username: mockUser.username },
+      //   "test@1234",
+      //   {
+      //     algorithm: "HS256",
+      //     expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
+      //   }
+      // );
 
-      signStub().then((token) => {
-        chai.expect(token).to.be.equal(mockToken);
-      });
-
-      expect(res.status.calledWithExactly(201)).toBeTruthy;
+      expect(res.status.calledWithExactly(201)).toBeTruthy();
 
       expect(
-        res.cookie.calledWithExactly("login_jwt_string", mockToken, {
+        res.cookie.calledWithExactly("authCookie", mockToken, {
           expires: new Date(new Date().getTime() + 24 * 60 * 60 * 30 * 1000),
         })
-      ).toBeTruthy;
+      ).toBeTruthy();
 
       expect(
         res.json.calledWithExactly({
           ...responseUser,
           message: "Bạn đã tạo tài khoản thành công",
         })
-      ).toBeTruthy;
+      ).toBeTruthy();
     });
   });
 
@@ -149,15 +136,20 @@ describe("registerController", () => {
       // assert
       expect(
         findOneStub.calledOnceWithExactly({
-          where: { username: mockUser.username },
+          where: {
+            [Op.or]: [
+              { username: mockUser.username },
+              { email: mockUser.email },
+            ],
+          },
         })
-      );
-      expect(res.status.calledWithExactly(409)).toBeTruthy;
+      ).toBeTruthy();
+      expect(res.status.calledWithExactly(409)).toBeTruthy();
       expect(
         res.json.calledWithExactly({
           message: "Tài khoản đã tồn tại, vui lòng thử lại!",
         })
-      ).toBeTruthy;
+      ).toBeTruthy();
     });
 
     // test khi lưu vào db mà bị lỗi ==> khó lỗi vcl vì password có empty vẫn oke
@@ -169,9 +161,9 @@ describe("registerController", () => {
     it("should return internal server error on unexpected error, status code 500", async () => {
       // mock/spies (arrange)
       const findOneStub = sinon.stub(User, "findOne").resolves(null);
-      const genSaltStub = sinon
-        .stub(bcrypt, "genSalt")
-        .yields(new Error("Error generating salt"));
+      jest.spyOn(bcrypt, "hash").mockImplementation((data, salt, callback) => {
+        callback(new Error("Bcrypt error"), null);
+      });
 
       // act
       await registerController(req, res);
@@ -179,14 +171,21 @@ describe("registerController", () => {
       // assert
       expect(
         findOneStub.calledWithExactly({
-          where: { username: mockUser.username },
+          where: {
+            [Op.or]: [
+              { username: mockUser.username },
+              { email: mockUser.email },
+            ],
+          },
         })
-      ).toBeTruthy;
+      ).toBeTruthy();
 
-      expect(genSaltStub.calledOnceWith(process.env.SALT_ROUNDS)).toBeTruthy;
-      expect(res.status.calledWithExactly(500)).toBeTruthy;
-      expect(res.json.calledWithExactly({ message: "Không thể xử lý yêu cầu" }))
-        .toBeTruthy;
+      expect(res.status.calledWithExactly(500)).toBeTruthy();
+      expect(
+        res.json.calledWithExactly({
+          message: "Không thể mã hoá mật khẩu",
+        })
+      ).toBeTruthy();
     });
   });
 });
