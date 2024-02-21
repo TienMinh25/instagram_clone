@@ -8,7 +8,6 @@ const db = require("../../models/index.js");
 
 describe("authentication middleware", () => {
   let req, res;
-  let mockPasswordHash;
   let mockJWTtoken;
   let next;
 
@@ -144,7 +143,7 @@ describe("authentication middleware", () => {
     ).toBeTruthy();
   });
 
-  it.only("should return internal server error on unexpected error, status code 500", async () => {
+  it("should return internal server error on unexpected error, status code 500", async () => {
     req.cookies = undefined;
 
     await authentication(req, res, next);
