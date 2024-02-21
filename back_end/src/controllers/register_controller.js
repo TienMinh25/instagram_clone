@@ -43,6 +43,7 @@ const registerController = async (req, res) => {
       );
 
       const { passwordHash, createdAt, updatedAt, ...userReturned } = user;
+
       // tra ve cho browser status 201 + set cookie co key = 'authCookie'
       return res
         .status(201)
