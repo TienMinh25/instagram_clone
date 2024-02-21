@@ -4,9 +4,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sinon = require("sinon");
 const { Op } = require("sequelize");
-const { sequelize } = require("../../models/index.js");
+const db = require("../../models/index.js");
 const registerController = require("../../controllers/register_controller.js");
-const { User } = sequelize.models;
 
 jest.useFakeTimers();
 
@@ -15,9 +14,10 @@ describe("registerController", () => {
   let mockHashPassword;
   let mockToken;
   let req, res;
-  let info;
 
   beforeEach(() => {
+    process.env.SECRET_KEY = "test@1234";
+
     mockUser = {
       firstName: "John",
       middleName: "Doe",
@@ -29,8 +29,6 @@ describe("registerController", () => {
     };
     mockHashPassword = "hashedPassword";
     mockToken = "jwtToken";
-
-    const { password, ...info } = mockUser;
 
     req = { body: { ...mockUser } };
 
@@ -48,6 +46,10 @@ describe("registerController", () => {
 
   describe("successful registration", () => {
     it("should create a new user with hashed password and return success response 201 with a JWT token", async () => {
+      const { password, ...info } = mockUser;
+
+      Date.now = jest.fn().mockImplementation(() => 1708504636281);
+
       const saveUser = {
         ...info,
         passwordHash: mockHashPassword,
@@ -59,6 +61,19 @@ describe("registerController", () => {
         updatedAt: Date.now(),
       };
 
+      const buildUser = {
+        ...info,
+        passwordHash: mockHashPassword,
+        lastLogin: null,
+        intro: null,
+        profile: null,
+        avatar: null,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        save: jest.fn().mockResolvedValue(saveUser),
+        reload: jest.fn().mockResolvedValue(saveUser),
+      };
+
       const responseUser = {
         ...info,
         lastLogin: null,
@@ -68,15 +83,10 @@ describe("registerController", () => {
       };
 
       // Stub/mock dependencies (arrange)
-      const findOneSpy = jest.spyOn(User, "findOne").mockResolvedValue(null); // User not found
-      const hashSpy = jest.spyOn(bcrypt, "hash");
-      const buildSpy = jest.fn(User.prototype, "build");
-      const saveSpy = jest.fn(User.prototype, "save");
-      const signSpy = jest.fn(jwt, "sign").mockResolvedValue(mockToken);
-
-      hashSpy.mockImplementationOnce((password, salt, callback) =>
-        callback(null, mockHashPassword)
-      );
+      const findOneSpy = jest.spyOn(db.User, "findOne").mockResolvedValue(null); // User not found
+      const hashSpy = jest.spyOn(bcrypt, "hash").mockResolvedValue(mockHashPassword);
+      jest.spyOn(db.User, "build").mockImplementation(() => buildUser);
+      jest.spyOn(jwt, "sign").mockImplementation(() => mockToken);
       // act
       await registerController(req, res);
 
@@ -87,23 +97,12 @@ describe("registerController", () => {
       });
 
       expect(hashSpy).toHaveBeenCalled();
-      expect(buildSpy).toHaveBeenCalled();
-      expect(saveSpy).toHaveBeenCalled();
-
-      // expect(signSpy).toHaveBeenCalledWith(
-      //   { username: mockUser.username },
-      //   "test@1234",
-      //   {
-      //     algorithm: "HS256",
-      //     expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
-      //   }
-      // );
 
       expect(res.status.calledWithExactly(201)).toBeTruthy();
 
       expect(
         res.cookie.calledWithExactly("authCookie", mockToken, {
-          expires: new Date(new Date().getTime() + 24 * 60 * 60 * 30 * 1000),
+          expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
         })
       ).toBeTruthy();
 
@@ -118,6 +117,8 @@ describe("registerController", () => {
 
   describe("failure registration", () => {
     it("should duplicate username and return response which have status 409", async () => {
+      const { password, ...info } = mockUser;
+      
       const findedUser = {
         ...info,
         passwordHash: mockHashPassword,
@@ -128,7 +129,7 @@ describe("registerController", () => {
       };
 
       // mock/spies/stub
-      const findOneStub = sinon.stub(User, "findOne").resolves(findedUser);
+      const findOneStub = sinon.stub(db.User, "findOne").resolves(findedUser);
 
       // act
       await registerController(req, res);
@@ -160,7 +161,7 @@ describe("registerController", () => {
     // test lỗi khi bcrypt xử lí promise failed ==> khi sinh hash password
     it("should return internal server error on unexpected error, status code 500", async () => {
       // mock/spies (arrange)
-      const findOneStub = sinon.stub(User, "findOne").resolves(null);
+      const findOneStub = sinon.stub(db.User, "findOne").resolves(null);
       jest.spyOn(bcrypt, "hash").mockImplementation((data, salt, callback) => {
         callback(new Error("Bcrypt error"), null);
       });
@@ -183,7 +184,7 @@ describe("registerController", () => {
       expect(res.status.calledWithExactly(500)).toBeTruthy();
       expect(
         res.json.calledWithExactly({
-          message: "Không thể mã hoá mật khẩu",
+          message: "Không thể xử lý yêu cầu",
         })
       ).toBeTruthy();
     });

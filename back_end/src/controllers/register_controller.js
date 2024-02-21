@@ -14,52 +14,45 @@ const registerController = async (req, res) => {
     });
 
     if (userCheck === null) {
-      bcrypt.hash(
+      const hashedPassword = bcrypt.hash(
         password,
-        parseInt(process.env.SALT_ROUNDS),
-        async function (err, hashedPassword) {
-          if (err) {
-            return res
-              .status(500)
-              .json({ message: "Không thể mã hoá mật khẩu" });
-          }
-          let newUser = db.User.build({
-            firstName: firstName,
-            middleName: middleName,
-            lastName: lastName,
-            username: username,
-            mobile: mobile,
-            email: email,
-            passwordHash: hashedPassword,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-          });
+        parseInt(process.env.SALT_ROUNDS)
+      );
 
-          await newUser.save();
-          const token = jwt.sign(
-            { username: newUser.dataValues.username },
-            process.env.SECRET_KEY,
-            {
-              algorithm: "HS256",
-              expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
-            }
-          );
-          const { passwordHash, createdAt, updatedAt, ...userReturned } =
-            newUser.dataValues;
-          // tra ve cho browser status 200 + set cookie co key = 'login_jwt_string'
-          return res
-            .status(201)
-            .cookie("authCookie", token, {
-              expires: new Date(
-                new Date().getTime() + 24 * 60 * 60 * 30 * 1000
-              ),
-            })
-            .json({
-              ...userReturned,
-              message: "Bạn đã tạo tài khoản thành công",
-            });
+      let newUser = db.User.build({
+        firstName: firstName,
+        middleName: middleName,
+        lastName: lastName,
+        username: username,
+        mobile: mobile,
+        email: email,
+        passwordHash: hashedPassword,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+
+      await newUser.save();
+      const user = await newUser.reload();
+      const token = jwt.sign(
+        { username: user.username },
+        process.env.SECRET_KEY,
+        {
+          algorithm: "HS256",
+          expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
         }
       );
+
+      const { passwordHash, createdAt, updatedAt, ...userReturned } = user;
+      // tra ve cho browser status 201 + set cookie co key = 'authCookie'
+      return res
+        .status(201)
+        .cookie("authCookie", token, {
+          expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
+        })
+        .json({
+          ...userReturned,
+          message: "Bạn đã tạo tài khoản thành công",
+        });
     } else {
       return res
         .status(409)
