@@ -8,6 +8,7 @@ const app = express();
 dotenv.config();
 const { authentication } = require("./src/middleware/authentication.js");
 const routerRegister = require("./src/routes/register.js");
+const authorization = require("./src/middleware/authorization.js");
 
 const corOptions = {
   // use origin * for development purpose
@@ -50,7 +51,10 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // use middleware authentication
-// app.use("/api/v1", authentication);
+app.use("/api/v1", authentication);
+
+// use middleware authorization
+app.use("/api/v1", authorization);
 
 // register router
 app.use(routerRegister);
