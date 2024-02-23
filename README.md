@@ -2,8 +2,10 @@
 
 # Front end:
 
-- ReactJS
--
+- **ReactJS**
+- **Chakra** (provide much more component built, so it allows you to have more time focus features)
+- **react-icons** (support multiple icon to use)
+- **react-router-dom** (navigation page)
 
 # Back end:
 
