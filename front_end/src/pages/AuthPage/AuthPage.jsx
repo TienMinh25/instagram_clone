@@ -1,5 +1,5 @@
 import { Flex, Container, Box, Image, VStack } from "@chakra-ui/react";
-import authImg from "../../../public/auth.png";
+import authImg from "/auth.png";
 import AuthForm from "../../components/AuthForm/AuthForm";
 import playStore from "/playstore.png";
 import microsoftImg from "/microsoft.png";
