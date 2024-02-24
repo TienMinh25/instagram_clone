@@ -122,7 +122,7 @@ function Sidebar() {
             mt="auto"
           >
             <BiLogOut />
-            <Box display={{ base: "none", md: "block" }}>Logout</Box>
+            <Box display={{ base: "none", md: "block" }}>Log out</Box>
           </Link>
         </Tooltip>
       </Flex>
