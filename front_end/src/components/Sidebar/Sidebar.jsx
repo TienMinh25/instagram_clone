@@ -32,6 +32,7 @@ function Sidebar() {
     {
       icon: <Avatar size={"sm"} name="Burak Orkmez" src="/profilepic.png" />,
       text: "Profile",
+      // thay bang link cua du lieu duoc fetch
       link: "/asaprogrammer",
     },
   ];
