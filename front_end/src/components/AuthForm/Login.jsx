@@ -1,11 +1,17 @@
 import { Input, Button } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useContext } from "react";
+
+import { UserContext } from "../../context/userContext.jsx";
 
 export const Login = () => {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
   });
+
+  const { login } = useContext(UserContext);
+  const [err, setErr] = useState(null);
+
   return (
     <>
       <Input
@@ -29,9 +35,16 @@ export const Login = () => {
         }}
       />
 
-      <Button w={"full"} colorScheme="blue" size={"sm"} fontSize={14}>
+      <Button
+        w={"full"}
+        colorScheme="blue"
+        size={"sm"}
+        fontSize={14}
+        onClick={(e) => login(inputs, setErr, e)}
+      >
         Log in
       </Button>
+      {err && err}
     </>
   );
 };

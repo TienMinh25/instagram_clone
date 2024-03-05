@@ -1,5 +1,6 @@
-import { Box, VStack, Image, Flex, Text } from "@chakra-ui/react";
+import { Box, VStack, Image, Flex, Text, useColorMode } from "@chakra-ui/react";
 import { useState } from "react";
+
 import logoIns from "/logo.png";
 import { Login } from "./Login";
 import Signup from "./Signup";
@@ -7,6 +8,8 @@ import GoogleAuth from "./GoogleAuth";
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
+
+  const { colorMode } = useColorMode();
 
   return (
     <>
@@ -25,7 +28,7 @@ function AuthForm() {
             w={"full"}
           >
             <Box flex={2} h={"1px"} bg={"gray.400"} />
-            <Text mx={1} color={"white"}>
+            <Text mx={1} color={colorMode == "light" ? "black" : "white"}>
               OR
             </Text>
             <Box flex={2} h={"1px"} bg={"gray.400"} />

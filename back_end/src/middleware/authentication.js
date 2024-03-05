@@ -15,24 +15,20 @@ const db = require(path.resolve(__dirname, "../models/index.js"));
 
 module.exports = async (req, res, next) => {
   try {
-    if (Object.keys(req.cookies).length === 0) {
+    if (Object.keys(req.cookies).length !== 0) {
       // nếu trong req.cookies có key thì chứng tỏ đã từng đăng nhập ===> chuyển luôn pass
       // middleware authorization
-
       next();
     } else {
-      const { usernameCheck, passwordCheck } = req.body;
+      const { email, password } = req.body;
       const userCheck = await db.User.findOne({
-        where: { username: usernameCheck },
+        where: { email: email },
       });
 
       if (userCheck === null) {
         return res.status(400).json({ message: "Không tìm thấy tài khoản" });
       } else {
-        const result = await bcrypt.compare(
-          passwordCheck,
-          userCheck.passwordHash
-        );
+        const result = await bcrypt.compare(password, userCheck.passwordHash);
 
         if (result) {
           // sinh jwt va tra ve cho user (expire 30 days)
@@ -45,14 +41,15 @@ module.exports = async (req, res, next) => {
             }
           );
 
+          const { passwordHash, createdAt, updatedAt, ...userReturned } =
+            userCheck.dataValues;
           // tra ve cho browser status 200 + set cookie co key = 'authCookie'
-
           res
             .status(200)
             .cookie("authCookie", token, {
               expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
             })
-            .json({ message: "Bạn đã đăng nhập thành công" });
+            .json({ ...userReturned, message: "Bạn đã đăng nhập thành công" });
         } else {
           res
             .status(401)

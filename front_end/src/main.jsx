@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "./App.jsx";
 import "./index.css";
+import { UserContextProvider } from "./context/userContext.jsx";
 
 const styles = {
   global: (props) => ({
@@ -25,7 +26,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <ChakraProvider theme={theme}>
-        <App />
+        <UserContextProvider>
+          <App />
+        </UserContextProvider>
       </ChakraProvider>
     </BrowserRouter>
   </React.StrictMode>
