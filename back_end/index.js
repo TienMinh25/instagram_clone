@@ -6,13 +6,13 @@ var dotenv = require("dotenv");
 
 const app = express();
 dotenv.config();
-const { authentication } = require("./src/middleware/authentication.js");
+const authentication = require("./src/middleware/authentication.js");
 const routerRegister = require("./src/routes/register.js");
 const authorization = require("./src/middleware/authorization.js");
 
 const corOptions = {
   // use origin * for development purpose
-  origin: "*",
+  origin: true,
   // methods: ["GET", "POST", "HEAD", "PUT", "PATCH", "DELETE", "OPTIONS", "CONNECT", "TRACE"],
   methods: [
     "GET",
@@ -50,14 +50,14 @@ app.use(bodyParser.json());
 // parse cookie header to data and assign it to req.cookies
 app.use(cookieParser());
 
+// register router
+app.use("/api/v1", routerRegister);
+
 // use middleware authentication
 app.use("/api/v1", authentication);
 
 // use middleware authorization
 app.use("/api/v1", authorization);
-
-// register router
-app.use(routerRegister);
 
 app.listen(process.env.BACKEND_PORT, () => {
   console.log("CORS-enabled web server");

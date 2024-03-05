@@ -106,17 +106,11 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      firstName: {
+      fullname: {
         type: DataTypes.STRING(50),
         defaultValue: null,
         allowNull: true,
       },
-      middleName: {
-        type: DataTypes.STRING(50),
-        defaultValue: null,
-        allowNull: true,
-      },
-      lastName: DataTypes.STRING(50),
       username: {
         type: DataTypes.STRING(50),
         allowNull: false,
@@ -168,7 +162,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "users",
       indexes: [
         {
-          fields: ["userName"],
+          fields: ["username"],
           name: "uq_username",
           unique: true,
         },

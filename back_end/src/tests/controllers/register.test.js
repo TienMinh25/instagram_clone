@@ -19,9 +19,7 @@ describe("registerController", () => {
     process.env.SECRET_KEY = "test@1234";
 
     mockUser = {
-      firstName: "John",
-      middleName: "Doe",
-      lastName: "Smith",
+      fullname: "John Doe",
       username: "johndoe",
       mobile: "1231241242",
       email: "johndoe@example.com",
@@ -74,6 +72,16 @@ describe("registerController", () => {
         reload: jest.fn().mockResolvedValue(saveUser),
       };
 
+      const userReload = {
+        dataValues: {
+          ...info,
+          lastLogin: null,
+          intro: null,
+          profile: null,
+          avatar: null,
+        },
+      };
+
       const responseUser = {
         ...info,
         lastLogin: null,
@@ -84,8 +92,11 @@ describe("registerController", () => {
 
       // Stub/mock dependencies (arrange)
       const findOneSpy = jest.spyOn(db.User, "findOne").mockResolvedValue(null); // User not found
-      const hashSpy = jest.spyOn(bcrypt, "hash").mockResolvedValue(mockHashPassword);
+      const hashSpy = jest
+        .spyOn(bcrypt, "hash")
+        .mockResolvedValue(mockHashPassword);
       jest.spyOn(db.User, "build").mockImplementation(() => buildUser);
+      jest.spyOn(buildUser, "reload").mockImplementation(() => userReload);
       jest.spyOn(jwt, "sign").mockImplementation(() => mockToken);
       // act
       await registerController(req, res);
@@ -118,7 +129,7 @@ describe("registerController", () => {
   describe("failure registration", () => {
     it("should duplicate username and return response which have status 409", async () => {
       const { password, ...info } = mockUser;
-      
+
       const findedUser = {
         ...info,
         passwordHash: mockHashPassword,

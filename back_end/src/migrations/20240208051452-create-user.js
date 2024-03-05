@@ -9,17 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
-      firstName: {
-        type: Sequelize.STRING(50),
-        defaultValue: null,
-        allowNull: true,
-      },
-      middleName: {
-        type: Sequelize.STRING(50),
-        defaultValue: null,
-        allowNull: true,
-      },
-      lastName: {
+      fullname: {
         type: Sequelize.STRING(50),
         defaultValue: null,
         allowNull: true,
