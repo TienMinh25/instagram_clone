@@ -3,6 +3,6 @@ const routerRegister = express.Router();
 
 const registerController = require("../controllers/register_controller");
 
-routerRegister.post("/api/v1/register", registerController);
+routerRegister.post("/register", registerController);
 
 module.exports = routerRegister;

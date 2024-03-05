@@ -6,6 +6,7 @@ import {
   Input,
   InputRightElement,
   Button,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -16,6 +17,7 @@ import {
 } from "../../assets/constants.jsx";
 
 function PostFooter({ username, isProfilePage }) {
+  const { colorMode } = useColorMode();
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(1000);
   const handleLike = () => {
@@ -34,11 +36,15 @@ function PostFooter({ username, isProfilePage }) {
     <Box mb={10} mt="auto">
       <Flex alignItems={"center"} gap={4} w="full" pt={0} mb={2} mt={"4"}>
         <Box onClick={handleLike} cursor={"pointer"} fontSize={18}>
-          {!liked ? <NotificationsLogo /> : <UnlikeLogo />}
+          {!liked ? (
+            <NotificationsLogo colorMode={colorMode} />
+          ) : (
+            <UnlikeLogo />
+          )}
         </Box>
 
         <Box cursor={"pointer"} fontSize={18}>
-          <CommentLogo />
+          <CommentLogo colorMode={colorMode} />
         </Box>
       </Flex>
       <Text fontWeight={600} fontSize={"sm"}>
