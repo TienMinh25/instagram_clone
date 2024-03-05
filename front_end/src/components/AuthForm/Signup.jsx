@@ -1,9 +1,7 @@
 import { Input, InputGroup, InputRightElement, Button } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import axios from "axios";
-import { makeRequest } from "../../axios";
+import { useContext, useState } from "react";
+import { UserContext } from "../../context/userContext.jsx";
 
 function Signup() {
   const [inputs, setInputs] = useState({
@@ -13,54 +11,11 @@ function Signup() {
     username: "",
   });
 
-  const navigate = useNavigate();
-
   const [err, setErr] = useState(null);
-
-  const registerClick = async (e) => {
-    e.preventDefault();
-
-    try {
-      if (
-        inputs.username.trim() !== "" &&
-        inputs.email.trim() !== "" &&
-        inputs.password.trim() !== "" &&
-        inputs.fullname.trim() !== ""
-      ) {
-        const response = await makeRequest.post(
-          "/register",
-          {
-            username: inputs.username,
-            email: inputs.email,
-            password: inputs.password,
-            fullname: inputs.fullname,
-          },
-          {
-            headers: {
-              "X-Requested-With": "XMLHttpRequest",
-              "Content-Type": "application/json; charset=UTF-8",
-            },
-            withCredentials: true,
-          }
-        );
-
-        // data tra ve tu server co trong response.data
-
-        // set cookie
-        document.cookie = response.headers["set-cookie"];
-
-        setErr(null);
-        navigate("/");
-      } else throw new Error("Vui lòng nhập đầy đủ dữ liệu!");
-    } catch (err) {
-      if (err.response?.data) setErr(err.response.data.message);
-      else if (err.request) {
-        console.log(err.request);
-      } else setErr(err.message);
-    }
-  };
-
   const [showPassword, setShowPassword] = useState(false);
+
+  const { register } = useContext(UserContext);
+
   return (
     <>
       <Input
@@ -120,7 +75,7 @@ function Signup() {
         colorScheme="blue"
         size={"sm"}
         fontSize={14}
-        onClick={registerClick}
+        onClick={(e) => register(inputs, setErr, e)}
       >
         Sign up
       </Button>
