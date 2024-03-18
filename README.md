@@ -46,6 +46,12 @@ $ git pull https://github.com/TienMinh25/instagram_clone.git
 $ npm install
 ```
 
+- First, you need a local database (use mysql)
+```
+Please config root and password for your local database,
+then open file .env (./back_end/.env) and modify it.
+```
+
 - Run backend
 
 ```sh
@@ -60,14 +66,21 @@ $ cd fron_end
 $ npm run dev
 ```
 
-### Second way: 🏃‍♂️🏃‍♂️
+### Second way: 🏃‍♂️🏃‍♂️ (Recommended)
 
 - First, you aslo need to pull project to your device 😄
 - Then you must have docker on your machine, then ensure docker is running
 - Open your terminal, make sure you are in the root ~ **/instagram_clone**, then type:
 
 ```sh
-$ docker-compose up -d
+~/<parent_directory>/instagram_clone
+$ docker-compose up --build
+```
+
+- Then open new terminal, and type:
+```sh
+$ docker exec -it backend_node sh
+$ sequelize db:migrate
 ```
 
 - If you need to termianted that, you just type:
@@ -77,9 +90,9 @@ $ docker-compose down
 ```
 
 - That's so easy, right 😆😚😎
+- Open your browser, and type http://localhost:80
 
 # Future Improvements (Planned)
-
 # Author:
 
 ```

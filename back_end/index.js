@@ -8,7 +8,7 @@ const app = express();
 dotenv.config();
 const routerRegister = require("./src/routes/register.js");
 const authorization = require("./src/middleware/authorization.js");
-const routerLogin = require("./src/routes/authentication.js");
+const routerLogin = require("./src/routes/authentication_route.js");
 
 const corOptions = {
   // use origin * for development purpose

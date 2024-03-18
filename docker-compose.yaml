@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  backend:
+    build: 
+      context: ./back_end
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./back_end/.env
+    environment:
+      - DB_PASSWORD=testSomethingNow
+      - DB_PORT=3307
+      - DB_HOST=database
+      - NODE_ENV=development
+    expose:
+      - 5001
+    container_name: backend_node
+    restart: always
+    volumes:
+      - ./back_end/src:/backend/src
+      - ./back_end/package.json:/backend/package.json
+      - ./back_end/package-lock.json:/backend/package-lock.json
+    depends_on:
+      - database
+
+  frontend:
+    build: 
+      context: ./front_end
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - VITE_BACKEND_HOST=backend
+      - VITE_BACKEND_PORT=5001
+    expose:
+      - 80
+    restart: always
+    container_name: frontend_react
+    volumes:
+      - ./front_end/dist:/usr/share/nginx/html
+    depends_on:
+      - backend
+  
+  database:
+    image: mysql:8
+    restart: always
+    container_name: mysql_container
+    environment:
+      - MYSQL_ROOT_PASSWORD=testSomethingNow
+      - MYSQL_DATABASE=instagram_development
+    ports:
+      - "3307:33060"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+
+    
