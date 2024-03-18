@@ -3,6 +3,6 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 
 export const makeRequest = axios.create({
-  baseURL: "http://localhost:5001/api/v1/",
+  baseURL: `http://${import.meta.env.VITE_BACKEND_HOST}:${import.meta.env.VITE_BACKEND_PORT}/api/v1/`,
   withCredentials: true,
 });
