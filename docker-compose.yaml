@@ -12,7 +12,7 @@ services:
       - ./back_end/.env
     environment:
       - DB_PASSWORD=testSomethingNow
-      - DB_PORT=3307
+      - DB_PORT=3306
       - DB_HOST=database
       - NODE_ENV=development
     expose:
@@ -45,14 +45,14 @@ services:
       - backend
   
   database:
-    image: mysql:8
+    image: mysql:8.0
     restart: always
     container_name: mysql_container
     environment:
       - MYSQL_ROOT_PASSWORD=testSomethingNow
       - MYSQL_DATABASE=instagram_development
     ports:
-      - "3307:33060"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
 

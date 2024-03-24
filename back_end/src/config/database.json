@@ -1,11 +1,11 @@
 {
   "development": {
     "username": "root",
-    "password": "${process.env.DB_PASSWORD}",
+    "password": "testSomethingNow",
     "database": "instagram_development",
-    "host": "${process.env.DB_HOST}",
+    "host": "database",
     "dialect": "mysql",
-    "port": "${process.env.DB_PORT}",
+    "port": "3306",
     "define": {
       "charset": "utf8mb4",
       "collate": "utf8mb4_unicode_ci"
@@ -13,11 +13,11 @@
   },
   "test": {
     "username": "root",
-    "password": "${process.env.DB_PASSWORD}",
+    "password": "testSomethingNow",
     "database": "instagram_test",
-    "host": "${process.env.DB_HOST}",
+    "host": "database",
     "dialect": "mysql",
-    "port": "${process.env.DB_PORT}",
+    "port": "3306",
     "define": {
       "charset": "utf8mb4",
       "collate": "utf8mb4_unicode_ci"
@@ -25,11 +25,11 @@
   },
   "production": {
     "username": "root",
-    "password": "${process.env.DB_PASSWORD}",
+    "password": "productPassword",
     "database": "database_production",
-    "host": "${process.env.DB_HOST}",
+    "host": "database",
     "dialect": "mysql",
-    "port": "${process.env.DB_PORT}",
+    "port": "3306",
     "define": {
       "charset": "utf8mb4",
       "collate": "utf8mb4_unicode_ci"
