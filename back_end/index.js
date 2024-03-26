@@ -2,6 +2,8 @@ var express = require("express");
 var cors = require("cors");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+var morgan = require("morgan");
 var dotenv = require("dotenv");
 
 const app = express();
@@ -41,11 +43,16 @@ const corOptions = {
 // config cors for all path of application  => default path: "/", doc co ghi : ))
 app.use(cors(corOptions));
 
+// Setup for secure api
+app.use(helmet({ crossOriginResourcePolicy: false }));
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
+app.use(morgan("dev"));
 
 // parse cookie header to data and assign it to req.cookies
 app.use(cookieParser());
@@ -58,6 +65,26 @@ app.use("/api/v1", routerLogin);
 
 // use middleware authorization
 app.use("/api/v1", authorization);
+
+// Catch 404 error (if user find some path not found on my app, it will generate status 404 for that)
+app.use((req, res, next) => {
+  const err = new Error("Not found");
+  err.status = 404;
+  next(err);
+});
+
+// handle for error path : ) but actually it should only handle for 404
+app.use((err, req, res, next) => {
+  const error = err;
+
+  const status = error.status || 500;
+
+  return res.status(status).json({
+    error: {
+      message: error.message,
+    },
+  });
+});
 
 app.listen(process.env.BACKEND_PORT, () => {
   console.log("CORS-enabled web server");
