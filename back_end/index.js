@@ -1,3 +1,5 @@
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 var express = require("express");
 var cors = require("cors");
 var bodyParser = require("body-parser");
@@ -5,12 +7,15 @@ var cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 var morgan = require("morgan");
 var dotenv = require("dotenv");
-
 const app = express();
 dotenv.config();
 const routerRegister = require("./src/routes/register.js");
 const authorization = require("./src/middleware/authorization.js");
 const routerLogin = require("./src/routes/authentication_route.js");
+
+
+
+
 
 const corOptions = {
   // use origin * for development purpose
@@ -39,6 +44,35 @@ const corOptions = {
     lieu khac
  - 
  */
+ const options = {
+  definition: {
+    openapi: "3.1.0",
+    info: {
+      title: "Instagram API Back-end",
+      version: "0.1.0",
+      description:
+        "API Instagram",
+      license: {
+        name: "MIT",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
+      contact: {
+        name: "LogRocket",
+        url: "https://logrocket.com",
+        email: "info@email.com",
+      },
+    },
+    
+  },
+  apis: ["./routes/*.js"],
+};
+
+const specs = swaggerJsdoc(options);
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs)
+);
 
 // config cors for all path of application  => default path: "/", doc co ghi : ))
 app.use(cors(corOptions));
