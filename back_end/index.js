@@ -12,6 +12,7 @@ dotenv.config();
 const routerRegister = require("./src/routes/register.js");
 const authorization = require("./src/middleware/authorization.js");
 const routerLogin = require("./src/routes/authentication_route.js");
+const routerPost = require("./src/routes/post_route.js");
 
 const corOptions = {
     // use origin * for development purpose
@@ -79,7 +80,9 @@ app.use("/api/v1", routerRegister);
 app.use("/api/v1", routerLogin);
 
 // use middleware authorization
-app.use("/api/v1", authorization);
+// app.use("/api/v1", authorization);
+
+app.use("/api/v1", routerPost);
 
 // Catch 404 error (if user find some path not found on my app, it will generate status 404 for that)
 app.use((req, res, next) => {

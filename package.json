@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "sequelize-cli": "^6.6.2"
+  },
+  "dependencies": {
+    "swagger-jsdoc": "5.0.1"
+  }
+}
