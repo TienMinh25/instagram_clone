@@ -1,38 +1,38 @@
 {
-  "development": {
-    "username": "root",
-    "password": "testSomethingNow",
-    "database": "instagram_development",
-    "host": "database",
-    "dialect": "mysql",
-    "port": "3306",
-    "define": {
-      "charset": "utf8mb4",
-      "collate": "utf8mb4_unicode_ci"
+    "development": {
+        "username": "root",
+        "password": "testSomethingNow",
+        "database": "instagram_development",
+        "host": "database",
+        "dialect": "mysql",
+        "port": "3306",
+        "define": {
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_unicode_ci"
+        }
+    },
+    "test": {
+        "username": "root",
+        "password": "testSomethingNow",
+        "database": "instagram_test",
+        "host": "database",
+        "dialect": "mysql",
+        "port": "3306",
+        "define": {
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_unicode_ci"
+        }
+    },
+    "production": {
+        "username": "root",
+        "password": "productPassword",
+        "database": "database_production",
+        "host": "database",
+        "dialect": "mysql",
+        "port": "3306",
+        "define": {
+            "charset": "utf8mb4",
+            "collate": "utf8mb4_unicode_ci"
+        }
     }
-  },
-  "test": {
-    "username": "root",
-    "password": "testSomethingNow",
-    "database": "instagram_test",
-    "host": "database",
-    "dialect": "mysql",
-    "port": "3306",
-    "define": {
-      "charset": "utf8mb4",
-      "collate": "utf8mb4_unicode_ci"
-    }
-  },
-  "production": {
-    "username": "root",
-    "password": "productPassword",
-    "database": "database_production",
-    "host": "database",
-    "dialect": "mysql",
-    "port": "3306",
-    "define": {
-      "charset": "utf8mb4",
-      "collate": "utf8mb4_unicode_ci"
-    }
-  }
 }

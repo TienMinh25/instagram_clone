@@ -8,14 +8,14 @@
 
 const jwt = require("jsonwebtoken");
 module.exports = async (req, res, next) => {
-  try {
-    const tokenAuth = req.cookies.authCookie;
-    const payloadVerify = jwt.verify(tokenAuth, process.env.SECRET_KEY);
+    try {
+        const tokenAuth = req.cookies.authCookie;
+        const payloadVerify = jwt.verify(tokenAuth, process.env.SECRET_KEY);
 
-    if (payloadVerify != null) {
-      next();
+        if (payloadVerify != null) {
+            next();
+        }
+    } catch (e) {
+        return res.status(401).json({ message: "Unauthorized request!" });
     }
-  } catch (e) {
-    return res.status(401).json({ message: "Unauthorized request!" });
-  }
 };
