@@ -1,4 +1,11 @@
-import { Input, InputGroup, InputRightElement, Button } from "@chakra-ui/react";
+import {
+  Input,
+  InputGroup,
+  InputRightElement,
+  Button,
+  Alert,
+  AlertIcon,
+} from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useContext, useState } from "react";
 import { UserContext } from "../../context/userContext.jsx";
@@ -13,6 +20,7 @@ function Signup() {
 
   const [err, setErr] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [loadingSignUp, setLoadingSignUp] = useState(false);
 
   const { register } = useContext(UserContext);
 
@@ -75,11 +83,17 @@ function Signup() {
         colorScheme="blue"
         size={"sm"}
         fontSize={14}
-        onClick={(e) => register(inputs, setErr, e)}
+        isLoading={loadingSignUp}
+        onClick={(e) => register(inputs, setErr, e, setLoadingSignUp)}
       >
         Sign up
       </Button>
-      {err && err}
+      {err && (
+        <Alert status="error" fontSize={13} p={2} borderRadius={4}>
+          <AlertIcon fontSize={12} />
+          {err}
+        </Alert>
+      )}
     </>
   );
 }
