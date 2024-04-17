@@ -106,11 +106,6 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 primaryKey: true,
             },
-            fullname: {
-                type: DataTypes.STRING(50),
-                defaultValue: null,
-                allowNull: true,
-            },
             username: {
                 type: DataTypes.STRING(50),
                 allowNull: false,

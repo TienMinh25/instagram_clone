@@ -7,12 +7,25 @@ var cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 var morgan = require("morgan");
 var dotenv = require("dotenv");
+const { createClient } = require("redis");
 const app = express();
 dotenv.config();
+
 const routerRegister = require("./src/routes/register.js");
 const authorization = require("./src/middleware/authorization.js");
 const routerLogin = require("./src/routes/authentication_route.js");
 const routerPost = require("./src/routes/post_route.js");
+
+const client = createClient({
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD,
+});
+
+client.on("error", (err) => console.log("Redis Client Error", err));
+client.on("connect", () => {
+    console.log("Connected to Redis server");
+});
 
 const corOptions = {
     // use origin * for development purpose

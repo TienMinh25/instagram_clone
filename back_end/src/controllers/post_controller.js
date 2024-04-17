@@ -1,66 +1,36 @@
-const { User_post } = require("../models/user_post.js");
-const multer = require("multer");
-
-const storage = multer.diskStorage({
-  destination: "./uploads/post_images/",
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 40 * 1024 * 1024 },
-}).single("image"); //40 MB size limit
+const moment = require("moment");
+const db = require("../models/index.js");
+const uploadFilesMiddleware = require("../utils/images/upload_files.js");
 
 // Controller function to add a new post
-const createPost = (req, res) => {
-  upload(req, res, async () => {
-    if (!req.body.token) res.status(403);
-
-    // File uploaded successfully, save post to database
+const addPost = async (req, res) => {
     try {
-      const hashtags = req.body.hashtags.split("#");
+        await uploadFilesMiddleware(req, res);
+        let mutiplePath = "";
+        const lengthOfFiles = req.files.length;
 
-      // Handle file size limit exceeded error
-      if (req.fileValidationError) {
-        return res
-          .status(400)
-          .json({ message: "File size limit exceeded (max 40MB)" });
-      }
+        for (let i = 0; i < lengthOfFiles; i++) {
+            if (i != lengthOfFiles - 1) mutiplePath += req.files[i].path + "$||$";
+            else mutiplePath += req.files[i].path;
+        }
+        let newPost = await db.User_post.create({
+            userId: parseInt(req.params.user_id),
+            media: mutiplePath === "" ? null : mutiplePath,
+            createdAt: moment.utc(),
+            updatedAt: moment.utc(),
+            description: req.body.description === "" ? null : req.body.description,
+        });
 
-      let mediaPath = null;
-      if (req.file) {
-        const oldPath = req.file.path;
-        const newPath = `uploads/post_images/${req.file.filename}`;
-        fs.renameSync(oldPath, newPath);
-        mediaPath = newPath;
-      }
-
-      const newPost = new User_post({
-        user_id: req.body.user_id,
-        media: req.file ? req.file.filename : null,
-        description: req.body.description,
-        hashtags: hashtags,
-        path_media: mediaPath,
-      });
-
-      await newPost.save();
-
-      return res.status(201).json({
-        success: true,
-        message: "Post created successfully",
-        post: newPost,
-      });
+        return res.status(201).json({ data: newPost });
     } catch (error) {
-      console.error("Error creating post:", error);
-      return res
-        .status(500)
-        .json({ success: false, message: "Error creating post." });
+        if (error.code === "LIMIT_UNEXPECTED_FILE") {
+            return res.status(400).json({ message: "Too many files to upload." });
+        }
+
+        return res.status(500).json({ message: error.message });
     }
-  });
 };
 
 module.exports = {
-  createPost,
+    addPost,
 };

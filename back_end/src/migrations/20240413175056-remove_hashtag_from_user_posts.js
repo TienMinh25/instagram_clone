@@ -1,7 +1,5 @@
 "use strict";
 
-const { DataTypes } = require("sequelize");
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
@@ -11,10 +9,7 @@ module.exports = {
          * Example:
          * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
          */
-        await queryInterface.changeColumn("user_posts", "media", {
-            type: DataTypes.TEXT,
-            allowNull: true,
-        });
+        await queryInterface.removeColumn("user_posts", "hashtags");
     },
 
     async down(queryInterface, Sequelize) {
@@ -24,9 +19,8 @@ module.exports = {
          * Example:
          * await queryInterface.dropTable('users');
          */
-        await queryInterface.changeColumn("user_posts", "media", {
-            type: DataTypes.BLOB,
-            allowNull: false,
+        await queryInterface.addColumn("user_posts", "hashtags", {
+            type: DataTypes.TEXT,
         });
     },
 };
