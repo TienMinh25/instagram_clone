@@ -1,9 +1,11 @@
 import { Container, Flex } from "@chakra-ui/react";
+import { useColorMode } from "@chakra-ui/react";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
 import ProfileTabs from "../../components/Profile/ProfileTabs";
 import ProfilePosts from "../../components/Profile/ProfilePosts";
 
 function ProfilePage() {
+  let { colorMode } = useColorMode();
   return (
     <Container maxW="container.lg" py={5}>
       <Flex
@@ -21,7 +23,7 @@ function ProfilePage() {
         maxW={"full"}
         mx={"auto"}
         borderTop={"1px solid"}
-        borderColor={"whiteAlpha.300"}
+        borderColor={colorMode == "dark" ? "whiteAlpha.300" : "blackAlpha.300"}
         direction={"column"}
       >
         <ProfileTabs />

@@ -1,5 +1,13 @@
-import { Input, Button } from "@chakra-ui/react";
+import {
+  Input,
+  Button,
+  InputGroup,
+  InputRightElement,
+  Alert,
+  AlertIcon,
+} from "@chakra-ui/react";
 import { useState, useContext } from "react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 import { UserContext } from "../../context/userContext.jsx";
 
@@ -11,6 +19,9 @@ export const Login = () => {
 
   const { login } = useContext(UserContext);
   const [err, setErr] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loadingLogin, setLoadingLogin] = useState(false);
+
 
   return (
     <>
@@ -24,27 +35,44 @@ export const Login = () => {
           setInputs((prev) => ({ ...prev, email: e.target.value }));
         }}
       />
-      <Input
-        placeholder="Password"
-        type="password"
-        fontSize={"14"}
-        size={"sm"}
-        value={inputs.password}
-        onChange={(e) => {
-          setInputs((prev) => ({ ...prev, password: e.target.value }));
-        }}
-      />
+      <InputGroup>
+        <Input
+          placeholder="Password"
+          type="password"
+          fontSize={"14"}
+          size={"sm"}
+          value={inputs.password}
+          onChange={(e) => {
+            setInputs((prev) => ({ ...prev, password: e.target.value }));
+          }}
+        />
+        <InputRightElement h="full">
+          <Button
+            variant={"ghost"}
+            size="sm"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+          </Button>
+        </InputRightElement>
+      </InputGroup>
 
       <Button
         w={"full"}
         colorScheme="blue"
         size={"sm"}
         fontSize={14}
-        onClick={(e) => login(inputs, setErr, e)}
+        isLoading={loadingLogin}
+        onClick={(e) => login(inputs, setErr, e, setLoadingLogin)}
       >
         Log in
       </Button>
-      {err && err}
+      {err && (
+        <Alert status="error" fontSize={13} p={2} borderRadius={4}>
+          <AlertIcon fontSize={12} />
+          {err}
+        </Alert>
+      )}
     </>
   );
 };

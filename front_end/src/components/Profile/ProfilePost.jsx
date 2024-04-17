@@ -13,6 +13,7 @@ import {
   ModalContent,
   ModalBody,
   ModalCloseButton,
+  useColorMode,
 } from "@chakra-ui/react";
 import { MdDelete } from "react-icons/md";
 import { AiFillHeart } from "react-icons/ai";
@@ -22,7 +23,7 @@ import PostFooter from "../FeedPosts/PostFooter.jsx";
 
 function ProfilePost({ img }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const { colorMode } = useColorMode();
   return (
     <>
       <GridItem
@@ -51,14 +52,14 @@ function ProfilePost({ img }) {
         >
           <Flex alignItems={"center"} justifyContent={"center"} gap={50}>
             <Flex>
-              <AiFillHeart size={20} />
-              <Text fontWeight={"bold"} ml={2}>
+              <AiFillHeart size={20} color="white" fill="white" />
+              <Text fontWeight={"bold"} ml={2} color={"white"}>
                 7
               </Text>
             </Flex>
             <Flex>
-              <FaComment size={20} />
-              <Text fontWeight={"bold"} ml={2}>
+              <FaComment size={20} color={"white"} fill="white" />
+              <Text fontWeight={"bold"} ml={2} color={"white"}>
                 8
               </Text>
             </Flex>
@@ -82,17 +83,19 @@ function ProfilePost({ img }) {
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
-          <ModalBody bg={"black"} pb={5}>
+          <ModalBody bg={colorMode === "dark" ? "black" : "white"} pb={5}>
             <Flex gap="4" w={{ base: "90%", sm: "70%", md: "full" }} mx="auto">
-              <Box
+              <Flex
                 borderRadius={4}
                 overflow={"hidden"}
                 border={"1px solid"}
                 borderColor={"whiteAlpha.300"}
                 flex={1.5}
+                justifyContent={"center"}
+                alignItems={"center"}
               >
                 <Image src={img} alt="profile post" />
-              </Box>
+              </Flex>
               <Flex
                 flex={1}
                 flexDirection={"column"}
@@ -114,7 +117,13 @@ function ProfilePost({ img }) {
                   </Flex>
 
                   <Box
-                    _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
+                    _hover={{
+                      bg:
+                        colorMode === "dark"
+                          ? "whiteAlpha.300"
+                          : "rgba(0, 0, 0, .05)",
+                      color: "red.600",
+                    }}
                     borderRadius={4}
                     p={1}
                   >
@@ -126,7 +135,7 @@ function ProfilePost({ img }) {
                 <VStack
                   w="full"
                   alignItems={"start"}
-                  maxH="350px"
+                  maxH="400px"
                   overflowY={"auto"}
                   css={{
                     "&::-webkit-scrollbar": {

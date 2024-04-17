@@ -19,8 +19,11 @@ import {
   CreatePostLogo,
 } from "../../assets/constants.jsx";
 
+import useLogout from "../../hooks/useLogout.js";
+
 function Sidebar() {
   const { colorMode, toggleColorMode } = useColorMode();
+  const { handleLogout } = useLogout();
   const sidebarItems = [
     {
       icon: <AiFillHome size={25} />,
@@ -157,11 +160,10 @@ function Sidebar() {
             openDelay={500}
             display={{ base: "block", md: "none" }}
           >
+            {/* LOG OUT */}
             {/* Can xoa authCookie trong cookie storage o day */}
-            <Link
-              display={"flex"}
-              to={"/auth"}
-              as={RouterLink}
+            <Flex
+              onClick={handleLogout}
               alignItems={"center"}
               gap={4}
               _hover={{
@@ -177,7 +179,7 @@ function Sidebar() {
             >
               <BiLogOut />
               <Box display={{ base: "none", md: "block" }}>Log out</Box>
-            </Link>
+            </Flex>
           </Tooltip>
         </Flex>
       </Flex>

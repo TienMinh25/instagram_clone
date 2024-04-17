@@ -22,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
         {
             id: { type: DataTypes.BIGINT, primaryKey: true },
             userId: DataTypes.BIGINT,
-            message: DataTypes.TEXT,
+            media: DataTypes.TEXT,
+            description: DataTypes.TEXT,
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE,
         },
