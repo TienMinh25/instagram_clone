@@ -10,18 +10,21 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
 
+            // oke
             // 1 hoac nhieu group duoc tao boi 1 user
             Group.belongsTo(models.User, {
                 foreignKey: "createdBy",
-                as: "UserCreated",
+                targetKey: "id",
             });
 
+            // oke
             // 1 hoac nhieu group duoc cap nhat boi 1 user
             Group.belongsTo(models.User, {
                 foreignKey: "updatedBy",
-                as: "UserUpdated",
+                targetKey: "id",
             });
 
+            // oke
             // quan he n-n cua 1 user co the co nhieu group message trong nhieu group, 1 group message
             // trong 1 group co the co nhieu user
             Group.belongsToMany(models.User, {
@@ -30,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
                 otherKey: "userId",
             });
 
+            // oke
             // quan he n-n cua 1 user co the co trong nhieu group,
             // 1 group co the co nhieu user
             Group.belongsToMany(models.User, {
@@ -39,11 +43,20 @@ module.exports = (sequelize, DataTypes) => {
             });
 
             // moi quan he 1-1
-            Group.hasOne(models.Group_meta);
+            // oke
+            Group.hasOne(models.Group_meta, {
+                foreignKey: "groupId",
+                sourceKey: "id",
+            });
 
+            // oke
             // quan he 1 - n cua group va group post
-            Group.hasOne(models.Group_post);
+            Group.hasOne(models.Group_post, {
+                foreignKey: "groupId",
+                sourceKey: "id"
+            });
 
+            // oke
             // quan he n-n cua group va user, 1 user co the follow nhieu group
             // 1 group co the co nhieu user follow
             Group.belongsToMany(models.User, {

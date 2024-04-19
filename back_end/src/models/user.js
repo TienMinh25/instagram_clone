@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
 
+            // oke
             // quan he n-n cua user voi user thong qua model User_friend
             // 1 user co the co nhieu ban be
             User.belongsToMany(User, {
@@ -19,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
                 as: "Friend",
             });
 
+            // oke
             User.belongsToMany(User, {
                 through: models.User_friend,
                 foreignKey: "sourceId",
@@ -41,9 +43,14 @@ module.exports = (sequelize, DataTypes) => {
                 as: "UserReceive",
             });
 
+            // oke
             // quan he 1 - n: 1 user co the co 0, 1, n bai post
-            User.hasMany(models.User_post);
+            User.hasMany(models.User_post, {
+                foreignKey: "userId",
+                sourceKey: "id",
+            });
 
+            // oke
             // quan he n - n giua cac user, 1 user co the follow nhieu user
             User.belongsToMany(User, {
                 through: models.User_follow,
@@ -52,6 +59,7 @@ module.exports = (sequelize, DataTypes) => {
                 as: "UserFollower",
             });
 
+            // oke
             User.belongsToMany(User, {
                 through: models.User_follow,
                 foreignKey: "targetId",
@@ -59,18 +67,21 @@ module.exports = (sequelize, DataTypes) => {
                 as: "UserFollowing",
             });
 
+            // oke
             // quan he 1-n voi group, 1 user co the tao ra 0, 1 hoac nhieu group
             User.hasMany(models.Group, {
                 foreignKey: "createdBy",
-                as: "GroupCreated",
+                sourceKey: "id",
             });
 
+            // oke
             // quan he 1-n voi group, 1 user co the cap nhat 0, 1 hoac nhieu group
             User.hasMany(models.Group, {
                 foreignKey: "updatedBy",
-                as: "GroupUpdated",
+                sourceKey: "id",
             });
 
+            // oke
             // quan he n-n cua 1 user co the co nhieu group, 1 group co the co nhieu user
             User.belongsToMany(models.Group, {
                 through: models.Group_message,
@@ -78,6 +89,7 @@ module.exports = (sequelize, DataTypes) => {
                 otherKey: "groupId",
             });
 
+            // oke
             // quan he n-n cua 1 user co the co trong nhieu group,
             // 1 group co the co nhieu user
             User.belongsToMany(models.Group, {
@@ -86,9 +98,14 @@ module.exports = (sequelize, DataTypes) => {
                 otherKey: "groupId",
             });
 
+            // oke
             // quan he 1 - n cua user voi group post
-            User.hasMany(models.Group_post);
+            User.hasMany(models.Group_post, {
+                sourceKey: "id",
+                foreignKey: "userId",
+            });
 
+            // oke
             // quan he n-n cua group va user, 1 user co the follow nhieu group
             // 1 group co the co nhieu user follow
             User.belongsToMany(models.Group, {

@@ -9,9 +9,13 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            // oke
             // moi quan he 1 1 giua bang group meta(bang bo sung them thong tin cho group) voi bang group
             Group_meta.belongsTo(models.Group, {
                 foreignKey: "groupId",
+                targetKey: "id",
+                onDelete: "cascade",
+                onUpdate: "no action",
             });
         }
     }
