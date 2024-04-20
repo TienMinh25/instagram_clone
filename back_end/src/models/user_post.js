@@ -10,9 +10,11 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
 
+            // oke
             // 1 bai post chi co the thuoc ve 1 user ( quan he 1-n voi user)
             User_post.belongsTo(models.User, {
                 foreignKey: "userId",
+                targetKey: "id",
                 onDelete: "cascade",
                 onUpdate: "no action",
             });

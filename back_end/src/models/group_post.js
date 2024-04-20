@@ -10,14 +10,22 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
 
+            // oke
             // quan he 1 - nhieu giua group post va user
             Group_post.belongsTo(models.User, {
                 foreignKey: "userId",
+                targetKey: "id",
+                onDelete: "cascade",
+                onUpdate: "no action",
             });
 
+            // oke
             // quan he 1 - nhieu giua group post va group
             Group_post.belongsTo(models.Group, {
                 foreignKey: "groupId",
+                targetKey: "id",
+                onDelete: "cascade",
+                onUpdate: "no action",
             });
         }
     }
