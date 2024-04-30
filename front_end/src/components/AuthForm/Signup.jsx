@@ -1,21 +1,14 @@
-import {
-  Input,
-  InputGroup,
-  InputRightElement,
-  Button,
-  Alert,
-  AlertIcon,
-} from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useContext, useState } from "react";
-import { UserContext } from "../../context/userContext.jsx";
+import { Input, InputGroup, InputRightElement, Button, Alert, AlertIcon } from '@chakra-ui/react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { useContext, useState } from 'react';
+import { UserContext } from '../../context/userContext.jsx';
 
 function Signup() {
   const [inputs, setInputs] = useState({
-    email: "",
-    password: "",
-    fullname: "",
-    username: "",
+    email: '',
+    password: '',
+    fullname: '',
+    username: ''
   });
 
   const [err, setErr] = useState(null);
@@ -29,9 +22,9 @@ function Signup() {
       <Input
         placeholder="Email"
         type="email"
-        fontSize={"14"}
+        fontSize={'14'}
         value={inputs.email}
-        size={"sm"}
+        size={'sm'}
         onChange={(e) => {
           setInputs((prev) => ({ ...prev, email: e.target.value }));
         }}
@@ -39,9 +32,9 @@ function Signup() {
       <Input
         placeholder="Username"
         type="text"
-        fontSize={"14"}
+        fontSize={'14'}
         value={inputs.username}
-        size={"sm"}
+        size={'sm'}
         onChange={(e) => {
           setInputs((prev) => ({ ...prev, username: e.target.value }));
         }}
@@ -49,9 +42,9 @@ function Signup() {
       <Input
         placeholder="Fullname"
         type="text"
-        fontSize={"14"}
+        fontSize={'14'}
         value={inputs.fullname}
-        size={"sm"}
+        size={'sm'}
         onChange={(e) => {
           setInputs((prev) => ({ ...prev, fullname: e.target.value }));
         }}
@@ -59,29 +52,25 @@ function Signup() {
       <InputGroup>
         <Input
           placeholder="Password"
-          type={showPassword ? "text" : "password"}
-          fontSize={"14"}
+          type={showPassword ? 'text' : 'password'}
+          fontSize={'14'}
           value={inputs.password}
-          size={"sm"}
+          size={'sm'}
           onChange={(e) => {
             setInputs((prev) => ({ ...prev, password: e.target.value }));
           }}
         />
         <InputRightElement h="full">
-          <Button
-            variant={"ghost"}
-            size="sm"
-            onClick={() => setShowPassword(!showPassword)}
-          >
+          <Button variant={'ghost'} size="sm" onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? <ViewIcon /> : <ViewOffIcon />}
           </Button>
         </InputRightElement>
       </InputGroup>
 
       <Button
-        w={"full"}
+        w={'full'}
         colorScheme="blue"
-        size={"sm"}
+        size={'sm'}
         fontSize={14}
         isLoading={loadingSignUp}
         onClick={(e) => register(inputs, setErr, e, setLoadingSignUp)}

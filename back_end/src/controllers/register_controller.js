@@ -5,7 +5,7 @@ const db = require("../models/index.js");
 
 const registerController = async (req, res) => {
     // khong can check password va confirmPassword ==> front end lo
-    const { username, email, password, fullname } = req.body;
+    const { username, email, password } = req.body;
     try {
         const userCheck = await db.User.findOne({
             where: { [Op.or]: [{ username: username }, { email: email }] },
@@ -15,9 +15,9 @@ const registerController = async (req, res) => {
             const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS));
 
             let newUser = db.User.build({
-                fullname: fullname,
                 username: username,
                 email: email,
+                // them anh mac dinh
                 passwordHash: hashedPassword,
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
@@ -25,17 +25,17 @@ const registerController = async (req, res) => {
 
             await newUser.save();
             const user = await newUser.reload();
-            const token = jwt.sign({ username: user.username }, process.env.SECRET_KEY, {
+            const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, {
                 algorithm: "HS256",
                 expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
             });
 
             const { passwordHash, createdAt, updatedAt, ...userReturned } = user.dataValues;
 
-            // tra ve cho browser status 201 + set cookie co key = 'authCookie'
+            // tra ve cho browser status 201 + set cookie co key = 'access_token'
             return res
                 .status(201)
-                .cookie("authCookie", token, {
+                .cookie("access_token", token, {
                     expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
                 })
                 .json({

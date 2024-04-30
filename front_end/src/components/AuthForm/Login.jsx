@@ -1,20 +1,13 @@
-import {
-  Input,
-  Button,
-  InputGroup,
-  InputRightElement,
-  Alert,
-  AlertIcon,
-} from "@chakra-ui/react";
-import { useState, useContext } from "react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { Input, Button, InputGroup, InputRightElement, Alert, AlertIcon } from '@chakra-ui/react';
+import { useState, useContext } from 'react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 
-import { UserContext } from "../../context/userContext.jsx";
+import { UserContext } from '../../context/userContext.jsx';
 
 export const Login = () => {
   const [inputs, setInputs] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: ''
   });
 
   const { login } = useContext(UserContext);
@@ -22,15 +15,14 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loadingLogin, setLoadingLogin] = useState(false);
 
-
   return (
     <>
       <Input
         placeholder="Email"
         type="email"
-        fontSize={"14"}
+        fontSize={'14'}
         value={inputs.email}
-        size={"sm"}
+        size={'sm'}
         onChange={(e) => {
           setInputs((prev) => ({ ...prev, email: e.target.value }));
         }}
@@ -39,28 +31,24 @@ export const Login = () => {
         <Input
           placeholder="Password"
           type="password"
-          fontSize={"14"}
-          size={"sm"}
+          fontSize={'14'}
+          size={'sm'}
           value={inputs.password}
           onChange={(e) => {
             setInputs((prev) => ({ ...prev, password: e.target.value }));
           }}
         />
         <InputRightElement h="full">
-          <Button
-            variant={"ghost"}
-            size="sm"
-            onClick={() => setShowPassword(!showPassword)}
-          >
+          <Button variant={'ghost'} size="sm" onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? <ViewIcon /> : <ViewOffIcon />}
           </Button>
         </InputRightElement>
       </InputGroup>
 
       <Button
-        w={"full"}
+        w={'full'}
         colorScheme="blue"
-        size={"sm"}
+        size={'sm'}
         fontSize={14}
         isLoading={loadingLogin}
         onClick={(e) => login(inputs, setErr, e, setLoadingLogin)}

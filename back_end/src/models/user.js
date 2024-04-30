@@ -139,11 +139,8 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
             },
             passwordHash: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
-                validate: {
-                    notEmpty: true,
-                },
+                type: DataTypes.TEXT("medium"),
+                allowNull: true,
             },
             lastLogin: {
                 type: DataTypes.DATE,
@@ -155,13 +152,8 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
                 defaultValue: null,
             },
-            profile: {
-                type: DataTypes.TEXT("medium"),
-                allowNull: true,
-                defaultValue: null,
-            },
             avatar: {
-                type: DataTypes.BLOB("medium"),
+                type: DataTypes.TEXT("medium"),
                 defaultValue: null,
                 allowNull: true,
             },

@@ -1,10 +1,10 @@
-import { VStack, Avatar, Text, Box, useColorMode } from "@chakra-ui/react";
+import { VStack, Avatar, Text, Box, useColorMode } from '@chakra-ui/react';
 
 function Story({ avatar, name }) {
   const { colorMode } = useColorMode();
 
   return (
-    <VStack spacing={1} maxW={"55px"} cursor={"pointer"}>
+    <VStack spacing={1} maxW={'55px'} cursor={'pointer'}>
       <Box
         borderRadius="full"
         overflow="hidden"
@@ -15,14 +15,14 @@ function Story({ avatar, name }) {
         <Avatar
           src={avatar}
           name={name}
-          size={"lg"}
+          size={'lg'}
           showBorder={true}
-          borderColor={colorMode === "light" ? "white" : "black"}
-          borderWidth={"2px"}
+          borderColor={colorMode === 'light' ? 'white' : 'black'}
+          borderWidth={'2px'}
         />
       </Box>
 
-      <Text fontSize={12} fontWeight={"medium"} isTruncated maxW="65px">
+      <Text fontSize={12} fontWeight={'medium'} isTruncated maxW="65px">
         {name}
       </Text>
     </VStack>

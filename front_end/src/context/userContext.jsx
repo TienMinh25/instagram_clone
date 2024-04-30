@@ -1,17 +1,15 @@
-import { createContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { makeRequest } from "../axios.js";
-import useShowToask from "../hooks/useShowToask.js";
+import { makeRequest } from '../axios.js';
+import useShowToask from '../hooks/useShowToask.js';
 
 export const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
-  const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem("user")) || null
-  );
+  const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
 
   const showToast = useShowToask();
 
@@ -19,34 +17,34 @@ export const UserContextProvider = ({ children }) => {
     e.preventDefault();
     setLoadingLogin(true);
     try {
-      if (inputs.email.trim() !== "" && inputs.password.trim() !== "") {
+      if (inputs.email.trim() !== '' && inputs.password.trim() !== '') {
         const response = await makeRequest.post(
-          "/login",
+          '/login',
           {
             email: inputs.email,
-            password: inputs.password,
+            password: inputs.password
           },
           {
             headers: {
-              "X-Requested-With": "XMLHttpRequest",
-              "Content-Type": "application/json; charset=UTF-8",
+              'X-Requested-With': 'XMLHttpRequest',
+              'Content-Type': 'application/json; charset=UTF-8'
             },
-            withCredentials: true,
+            withCredentials: true
           }
         );
 
         // data tra ve tu server co trong response.data
         // set cookie
-        document.cookie = response.headers["set-cookie"];
+        document.cookie = response.headers['set-cookie'];
 
         setErr(null);
 
         let { message, ...info } = response.data;
-        showToast({ title: message, status: "success" });
+        showToast({ title: message, status: 'success' });
         setCurrentUser(info);
         setLoadingLogin(false);
-        navigate("/");
-      } else throw new Error("Vui lòng nhập đầy đủ dữ liệu!");
+        navigate('/');
+      } else throw new Error('Vui lòng nhập đầy đủ dữ liệu!');
     } catch (err) {
       setLoadingLogin(false);
       if (err.response?.data) setErr(err.response.data.message);
@@ -61,41 +59,41 @@ export const UserContextProvider = ({ children }) => {
     setLoadingSignUp(true);
     try {
       if (
-        inputs.username.trim() !== "" &&
-        inputs.email.trim() !== "" &&
-        inputs.password.trim() !== "" &&
-        inputs.fullname.trim() !== ""
+        inputs.username.trim() !== '' &&
+        inputs.email.trim() !== '' &&
+        inputs.password.trim() !== '' &&
+        inputs.fullname.trim() !== ''
       ) {
         const response = await makeRequest.post(
-          "/register",
+          '/register',
           {
             username: inputs.username,
             email: inputs.email,
             password: inputs.password,
-            fullname: inputs.fullname,
+            fullname: inputs.fullname
           },
           {
             headers: {
-              "X-Requested-With": "XMLHttpRequest",
-              "Content-Type": "application/json; charset=UTF-8",
+              'X-Requested-With': 'XMLHttpRequest',
+              'Content-Type': 'application/json; charset=UTF-8'
             },
-            withCredentials: true,
+            withCredentials: true
           }
         );
 
         // data tra ve tu server co trong response.data
         // set cookie
-        document.cookie = response.headers["set-cookie"];
+        document.cookie = response.headers['set-cookie'];
 
         let { message, ...info } = response.data;
         setCurrentUser(info);
         setErr(null);
-        showToast({ title: message, status: "success" });
+        showToast({ title: message, status: 'success' });
         setLoadingSignUp(false);
 
-        navigate("/");
+        navigate('/');
       } else {
-        throw new Error("Vui lòng nhập đầy đủ dữ liệu!");
+        throw new Error('Vui lòng nhập đầy đủ dữ liệu!');
       }
     } catch (err) {
       setLoadingSignUp(false);
@@ -106,12 +104,30 @@ export const UserContextProvider = ({ children }) => {
     }
   };
 
+  const authenGoogle = async (currentRef, setIsLogin, param, codeParam) => {
+    if (currentRef.current.includes(param)) {
+      setIsLogin(true);
+      makeRequest
+        .get(`/oauth/token?${param}=${codeParam}`)
+        .then((res) => {
+          setCurrentUser(res.data);
+        })
+        .catch((e) => {
+          alert(e.message);
+        })
+        .finally(() => {
+          setIsLogin(false);
+          navigate('/');
+        });
+    }
+  }
+
   useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(currentUser));
+    localStorage.setItem('user', JSON.stringify(currentUser));
   }, [currentUser]);
 
   return (
-    <UserContext.Provider value={{ currentUser, login, register }}>
+    <UserContext.Provider value={{ currentUser, login, register, authenGoogle }}>
       {children}
     </UserContext.Provider>
   );

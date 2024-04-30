@@ -1,7 +1,7 @@
-import { Grid, GridItem, Spinner } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Grid, GridItem, Spinner, CircularProgress } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 
-import ProfilePost from "./ProfilePost";
+import ProfilePost from './ProfilePost';
 
 function ProfilePosts() {
   const [isLoading, setIsLoading] = useState(true);
@@ -11,20 +11,16 @@ function ProfilePosts() {
     }, 2000);
   }, []);
   return (
-    <Grid
-      templateColumns={{ sm: "repeat(1, 1fr)", md: "repeat(3, 1fr)" }}
-      gap={1}
-      columnGap={1}
-    >
+    <Grid templateColumns={{ sm: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)' }} gap={1} columnGap={1}>
       {isLoading && (
         <GridItem
           colSpan={3}
           minH={150}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
+          display={'flex'}
+          justifyContent={'center'}
+          alignItems={'center'}
         >
-          <Spinner color="white.500" size={"xl"} alignItems={"center"} />
+          <CircularProgress color="blue.400" alignItems={'center'} isIndeterminate />
         </GridItem>
       )}
 

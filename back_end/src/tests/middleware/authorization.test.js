@@ -12,7 +12,7 @@ describe("authorization middleware", () => {
         process.env.SECRET_KEY = "test@1234";
         req = {
             cookies: {
-                authCookie: "tokenJWT",
+                access_token: "tokenJWT",
             },
         };
         res = {

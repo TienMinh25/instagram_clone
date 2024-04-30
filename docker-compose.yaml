@@ -30,24 +30,6 @@ services:
     depends_on:
       - database
       - redis
-
-  frontend:
-    build: 
-      context: ./front_end
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    environment:
-      - VITE_BACKEND_HOST=backend
-      - VITE_BACKEND_PORT=5001
-    expose:
-      - 80
-    restart: always
-    container_name: frontend_react
-    volumes:
-      - ./front_end/dist:/usr/share/nginx/html
-    depends_on:
-      - backend
   
   database:
     image: mysql:8.0
@@ -78,4 +60,3 @@ volumes:
   black_list:
     driver: local
 
-    

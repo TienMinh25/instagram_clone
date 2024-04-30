@@ -9,7 +9,7 @@
 const jwt = require("jsonwebtoken");
 module.exports = async (req, res, next) => {
     try {
-        const tokenAuth = req.cookies.authCookie;
+        const tokenAuth = req.cookies.access_token;
         const payloadVerify = jwt.verify(tokenAuth, process.env.SECRET_KEY);
 
         if (payloadVerify != null) {

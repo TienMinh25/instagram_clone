@@ -13,13 +13,13 @@ import {
   ModalContent,
   ModalBody,
   ModalCloseButton,
-  useColorMode,
-} from "@chakra-ui/react";
-import { MdDelete } from "react-icons/md";
-import { AiFillHeart } from "react-icons/ai";
-import { FaComment } from "react-icons/fa";
-import Comment from "../Comment/Comment";
-import PostFooter from "../FeedPosts/PostFooter.jsx";
+  useColorMode
+} from '@chakra-ui/react';
+import { MdDelete } from 'react-icons/md';
+import { AiFillHeart } from 'react-icons/ai';
+import { FaComment } from 'react-icons/fa';
+import Comment from '../Comment/Comment';
+import PostFooter from '../FeedPosts/PostFooter.jsx';
 
 function ProfilePost({ img }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -27,12 +27,12 @@ function ProfilePost({ img }) {
   return (
     <>
       <GridItem
-        cursor={"pointer"}
+        cursor={'pointer'}
         borderRadius={4}
-        overflow={"hidden"}
-        border={"1px solid"}
-        borderColor={"whiteAlpha.300"}
-        position={"relative"}
+        overflow={'hidden'}
+        border={'1px solid'}
+        borderColor={'whiteAlpha.300'}
+        position={'relative'}
         aspectRatio={1 / 1}
         onClick={onOpen}
       >
@@ -40,77 +40,62 @@ function ProfilePost({ img }) {
         <Flex
           opacity={0}
           _hover={{ opacity: 1 }}
-          position={"absolute"}
+          position={'absolute'}
           top={0}
           left={0}
           right={0}
           bottom={0}
           bg="blackAlpha.700"
-          transition={"all 0.3s ease"}
+          transition={'all 0.3s ease'}
           zIndex={1}
-          justifyContent={"center"}
+          justifyContent={'center'}
         >
-          <Flex alignItems={"center"} justifyContent={"center"} gap={50}>
+          <Flex alignItems={'center'} justifyContent={'center'} gap={50}>
             <Flex>
               <AiFillHeart size={20} color="white" fill="white" />
-              <Text fontWeight={"bold"} ml={2} color={"white"}>
+              <Text fontWeight={'bold'} ml={2} color={'white'}>
                 7
               </Text>
             </Flex>
             <Flex>
-              <FaComment size={20} color={"white"} fill="white" />
-              <Text fontWeight={"bold"} ml={2} color={"white"}>
+              <FaComment size={20} color={'white'} fill="white" />
+              <Text fontWeight={'bold'} ml={2} color={'white'}>
                 8
               </Text>
             </Flex>
           </Flex>
         </Flex>
-        <Image
-          src={img}
-          alt="profile post"
-          w={"100%"}
-          h={"100%"}
-          objectFit={"cover"}
-        />
+        <Image src={img} alt="profile post" w={'100%'} h={'100%'} objectFit={'cover'} />
       </GridItem>
 
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        isCentered={true}
-        size={{ base: "3xl", md: "6xl" }}
-      >
+      <Modal isOpen={isOpen} onClose={onClose} isCentered={true} size={{ base: '3xl', md: '6xl' }}>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
-          <ModalBody bg={colorMode === "dark" ? "black" : "white"} pb={5}>
-            <Flex gap="4" w={{ base: "90%", sm: "70%", md: "full" }} mx="auto">
+          <ModalBody bg={colorMode === 'dark' ? 'black' : 'white'} pb={5}>
+            <Flex gap="4" w={{ base: '90%', sm: '70%', md: 'full' }} mx="auto">
               <Flex
                 borderRadius={4}
-                overflow={"hidden"}
-                border={"1px solid"}
-                borderColor={"whiteAlpha.300"}
+                overflow={'hidden'}
+                border={'1px solid'}
+                borderColor={'whiteAlpha.300'}
                 flex={1.5}
-                justifyContent={"center"}
-                alignItems={"center"}
+                justifyContent={'center'}
+                alignItems={'center'}
               >
                 <Image src={img} alt="profile post" />
               </Flex>
               <Flex
                 flex={1}
-                flexDirection={"column"}
+                flexDirection={'column'}
                 px={10}
-                display={{ base: "none", md: "flex" }}
+                display={{ base: 'none', md: 'flex' }}
               >
-                <Flex justifyContent={"space-between"} alignItems={"center"}>
-                  <Flex alignItems={"center"} gap={4}>
+                <Flex justifyContent={'space-between'} alignItems={'center'}>
+                  <Flex alignItems={'center'} gap={4}>
                     {/* sau nay thay bang avatar cua nguoi dang bai */}
-                    <Avatar
-                      src="/profilepic.png"
-                      size={"sm"}
-                      name="Tien Minh"
-                    />
-                    <Text fontWeight={"bold"} fontSize={12}>
+                    <Avatar src="/profilepic.png" size={'sm'} name="Tien Minh" />
+                    <Text fontWeight={'bold'} fontSize={12}>
                       {/* sau nay thay bang username cua ng dung */}
                       Tien Minh
                     </Text>
@@ -118,11 +103,8 @@ function ProfilePost({ img }) {
 
                   <Box
                     _hover={{
-                      bg:
-                        colorMode === "dark"
-                          ? "whiteAlpha.300"
-                          : "rgba(0, 0, 0, .05)",
-                      color: "red.600",
+                      bg: colorMode === 'dark' ? 'whiteAlpha.300' : 'rgba(0, 0, 0, .05)',
+                      color: 'red.600'
                     }}
                     borderRadius={4}
                     p={1}
@@ -130,18 +112,18 @@ function ProfilePost({ img }) {
                     <MdDelete size={20} cursor="pointer" />
                   </Box>
                 </Flex>
-                <Divider my={4} bg={"gray.500"} />
+                <Divider my={4} bg={'gray.500'} />
 
                 <VStack
                   w="full"
-                  alignItems={"start"}
+                  alignItems={'start'}
                   maxH="400px"
-                  overflowY={"auto"}
+                  overflowY={'auto'}
                   css={{
-                    "&::-webkit-scrollbar": {
-                      width: "0px",
-                      background: "transparent",
-                    },
+                    '&::-webkit-scrollbar': {
+                      width: '0px',
+                      background: 'transparent'
+                    }
                   }}
                 >
                   {/* sau nay se lay comment ra */}
@@ -149,62 +131,62 @@ function ProfilePost({ img }) {
                     createdAt="1d ago"
                     username="tien minh"
                     profilePic="/profilepic.png"
-                    text={"Dummy images from unplash"}
+                    text={'Dummy images from unplash'}
                   />
 
                   <Comment
                     createdAt="12h ago"
                     username="quyen"
-                    profilePic={"https://bit.ly/dan-abramov"}
-                    text={"Nice picture"}
+                    profilePic={'https://bit.ly/dan-abramov'}
+                    text={'Nice picture'}
                   />
 
                   <Comment
                     createdAt="3h ago"
                     username="jenky"
-                    profilePic={"https://bit.ly/kent-c-dodds"}
-                    text={"Good clone dude!"}
+                    profilePic={'https://bit.ly/kent-c-dodds'}
+                    text={'Good clone dude!'}
                   />
 
                   <Comment
                     createdAt="3h ago"
                     username="jenky"
-                    profilePic={"https://bit.ly/kent-c-dodds"}
-                    text={"Good clone dude!"}
+                    profilePic={'https://bit.ly/kent-c-dodds'}
+                    text={'Good clone dude!'}
                   />
                   <Comment
                     createdAt="3h ago"
                     username="jenky"
-                    profilePic={"https://bit.ly/kent-c-dodds"}
-                    text={"Good clone dude!"}
+                    profilePic={'https://bit.ly/kent-c-dodds'}
+                    text={'Good clone dude!'}
                   />
                   <Comment
                     createdAt="3h ago"
                     username="jenky"
-                    profilePic={"https://bit.ly/kent-c-dodds"}
-                    text={"Good clone dude!"}
+                    profilePic={'https://bit.ly/kent-c-dodds'}
+                    text={'Good clone dude!'}
                   />
                   <Comment
                     createdAt="3h ago"
                     username="jenky"
-                    profilePic={"https://bit.ly/kent-c-dodds"}
-                    text={"Good clone dude!"}
+                    profilePic={'https://bit.ly/kent-c-dodds'}
+                    text={'Good clone dude!'}
                   />
                   <Comment
                     createdAt="3h ago"
                     username="jenky"
-                    profilePic={"https://bit.ly/kent-c-dodds"}
-                    text={"Good clone dude!"}
+                    profilePic={'https://bit.ly/kent-c-dodds'}
+                    text={'Good clone dude!'}
                   />
                   <Comment
                     createdAt="3h ago"
                     username="jenky"
-                    profilePic={"https://bit.ly/kent-c-dodds"}
-                    text={"Good clone dude!"}
+                    profilePic={'https://bit.ly/kent-c-dodds'}
+                    text={'Good clone dude!'}
                   />
                 </VStack>
 
-                <Divider my={4} bg={"gray.800"} />
+                <Divider my={4} bg={'gray.800'} />
 
                 <PostFooter isProfilePage={true} />
               </Flex>

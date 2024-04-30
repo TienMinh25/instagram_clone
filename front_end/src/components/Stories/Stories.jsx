@@ -1,27 +1,27 @@
-import { Container, Flex } from "@chakra-ui/react";
-import Story from "./Story";
+import { Container, Flex } from '@chakra-ui/react';
+import Story from './Story';
 
 function Stories() {
   return (
     <Container>
       <Flex
-        alignItems={"flex-start"}
+        alignItems={'flex-start'}
         gap={8}
-        overflow={"scroll"}
+        overflow={'scroll'}
         css={{
-          "&::-webkit-scrollbar": {
-            width: "0px",
-            background: "transparent",
+          '&::-webkit-scrollbar': {
+            width: '0px',
+            background: 'transparent'
           },
-          "&::-webkit-scrollbar-track": {
-            background: "transparent",
+          '&::-webkit-scrollbar-track': {
+            background: 'transparent'
           },
-          "&::-webkit-scrollbar-thumb": {
-            background: "transparent",
+          '&::-webkit-scrollbar-thumb': {
+            background: 'transparent'
           },
-          "&::-webkit-scrollbar-thumb:hover": {
-            background: "transparent",
-          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            background: 'transparent'
+          }
         }}
         px={3}
       >
