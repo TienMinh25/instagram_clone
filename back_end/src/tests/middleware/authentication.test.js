@@ -3,7 +3,7 @@ const sinon = require("sinon");
 const chai = require("chai");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const authentication = require("../../middleware/authentication.js");
+const { loginWithEmalAndPassword } = require("../../controllers/authentication.js");
 const db = require("../../models/index.js");
 
 describe("authentication middleware", () => {
@@ -19,7 +19,7 @@ describe("authentication middleware", () => {
                 email: "johndoe",
                 password: "check123",
             },
-            cookies: { authCookie: mockJWTtoken },
+            cookies: { access_token: mockJWTtoken },
         };
 
         res = {
@@ -38,9 +38,9 @@ describe("authentication middleware", () => {
 
     it("check header cookie that should have a least one key and pass it to next middleware", async () => {
         // mock/spies function and data
-        const keyStub = sinon.stub(Object, "keys").returns(["authCookie"]);
+        const keyStub = sinon.stub(Object, "keys").returns(["access_token"]);
 
-        await authentication(req, res, next);
+        await loginWithEmalAndPassword(req, res, next);
 
         chai.expect(keyStub.calledWithExactly(req.cookies)).to.be.true;
         chai.expect(next.called).to.be.true;
@@ -55,7 +55,7 @@ describe("authentication middleware", () => {
             return null;
         });
 
-        await authentication(req, res, next);
+        await loginWithEmalAndPassword(req, res, next);
 
         chai.expect(keyStub.called).to.be.true;
         chai.expect(next.called).to.be.false;
@@ -83,7 +83,7 @@ describe("authentication middleware", () => {
         });
         jest.spyOn(bcrypt, "compare").mockResolvedValue(false);
 
-        await authentication(req, res, next);
+        await loginWithEmalAndPassword(req, res, next);
 
         chai.expect(next.called).to.be.false;
         chai.expect(res.status.calledWithExactly(401)).to.be.true;
@@ -126,13 +126,13 @@ describe("authentication middleware", () => {
 
         Date.now = jest.fn().mockImplementation(() => 1708410531939);
 
-        await authentication(req, res, next);
+        await loginWithEmalAndPassword(req, res, next);
 
         chai.expect(next.called).to.be.false;
 
         chai.expect(res.status.calledWithExactly(200)).to.be.true;
         chai.expect(
-            res.cookie.calledWithExactly("authCookie", mockJWTtoken, {
+            res.cookie.calledWithExactly("access_token", mockJWTtoken, {
                 expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
             }),
         ).to.be.true;
@@ -150,7 +150,7 @@ describe("authentication middleware", () => {
         });
         req.body = undefined;
 
-        await authentication(req, res, next);
+        await loginWithEmalAndPassword(req, res, next);
 
         chai.expect(res.status.calledWithExactly(500)).to.be.true;
         chai.expect(res.json.calledWithExactly({ message: "Không thể xử lí yêu cầu!" })).to.be.true;

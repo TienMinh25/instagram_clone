@@ -15,6 +15,7 @@ const routerRegister = require("./src/routes/register.js");
 const authorization = require("./src/middleware/authorization.js");
 const routerLogin = require("./src/routes/authentication_route.js");
 const routerPost = require("./src/routes/post_route.js");
+const oauth2Route = require("./src/routes/oauth2_route.js");
 
 const client = createClient({
     host: process.env.REDIS_HOST,
@@ -47,23 +48,24 @@ const corOptions = {
  */
 const options = {
     definition: {
-        openapi: "3.1.0",
+        openapi: "3.0.0",
         info: {
             title: "Instagram API Back-end",
-            version: "0.1.0",
+            version: "1.0.0",
             description: "API Instagram",
             license: {
                 name: "MIT",
                 url: "https://spdx.org/licenses/MIT.html",
             },
-            contact: {
-                name: "LogRocket",
-                url: "https://logrocket.com",
-                email: "info@email.com",
-            },
         },
+        servers: [
+            {
+                url: "http://localhost:5001",
+                description: "Development server",
+            },
+        ],
     },
-    apis: ["./routes/*.js"],
+    apis: ["./src/routes/*.js"],
 };
 
 const specs = swaggerJsdoc(options);
@@ -85,6 +87,9 @@ app.use(morgan("dev"));
 
 // parse cookie header to data and assign it to req.cookies
 app.use(cookieParser());
+
+// oauth2 router
+app.use("/api/v1", oauth2Route);
 
 // register router
 app.use("/api/v1", routerRegister);

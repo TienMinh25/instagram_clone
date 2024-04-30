@@ -110,7 +110,7 @@ describe("registerController", () => {
             expect(res.status.calledWithExactly(201)).toBeTruthy();
 
             expect(
-                res.cookie.calledWithExactly("authCookie", mockToken, {
+                res.cookie.calledWithExactly("access_token", mockToken, {
                     expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
                 }),
             ).toBeTruthy();

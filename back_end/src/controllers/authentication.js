@@ -13,7 +13,7 @@ const db = require(path.resolve(__dirname, "../models/index.js"));
  * @param {import("express").NextFunction} next
  */
 
-module.exports = async (req, res, next) => {
+const loginWithEmalAndPassword = async (req, res, next) => {
     try {
         if (Object.keys(req.cookies).length !== 0) {
             // nếu trong req.cookies có key thì chứng tỏ đã từng đăng nhập ===> chuyển luôn pass
@@ -39,9 +39,9 @@ module.exports = async (req, res, next) => {
 
                     const { passwordHash, createdAt, updatedAt, ...userReturned } =
                         userCheck.dataValues;
-                    // tra ve cho browser status 200 + set cookie co key = 'authCookie'
+                    // tra ve cho browser status 200 + set cookie co key = 'access_token'
                     res.status(200)
-                        .cookie("authCookie", token, {
+                        .cookie("access_token", token, {
                             expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
                         })
                         .json({ ...userReturned, message: "Bạn đã đăng nhập thành công" });
@@ -54,3 +54,5 @@ module.exports = async (req, res, next) => {
         res.status(500).json({ message: "Không thể xử lí yêu cầu!" });
     }
 };
+
+module.exports = { loginWithEmalAndPassword };

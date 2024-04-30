@@ -6,15 +6,11 @@ import {
   Input,
   InputRightElement,
   Button,
-  useColorMode,
-} from "@chakra-ui/react";
-import { useState } from "react";
+  useColorMode
+} from '@chakra-ui/react';
+import { useState } from 'react';
 
-import {
-  CommentLogo,
-  NotificationsLogo,
-  UnlikeLogo,
-} from "../../assets/constants.jsx";
+import { CommentLogo, NotificationsLogo, UnlikeLogo } from '../../assets/constants.jsx';
 
 function PostFooter({ username, isProfilePage }) {
   const { colorMode } = useColorMode();
@@ -34,58 +30,45 @@ function PostFooter({ username, isProfilePage }) {
 
   return (
     <Box mb={10} mt="auto">
-      <Flex alignItems={"center"} gap={4} w="full" pt={0} mb={2} mt={"4"}>
-        <Box onClick={handleLike} cursor={"pointer"} fontSize={18}>
-          {!liked ? (
-            <NotificationsLogo colorMode={colorMode} />
-          ) : (
-            <UnlikeLogo />
-          )}
+      <Flex alignItems={'center'} gap={4} w="full" pt={0} mb={2} mt={'4'}>
+        <Box onClick={handleLike} cursor={'pointer'} fontSize={18}>
+          {!liked ? <NotificationsLogo colorMode={colorMode} /> : <UnlikeLogo />}
         </Box>
 
-        <Box cursor={"pointer"} fontSize={18}>
+        <Box cursor={'pointer'} fontSize={18}>
           <CommentLogo colorMode={colorMode} />
         </Box>
       </Flex>
-      <Text fontWeight={600} fontSize={"sm"}>
+      <Text fontWeight={600} fontSize={'sm'}>
         {likes} likes
       </Text>
       {!isProfilePage && (
         <>
-          <Text fontSize={"sm"} fontWeight={700}>
+          <Text fontSize={'sm'} fontWeight={700}>
             {/* thay the bang ten cac nguoi dung comment, nguoi dung comment moi nhat */}
-            {username}{" "}
+            {username}{' '}
             <Text as="span" fontWeight={400}>
               Feeling good
             </Text>
           </Text>
-          <Text fontSize={"sm"} color={"gray"}>
+          <Text fontSize={'sm'} color={'gray'}>
             {/* Lay view tu db ra de hien thi */}
             View all 1,000 comments
           </Text>
         </>
       )}
 
-      <Flex
-        alignItems={"center"}
-        gap={2}
-        justifyContent={"space-between"}
-        w="full"
-      >
+      <Flex alignItems={'center'} gap={2} justifyContent={'space-between'} w="full">
         <InputGroup>
-          <Input
-            variant={"flushed"}
-            placeholder="Add a comment..."
-            fontSize={14}
-          />
+          <Input variant={'flushed'} placeholder="Add a comment..." fontSize={14} />
           <InputRightElement>
             <Button
               fontSize={14}
-              color={"blue.500"}
+              color={'blue.500'}
               fontWeight={600}
-              cursor={"pointer"}
+              cursor={'pointer'}
               _hover={{
-                color: "white",
+                color: 'white'
               }}
               bg="transparent"
             >

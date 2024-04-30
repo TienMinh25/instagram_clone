@@ -1,4 +1,4 @@
-import { useToast } from "@chakra-ui/react";
+import { useToast } from '@chakra-ui/react';
 
 const useShowToask = () => {
   const toast = useToast();
@@ -8,7 +8,7 @@ const useShowToask = () => {
       description: description,
       status: status,
       duration: 3000,
-      isClosable: true,
+      isClosable: true
     });
   };
   return showToast;

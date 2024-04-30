@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
             // quan he 1 - n cua group va group post
             Group.hasOne(models.Group_post, {
                 foreignKey: "groupId",
-                sourceKey: "id"
+                sourceKey: "id",
             });
 
             // oke

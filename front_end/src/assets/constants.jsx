@@ -1,6 +1,5 @@
 export const InstagramLogo = ({ colorMode }) => {
-  const fillColor =
-    colorMode === "dark" ? "rgb(245, 245, 245)" : "rgb(0, 0, 0)";
+  const fillColor = colorMode === 'dark' ? 'rgb(245, 245, 245)' : 'rgb(0, 0, 0)';
 
   return (
     <svg
@@ -23,8 +22,7 @@ export const InstagramLogo = ({ colorMode }) => {
 };
 
 export const InstagramMobileLogo = ({ colorMode }) => {
-  const fillColor =
-    colorMode === "dark" ? "rgb(245, 245, 245)" : "rgb(0, 0, 0)";
+  const fillColor = colorMode === 'dark' ? 'rgb(245, 245, 245)' : 'rgb(0, 0, 0)';
   return (
     <svg
       aria-label="Instagram"
@@ -42,8 +40,7 @@ export const InstagramMobileLogo = ({ colorMode }) => {
 };
 
 export const SearchLogo = ({ colorMode }) => {
-  const fillColor =
-    colorMode === "dark" ? "rgb(245, 245, 245)" : "rgb(0, 0, 0)";
+  const fillColor = colorMode === 'dark' ? 'rgb(245, 245, 245)' : 'rgb(0, 0, 0)';
 
   return (
     <svg
@@ -78,8 +75,7 @@ export const SearchLogo = ({ colorMode }) => {
   );
 };
 export const ReelsLogo = ({ colorMode }) => {
-  const fillColor =
-    colorMode === "dark" ? "rgb(245, 245, 245)" : "rgb(0, 0, 0)";
+  const fillColor = colorMode === 'dark' ? 'rgb(245, 245, 245)' : 'rgb(0, 0, 0)';
 
   return (
     <svg
@@ -140,8 +136,7 @@ export const ReelsLogo = ({ colorMode }) => {
 };
 
 export const MessagesLogo = ({ colorMode }) => {
-  const fillColor =
-    colorMode === "dark" ? "rgb(245, 245, 245)" : "rgb(0, 0, 0)";
+  const fillColor = colorMode === 'dark' ? 'rgb(245, 245, 245)' : 'rgb(0, 0, 0)';
   return (
     <svg
       aria-label="Messenger"
@@ -168,8 +163,7 @@ export const MessagesLogo = ({ colorMode }) => {
 };
 
 export const NotificationsLogo = ({ colorMode }) => {
-  const fillColor =
-    colorMode === "dark" ? "rgb(245, 245, 245)" : "rgb(0, 0, 0)";
+  const fillColor = colorMode === 'dark' ? 'rgb(245, 245, 245)' : 'rgb(0, 0, 0)';
   return (
     <svg
       aria-label="Notifications"
@@ -203,8 +197,7 @@ export const UnlikeLogo = () => {
 };
 
 export const CreatePostLogo = ({ colorMode }) => {
-  const fillColor =
-    colorMode === "dark" ? "rgb(245, 245, 245)" : "rgb(0, 0, 0)";
+  const fillColor = colorMode === 'dark' ? 'rgb(245, 245, 245)' : 'rgb(0, 0, 0)';
   return (
     <svg
       aria-label="New post"
@@ -250,8 +243,7 @@ export const CreatePostLogo = ({ colorMode }) => {
 };
 
 export const CommentLogo = ({ colorMode }) => {
-  const fillColor =
-    colorMode === "dark" ? "rgb(245, 245, 245)" : "rgb(0, 0, 0)";
+  const fillColor = colorMode === 'dark' ? 'rgb(245, 245, 245)' : 'rgb(0, 0, 0)';
   return (
     <svg
       aria-label="Comment"
