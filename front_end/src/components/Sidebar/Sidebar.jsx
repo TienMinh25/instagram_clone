@@ -1,4 +1,5 @@
 import { Box, Flex, Link, Avatar, Tooltip, useColorMode } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { AiFillHome } from 'react-icons/ai';
 import { BiLogOut } from 'react-icons/bi';
@@ -13,10 +14,18 @@ import {
 } from '../../assets/constants.jsx';
 
 import useLogout from '../../hooks/useLogout.js';
+import fetchAvatar from '../../utils/fetchAvatar.js';
 
 function Sidebar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { handleLogout } = useLogout();
+  const currentUser = JSON.parse(localStorage.getItem('user'));
+  const [imgAvatar, setImgAvatar] = useState();
+
+  useEffect(() => {
+    fetchAvatar(currentUser.avatar, setImgAvatar);
+  }, [currentUser.avatar]);
+
   const sidebarItems = [
     {
       icon: <AiFillHome size={25} />,
@@ -36,10 +45,10 @@ function Sidebar() {
       text: 'Create'
     },
     {
-      icon: <Avatar size={'sm'} name="Burak Orkmez" src="/profilepic.png" />,
+      icon: <Avatar size={'sm'} name="Burak Orkmez" src={imgAvatar} />,
       text: 'Profile',
       // thay bang link cua du lieu duoc fetch
-      link: '/asaprogrammer'
+      link: `${currentUser.username}`
     }
   ];
   return (

@@ -12,10 +12,10 @@ const app = express();
 dotenv.config();
 
 const routerRegister = require("./src/routes/register.js");
-const authorization = require("./src/middleware/authorization.js");
 const routerLogin = require("./src/routes/authentication_route.js");
 const routerPost = require("./src/routes/post_route.js");
-const oauth2Route = require("./src/routes/oauth2_route.js");
+const oauth2Route = require("./src/routes/oauth2_route.js"); 
+const userRoute = require("./src/routes/user_route.js");
 
 const client = createClient({
     host: process.env.REDIS_HOST,
@@ -91,17 +91,15 @@ app.use(cookieParser());
 // oauth2 router
 app.use("/api/v1", oauth2Route);
 
-// register router
-app.use("/api/v1", routerRegister);
-
 // use middleware authentication
 app.use("/api/v1", routerLogin);
 
-// use middleware authorization
-// app.use("/api/v1", authorization);
+// register router
+app.use("/api/v1", routerRegister);
 
 app.use("/api/v1", routerPost);
 
+app.use("/api/v1", userRoute);
 // Catch 404 error (if user find some path not found on my app, it will generate status 404 for that)
 app.use((req, res, next) => {
     const err = new Error("Not found");

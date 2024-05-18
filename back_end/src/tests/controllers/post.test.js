@@ -1,9 +1,9 @@
 const moment = require("moment");
 const { addPost } = require("../../controllers/post_controller.js");
 const db = require("../../models/index.js");
-const uploadFilesMiddleware = require("../../utils/images/upload_files.js");
+const uploadFilesMiddleware = require("../../utils/upload_files.js");
 
-jest.mock("../../utils/images/upload_files.js", () => jest.fn());
+jest.mock("../../utils/upload_files.js", () => jest.fn());
 jest.mock("../../models/index.js", () => ({
     User_post: {
         create: jest.fn(),
@@ -14,7 +14,7 @@ describe("new post", () => {
     let req, res;
     beforeEach(() => {
         req = {
-            params: { user_id: "1" },
+            query: { user_id: "1" },
             body: { description: "test" },
             files: [
                 {
@@ -51,12 +51,12 @@ describe("new post", () => {
     });
 
     it("should create succesfully", async () => {
-        moment.utc = jest.fn().mockImplementation(() => "2024-04-17T03:49:16Z");
+        Date.now = jest.fn().mockImplementation(() => "1714647817869");
         const responsePost = {
             userId: 1,
             media: "/backend/src/uploads/1713021815074-instagram-Screenshot 2024-04-13 at 13.25.22.png$||$/backend/src/uploads/1713021815110-instagram-Screenshot 2024-04-09 at 07.28.57.png",
-            createdAt: moment.utc(),
-            updatedAt: moment.utc(),
+            createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+            updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             description: "test",
         };
 

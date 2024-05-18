@@ -15,39 +15,33 @@ const db = require(path.resolve(__dirname, "../models/index.js"));
 
 const loginWithEmalAndPassword = async (req, res, next) => {
     try {
-        if (Object.keys(req.cookies).length !== 0) {
-            // nếu trong req.cookies có key thì chứng tỏ đã từng đăng nhập ===> chuyển luôn pass
-            // middleware authorization
-            next();
+        const { email, password } = req.body;
+        const userCheck = await db.User.findOne({
+            where: { email: email },
+        });
+
+        if (userCheck === null) {
+            return res.status(400).json({ message: "Không tìm thấy tài khoản" });
         } else {
-            const { email, password } = req.body;
-            const userCheck = await db.User.findOne({
-                where: { email: email },
-            });
+            const result = await bcrypt.compare(password, userCheck.passwordHash);
 
-            if (userCheck === null) {
-                return res.status(400).json({ message: "Không tìm thấy tài khoản" });
+            if (result) {
+                // sinh jwt va tra ve cho user (expire 30 days)
+                const token = jwt.sign({ username: result.username }, process.env.SECRET_KEY, {
+                    algorithm: "HS256",
+                    expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
+                });
+
+                const { passwordHash, createdAt, updatedAt, ...userReturned } =
+                    userCheck.dataValues;
+                // tra ve cho browser status 200 + set cookie co key = 'access_token'
+                res.status(200)
+                    .cookie("access_token", token, {
+                        expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
+                    })
+                    .json({ ...userReturned, access_token: token });
             } else {
-                const result = await bcrypt.compare(password, userCheck.passwordHash);
-
-                if (result) {
-                    // sinh jwt va tra ve cho user (expire 30 days)
-                    const token = jwt.sign({ username: result.username }, process.env.SECRET_KEY, {
-                        algorithm: "HS256",
-                        expiresIn: `${24 * 60 * 60 * 30 * 1000}`,
-                    });
-
-                    const { passwordHash, createdAt, updatedAt, ...userReturned } =
-                        userCheck.dataValues;
-                    // tra ve cho browser status 200 + set cookie co key = 'access_token'
-                    res.status(200)
-                        .cookie("access_token", token, {
-                            expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
-                        })
-                        .json({ ...userReturned, message: "Bạn đã đăng nhập thành công" });
-                } else {
-                    res.status(401).json({ message: "Sai thông tin đăng nhập, vui lòng thử lại!" });
-                }
+                res.status(401).json({ message: "Sai thông tin đăng nhập, vui lòng thử lại!" });
             }
         }
     } catch (error) {
@@ -55,4 +49,13 @@ const loginWithEmalAndPassword = async (req, res, next) => {
     }
 };
 
-module.exports = { loginWithEmalAndPassword };
+const logout = async () => {
+    const access_token = localStorage.getItem("access_token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("access_token");
+    document.cookie="access_token=;"
+
+    
+}
+
+module.exports = { loginWithEmalAndPassword, logout };

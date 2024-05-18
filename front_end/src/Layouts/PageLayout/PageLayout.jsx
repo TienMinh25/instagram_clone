@@ -1,10 +1,17 @@
 import { Flex, Box } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import { useContext } from 'react';
+import Wait from '../../components/Wait/Wait';
+import { UserContext } from '../../context/userContext';
 
 function PageLayout({ children }) {
   const { pathname } = useLocation();
-  return (
+  const { loading } = useContext(UserContext);
+
+  return loading ? (
+    <Wait />
+  ) : (
     <Flex>
       {/* sidebar on the left */}
       {pathname !== '/auth' ? (

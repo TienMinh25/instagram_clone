@@ -13,7 +13,6 @@ export const Login = () => {
   const { login } = useContext(UserContext);
   const [err, setErr] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [loadingLogin, setLoadingLogin] = useState(false);
 
   return (
     <>
@@ -30,7 +29,7 @@ export const Login = () => {
       <InputGroup>
         <Input
           placeholder="Password"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           fontSize={'14'}
           size={'sm'}
           value={inputs.password}
@@ -50,8 +49,7 @@ export const Login = () => {
         colorScheme="blue"
         size={'sm'}
         fontSize={14}
-        isLoading={loadingLogin}
-        onClick={(e) => login(inputs, setErr, e, setLoadingLogin)}
+        onClick={(e) => login(inputs, setErr, e)}
       >
         Log in
       </Button>

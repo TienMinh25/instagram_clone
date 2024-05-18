@@ -1,11 +1,12 @@
 const express = require("express");
 const { addPost } = require("../controllers/post_controller");
 const routerPost = express.Router();
+// const authorization = require("../middleware/authorization");
 
 /**
  * @swagger
  * paths:
- *  /api/v1/users/{user_id}/posts:
+ *  /api/v1/posts:
  *    post:
  *      description: User can create a new post
  *      tags:
@@ -25,7 +26,7 @@ const routerPost = express.Router();
  *                description:
  *                  type: string
  *      parameters:
- *        - in: path
+ *        - in: query
  *          name: user_id
  *          required: true
  *          descrition: user id of the user who created new post
@@ -87,6 +88,6 @@ const routerPost = express.Router();
  *  - name: users
  *    description: Everything about users can do
  */
-routerPost.post("/users/:user_id/posts", addPost);
+routerPost.post("/posts", addPost);
 
 module.exports = routerPost;

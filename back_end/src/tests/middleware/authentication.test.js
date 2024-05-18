@@ -36,28 +36,13 @@ describe("authentication middleware", () => {
         sinon.restore();
     });
 
-    it("check header cookie that should have a least one key and pass it to next middleware", async () => {
-        // mock/spies function and data
-        const keyStub = sinon.stub(Object, "keys").returns(["access_token"]);
-
-        await loginWithEmalAndPassword(req, res, next);
-
-        chai.expect(keyStub.calledWithExactly(req.cookies)).to.be.true;
-        chai.expect(next.called).to.be.true;
-        chai.expect(res.status.called).to.be.false;
-        chai.expect(res.json.called).to.be.false;
-        chai.expect(res.cookie.called).to.be.false;
-    });
-
     it("should not find username in database and return status code 400", async () => {
-        const keyStub = sinon.stub(Object, "keys").returns([]);
         jest.spyOn(db.User, "findOne").mockImplementation(() => {
             return null;
         });
 
         await loginWithEmalAndPassword(req, res, next);
 
-        chai.expect(keyStub.called).to.be.true;
         chai.expect(next.called).to.be.false;
         chai.expect(res.status.calledWith(400)).to.be.true;
         chai.expect(res.json.calledWith({ message: "Không tìm thấy tài khoản" })).to.be.true;
@@ -75,8 +60,6 @@ describe("authentication middleware", () => {
             profile: null,
             avatar: null,
         };
-
-        sinon.stub(Object, "keys").returns([]);
 
         jest.spyOn(db.User, "findOne").mockImplementation(() => {
             return userFind;
@@ -139,15 +122,12 @@ describe("authentication middleware", () => {
         chai.expect(
             res.json.calledWithExactly({
                 ...userResponse,
-                message: "Bạn đã đăng nhập thành công",
+                access_token: mockJWTtoken,
             }),
         ).to.be.true;
     });
 
     it("should return internal server error on unexpected error, status code 500", async () => {
-        jest.spyOn(Object, "keys").mockImplementation(() => {
-            return [];
-        });
         req.body = undefined;
 
         await loginWithEmalAndPassword(req, res, next);

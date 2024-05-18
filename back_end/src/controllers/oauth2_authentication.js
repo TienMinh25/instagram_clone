@@ -1,4 +1,5 @@
 const axios = require("axios");
+const moment = require("moment");
 const db = require("../models/index.js");
 const jwt = require("jsonwebtoken");
 
@@ -47,10 +48,11 @@ const getUserDataAndTokenApp = async (req, res) => {
         if (userCheck === null) {
             await db.User.create({
                 username: dataUser?.name,
+                name_tag: dataUser?.email.split("@")[0],
                 email: dataUser?.email,
                 avatar: dataUser?.picture,
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
+                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             });
         }
 
@@ -64,13 +66,14 @@ const getUserDataAndTokenApp = async (req, res) => {
         const { passwordHash, createdAt, updatedAt, ...userReturned } = user.dataValues;
 
         return res
-                .status(200)
-                .cookie("access_token", token, {
-                    expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
-                })
-                .json({
-                    ...userReturned,
-                });
+            .status(200)
+            .cookie("access_token", token, {
+                expires: new Date(Date.now() + 24 * 60 * 60 * 30 * 1000),
+            })
+            .json({
+                ...userReturned,
+                access_token: token,
+            });
     } catch (e) {
         console.log(e);
         return res.status(500).json({ error: "Internal server error " });

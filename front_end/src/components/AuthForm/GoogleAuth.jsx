@@ -1,15 +1,13 @@
-import { Flex, Image, Text, CircularProgress } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
+import { Flex, Image, Text } from '@chakra-ui/react';
 
 import logoGoogle from '/google.png';
 import { makeRequest } from '../../axios';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { UserContext } from '../../context/userContext';
 
 const GoogleAuth = ({ prefix }) => {
   const { authenGoogle } = useContext(UserContext);
   const currentRef = useRef(window.location.href);
-  const [isLogin, setIsLogin] = useState(false);
   const param = 'code';
 
   const getAuthorizationUrl = async () => {
@@ -26,14 +24,13 @@ const GoogleAuth = ({ prefix }) => {
     const searchParams = new URLSearchParams(window.location.search);
     const codeParam = searchParams.get(param);
 
-    authenGoogle(currentRef, setIsLogin, param, codeParam);
+    (async () => {
+      await authenGoogle(currentRef, param, codeParam);
+    })();
   }, [currentRef]);
 
   return (
     <>
-      {isLogin ? (
-        <CircularProgress color="blue.400" isIndeterminate />
-      ) : (
         <Flex
           alignItems={'center'}
           justifyContent={'center'}
@@ -45,7 +42,6 @@ const GoogleAuth = ({ prefix }) => {
             {prefix} with Google
           </Text>
         </Flex>
-      )}
     </>
   );
 };

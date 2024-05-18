@@ -7,13 +7,11 @@ function Signup() {
   const [inputs, setInputs] = useState({
     email: '',
     password: '',
-    fullname: '',
     username: ''
   });
 
   const [err, setErr] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [loadingSignUp, setLoadingSignUp] = useState(false);
 
   const { register } = useContext(UserContext);
 
@@ -39,16 +37,6 @@ function Signup() {
           setInputs((prev) => ({ ...prev, username: e.target.value }));
         }}
       />
-      <Input
-        placeholder="Fullname"
-        type="text"
-        fontSize={'14'}
-        value={inputs.fullname}
-        size={'sm'}
-        onChange={(e) => {
-          setInputs((prev) => ({ ...prev, fullname: e.target.value }));
-        }}
-      />
       <InputGroup>
         <Input
           placeholder="Password"
@@ -72,8 +60,7 @@ function Signup() {
         colorScheme="blue"
         size={'sm'}
         fontSize={14}
-        isLoading={loadingSignUp}
-        onClick={(e) => register(inputs, setErr, e, setLoadingSignUp)}
+        onClick={(e) => register(inputs, setErr, e)}
       >
         Sign up
       </Button>
