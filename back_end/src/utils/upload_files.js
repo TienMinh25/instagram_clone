@@ -4,7 +4,7 @@ const util = require("util");
 
 var storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, path.join(`${__dirname}/../../uploads`));
+        callback(null, path.join(__dirname, "../upload"));
     },
     filename: async (req, file, callback) => {
         const match = ["image/png", "image/jpeg"];

@@ -1,21 +1,18 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { makeRequest } from '../axios.js';
-import useShowToask from '../hooks/useShowToask.js';
 
 export const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
-  const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+  const [loading, setLoading] = useState(false);
 
-  const showToast = useShowToask();
-
-  const login = async (inputs, setErr, e, setLoadingLogin) => {
+  const login = async (inputs, setErr, e) => {
     e.preventDefault();
-    setLoadingLogin(true);
+    setLoading(true);
     try {
       if (inputs.email.trim() !== '' && inputs.password.trim() !== '') {
         const response = await makeRequest.post(
@@ -33,20 +30,20 @@ export const UserContextProvider = ({ children }) => {
           }
         );
 
-        // data tra ve tu server co trong response.data
-        // set cookie
-        document.cookie = response.headers['set-cookie'];
-
         setErr(null);
 
-        let { message, ...info } = response.data;
-        showToast({ title: message, status: 'success' });
-        setCurrentUser(info);
-        setLoadingLogin(false);
+        let { access_token, ...info } = response.data;
+        
+        info.avatar = info.avatar.slice(20);
+
+        localStorage.setItem('user', JSON.stringify(info));
+        localStorage.setItem('access_token', JSON.stringify(access_token));
+        
+        setLoading(false);
         navigate('/');
       } else throw new Error('Vui lòng nhập đầy đủ dữ liệu!');
     } catch (err) {
-      setLoadingLogin(false);
+      setLoading(false);
       if (err.response?.data) setErr(err.response.data.message);
       else if (err.request) {
         console.log(err.request);
@@ -54,9 +51,9 @@ export const UserContextProvider = ({ children }) => {
     }
   };
 
-  const register = async (inputs, setErr, e, setLoadingSignUp) => {
+  const register = async (inputs, setErr, e) => {
     e.preventDefault();
-    setLoadingSignUp(true);
+    setLoading(true);
     try {
       if (
         inputs.username.trim() !== '' &&
@@ -81,22 +78,21 @@ export const UserContextProvider = ({ children }) => {
           }
         );
 
-        // data tra ve tu server co trong response.data
-        // set cookie
-        document.cookie = response.headers['set-cookie'];
-
-        let { message, ...info } = response.data;
-        setCurrentUser(info);
+        let { access_token, ...info } = response.data;
+        
         setErr(null);
-        showToast({ title: message, status: 'success' });
-        setLoadingSignUp(false);
+        
+        info.avatar = info.avatar.slice(20);
+        localStorage.setItem('user', JSON.stringify(info));
+        localStorage.setItem('access_token', JSON.stringify(access_token));
+        setLoading(false);
 
         navigate('/');
       } else {
         throw new Error('Vui lòng nhập đầy đủ dữ liệu!');
       }
     } catch (err) {
-      setLoadingSignUp(false);
+      setLoading(false);
       if (err.response?.data) setErr(err.response.data.message);
       else if (err.request) {
         console.log(err.request);
@@ -104,30 +100,27 @@ export const UserContextProvider = ({ children }) => {
     }
   };
 
-  const authenGoogle = async (currentRef, setIsLogin, param, codeParam) => {
+  const authenGoogle = async (currentRef, param, codeParam) => {
     if (currentRef.current.includes(param)) {
-      setIsLogin(true);
-      makeRequest
-        .get(`/oauth/token?${param}=${codeParam}`)
-        .then((res) => {
-          setCurrentUser(res.data);
-        })
-        .catch((e) => {
-          alert(e.message);
-        })
-        .finally(() => {
-          setIsLogin(false);
-          navigate('/');
-        });
-    }
-  }
+      setLoading(true);
 
-  useEffect(() => {
-    localStorage.setItem('user', JSON.stringify(currentUser));
-  }, [currentUser]);
+      try {
+        const res = await makeRequest.get(`/oauth/token?${param}=${codeParam}`);
+        const { access_token, ...info } = res.data;
+
+        localStorage.setItem('user', JSON.stringify(info));
+        localStorage.setItem('access_token', JSON.stringify(access_token));
+      } catch (e) {
+        alert(e.message);
+      } finally {
+        setLoading(false);
+        navigate('/');
+      }
+    }
+  };
 
   return (
-    <UserContext.Provider value={{ currentUser, login, register, authenGoogle }}>
+    <UserContext.Provider value={{ login, register, authenGoogle, loading }}>
       {children}
     </UserContext.Provider>
   );

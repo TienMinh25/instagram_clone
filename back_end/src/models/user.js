@@ -124,7 +124,14 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
             },
             username: {
-                type: DataTypes.STRING(50),
+                type: DataTypes.STRING(100),
+                allowNull: false,
+                validate: {
+                    notEmpty: true,
+                },
+            },
+            name_tag: {
+                type: DataTypes.STRING(100),
                 allowNull: false,
                 validate: {
                     notEmpty: true,

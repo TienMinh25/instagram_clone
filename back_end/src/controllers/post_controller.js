@@ -1,6 +1,6 @@
 const moment = require("moment");
 const db = require("../models/index.js");
-const uploadFilesMiddleware = require("../utils/images/upload_files.js");
+const uploadFilesMiddleware = require("../utils/upload_files.js");
 
 // Controller function to add a new post
 const addPost = async (req, res) => {
@@ -13,11 +13,11 @@ const addPost = async (req, res) => {
             if (i != lengthOfFiles - 1) mutiplePath += req.files[i].path + "$||$";
             else mutiplePath += req.files[i].path;
         }
-        let newPost = await db.User_post.create({
-            userId: parseInt(req.params.user_id),
+        const newPost = await db.User_post.create({
+            userId: parseInt(req.query.user_id),
             media: mutiplePath === "" ? null : mutiplePath,
-            createdAt: moment.utc(),
-            updatedAt: moment.utc(),
+            createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+            updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             description: req.body.description === "" ? null : req.body.description,
         });
 

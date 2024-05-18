@@ -1,7 +1,7 @@
 const express = require("express");
 const routerLogin = express.Router();
 
-const { loginWithEmalAndPassword } = require("../controllers/authentication");
+const { loginWithEmalAndPassword, logout } = require("../controllers/authentication");
 
 /**
  * @swagger
@@ -99,5 +99,6 @@ const { loginWithEmalAndPassword } = require("../controllers/authentication");
  */
 
 routerLogin.post("/login", loginWithEmalAndPassword);
+routerLogin.post("/logout", logout);
 
 module.exports = routerLogin;

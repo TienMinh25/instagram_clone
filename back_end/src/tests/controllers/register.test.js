@@ -1,5 +1,5 @@
 require("iconv-lite").encodingExists("foo");
-const chai = require("chai");
+const moment = require("moment");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sinon = require("sinon");
@@ -19,8 +19,8 @@ describe("registerController", () => {
         process.env.SECRET_KEY = "test@1234";
 
         mockUser = {
-            fullname: "John Doe",
-            username: "johndoe",
+            username: "John Doe",
+            name_tag: "johndoe",
             mobile: "1231241242",
             email: "johndoe@example.com",
             password: "check123",
@@ -55,8 +55,8 @@ describe("registerController", () => {
                 intro: null,
                 profile: null,
                 avatar: null,
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
+                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             };
 
             const buildUser = {
@@ -66,8 +66,8 @@ describe("registerController", () => {
                 intro: null,
                 profile: null,
                 avatar: null,
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
+                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
                 save: jest.fn().mockResolvedValue(saveUser),
                 reload: jest.fn().mockResolvedValue(saveUser),
             };
@@ -118,7 +118,7 @@ describe("registerController", () => {
             expect(
                 res.json.calledWithExactly({
                     ...responseUser,
-                    message: "Bạn đã tạo tài khoản thành công",
+                    access_token: mockToken,
                 }),
             ).toBeTruthy();
         });

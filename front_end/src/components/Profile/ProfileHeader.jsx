@@ -1,6 +1,16 @@
 import { Flex, AvatarGroup, Avatar, VStack, Text, Button } from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+
+import fetchAvatar from '../../utils/fetchAvatar';
 
 function ProfileHeader() {
+  const currentUser = JSON.parse(localStorage.getItem('user'));
+  const [imgAvatar, setImgAvatar] = useState();
+
+  useEffect(() => {
+    fetchAvatar(currentUser.avatar, setImgAvatar);
+  }, [currentUser.avatar]);
+
   return (
     <Flex gap={{ base: 4, sm: 10 }} py={10} direction={{ base: 'column', sm: 'row' }}>
       <AvatarGroup
@@ -12,7 +22,7 @@ function ProfileHeader() {
           fontSize: '50px'
         }}
       >
-        <Avatar src="/profilepic.png" name="Tien Minh" alt="Tien minh logo" />
+        <Avatar src={imgAvatar} name={currentUser.username} alt={`${currentUser.username} logo`} />
       </AvatarGroup>
 
       <VStack alignItems={'start'} gap={2} mx={'auto'} flex={1}>
@@ -25,7 +35,7 @@ function ProfileHeader() {
         >
           <Text fontSize={{ base: 'sm', md: 'lg' }}>
             {/* Ten nguoi dung o day, co the truyen prop vao */}
-            zero night
+            {currentUser.name_tag}
           </Text>
           <Flex gap={4} alignItems={'center'} justifyContent={'center'}>
             <Button
@@ -61,10 +71,10 @@ function ProfileHeader() {
         </Flex>
         <Flex alignItems={'flex-start'} direction={'column'}>
           <Text fontSize={'sm'} fontWeight={'bold'}>
-            Tiến Minh
+            {currentUser.username}
           </Text>
           {/* Bio for profile */}
-          <Text fontSize={'sm'}>Nothing is impossible!</Text>
+          <Text fontSize={'sm'}>{currentUser.intro}</Text>
         </Flex>
       </VStack>
     </Flex>

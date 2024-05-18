@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const path = require("path");
+const moment = require("moment");
 const { Op } = require("sequelize");
 const db = require("../models/index.js");
 
@@ -17,10 +19,11 @@ const registerController = async (req, res) => {
             let newUser = db.User.build({
                 username: username,
                 email: email,
-                // them anh mac dinh
+                name_tag: email.split("@")[0],
+                avatar: path.join(__dirname, "../avatar/", "avatar_default.jpeg"),
                 passwordHash: hashedPassword,
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
+                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             });
 
             await newUser.save();
@@ -40,7 +43,7 @@ const registerController = async (req, res) => {
                 })
                 .json({
                     ...userReturned,
-                    message: "Bạn đã tạo tài khoản thành công",
+                    access_token: token,
                 });
         } else {
             return res.status(409).json({ message: "Tài khoản đã tồn tại, vui lòng thử lại!" });
