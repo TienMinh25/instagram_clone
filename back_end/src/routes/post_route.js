@@ -1,7 +1,7 @@
 const express = require("express");
-const { addPost } = require("../controllers/post_controller");
+const { addPost, getPostPagination } = require("../controllers/post_controller");
 const routerPost = express.Router();
-// const authorization = require("../middleware/authorization");
+const authorization = require("../middleware/authorization");
 
 /**
  * @swagger
@@ -88,6 +88,7 @@ const routerPost = express.Router();
  *  - name: users
  *    description: Everything about users can do
  */
-routerPost.post("/posts", addPost);
+routerPost.post("/posts", authorization, addPost);
+routerPost.get("/posts", authorization, getPostPagination);
 
 module.exports = routerPost;

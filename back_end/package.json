@@ -39,7 +39,8 @@
         "sequelize": "^6.36.0",
         "sharp": "^0.33.3",
         "swagger-jsdoc": "^6.2.8",
-        "swagger-ui-express": "^5.0.0"
+        "swagger-ui-express": "^5.0.0",
+        "zlib": "^1.0.5"
     },
     "devDependencies": {
         "chai": "^4.4.1",

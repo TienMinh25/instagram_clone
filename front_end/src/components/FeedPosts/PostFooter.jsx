@@ -6,25 +6,139 @@ import {
   Input,
   InputRightElement,
   Button,
-  useColorMode
+  useColorMode,
+  useToast
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { CommentLogo, NotificationsLogo, UnlikeLogo } from '../../assets/constants.jsx';
+import { makeRequest } from '../../axios.js';
 
-function PostFooter({ username, isProfilePage }) {
+function PostFooter({ isProfilePage, postId }) {
+  const currentUser = JSON.parse(localStorage.getItem('user'));
   const { colorMode } = useColorMode();
   const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(1000);
-  const handleLike = () => {
-    // sau nay o day se goi axios len server de update like or unlike
-    if (liked) {
-      // update unlike for server and UI
-      setLiked(false);
-      setLikes((prev) => prev - 1);
-    } else {
-      setLiked(true);
-      setLikes((prev) => prev + 1);
+  const [likes, setLikes] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [countComments, setCountComments] = useState(0);
+  const [newComment, setNewComment] = useState('');
+  const toast = useToast();
+
+  useEffect(() => {
+    const fetchLikes = async () => {
+      try {
+        const response = await makeRequest(`likes?postId=${postId}`);
+        let isLiked = false;
+        let { likes, data } = response.data;
+
+        for (let i = 0; i < data?.length; i++) {
+          if (data[i].userId === currentUser.id) {
+            isLiked = true;
+            break;
+          }
+        }
+
+        setLikes(likes);
+        setLiked(isLiked);
+      } catch (error) {
+        toast({
+          title: 'Cannot load like of posts',
+          description: error.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'bottom'
+        });
+      }
+    };
+
+    const fetchComments = async () => {
+      try {
+        const response = await makeRequest(`comments?postId=${postId}`);
+        let { data, meta } = response.data;
+
+        setCountComments(meta.itemCount);
+        setComments(data);
+      } catch (error) {
+        toast({
+          title: 'Cannot load comment of posts',
+          description: error.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'bottom'
+        });
+      }
+    };
+
+    fetchLikes();
+    fetchComments();
+  }, [postId, toast, currentUser.id]);
+
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value);
+  };
+
+  const handleCommentPost = async (e) => {
+    e.preventDefault();
+    if (newComment.trim() === '') {
+      toast({
+        title: 'Comment cannot be empty',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom'
+      });
+      return;
+    }
+
+    try {
+      await makeRequest(`/comments?postId=${postId}&userId=${currentUser.id}`, {
+        method: 'POST',
+        data: {
+          content: newComment
+        }
+      });
+      setCountComments((prev) => prev + 1);
+      setNewComment('');
+    } catch (error) {
+      toast({
+        title: 'Cannot post comment',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      if (liked) {
+        // Gọi API để unlike
+        await makeRequest(`/likes?userId=${currentUser.id}&postId=${postId}`, {
+          method: 'DELETE'
+        });
+        setLiked(false);
+        setLikes((prev) => prev - 1);
+      } else {
+        // Gọi API để like
+        await makeRequest(`/likes?userId=${currentUser.id}&postId=${postId}`, {
+          method: 'POST'
+        });
+        setLiked(true);
+        setLikes((prev) => prev + 1);
+      }
+    } catch (error) {
+      toast({
+        title: 'Cannot like or unlike',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
     }
   };
 
@@ -45,22 +159,32 @@ function PostFooter({ username, isProfilePage }) {
       {!isProfilePage && (
         <>
           <Text fontSize={'sm'} fontWeight={700}>
-            {/* thay the bang ten cac nguoi dung comment, nguoi dung comment moi nhat */}
-            {username}{' '}
-            <Text as="span" fontWeight={400}>
-              Feeling good
+            {comments[0] && (
+              <>
+                {comments[0].User.name_tag}{' '}
+                <Text as="span" fontWeight={400}>
+                  {comments[0].content}
+                </Text>
+              </>
+            )}
+          </Text>
+          {countComments > 0 && (
+            <Text fontSize={'sm'} color={'gray'}>
+              View all {countComments} comments
             </Text>
-          </Text>
-          <Text fontSize={'sm'} color={'gray'}>
-            {/* Lay view tu db ra de hien thi */}
-            View all 1,000 comments
-          </Text>
+          )}
         </>
       )}
 
       <Flex alignItems={'center'} gap={2} justifyContent={'space-between'} w="full">
         <InputGroup>
-          <Input variant={'flushed'} placeholder="Add a comment..." fontSize={14} />
+          <Input
+            onChange={handleCommentChange}
+            variant={'flushed'}
+            value={newComment}
+            placeholder="Add a comment..."
+            fontSize={14}
+          />
           <InputRightElement>
             <Button
               fontSize={14}
@@ -70,8 +194,8 @@ function PostFooter({ username, isProfilePage }) {
               _hover={{
                 color: 'white'
               }}
-              bg="transparent"
-            >
+              onClick={handleCommentPost}
+              bg="transparent">
               Post
             </Button>
           </InputRightElement>

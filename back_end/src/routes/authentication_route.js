@@ -1,5 +1,6 @@
 const express = require("express");
-const routerLogin = express.Router();
+const routerAuthen = express.Router();
+const authorization = require('../middleware/authorization');
 
 const { loginWithEmalAndPassword, logout } = require("../controllers/authentication");
 
@@ -98,7 +99,7 @@ const { loginWithEmalAndPassword, logout } = require("../controllers/authenticat
  *      name: access_token
  */
 
-routerLogin.post("/login", loginWithEmalAndPassword);
-routerLogin.post("/logout", logout);
+routerAuthen.post("/login", loginWithEmalAndPassword);
+routerAuthen.post("/logout", authorization, logout);
 
-module.exports = routerLogin;
+module.exports = routerAuthen;

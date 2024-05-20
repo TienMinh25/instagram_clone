@@ -1,15 +1,70 @@
-import { Container, VStack, Flex, SkeletonCircle, Skeleton, Box } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import {
+  Container,
+  VStack,
+  Flex,
+  SkeletonCircle,
+  Skeleton,
+  Box,
+  useToast,
+  Text,
+  useColorMode
+} from '@chakra-ui/react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import FeedPost from './FeedPost';
+import { makeRequest } from '../../axios';
 
 const FeedPosts = () => {
+  const currentUser = JSON.parse(localStorage.getItem('user'));
   const [isLoading, setIsLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef();
+  const { colorMode } = useColorMode();
+  const toast = useToast();
+  const [page, setPage] = useState(1);
+  const [posts, setPosts] = useState([]);
+
+  const fetchPosts = async (pageNumber) => {
+    try {
+      const res = await makeRequest.get(`/posts?page=${pageNumber}&limit=4`);
+      const { data, meta } = res.data;
+      if (!meta.hasNextPage) {
+        setHasMore(false);
+        setPosts((prevPosts) => [...prevPosts, ...data]);
+      } else {
+        setPosts((prevPosts) => [...prevPosts, ...data]);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      toast({
+        title: 'Cannot load posts',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+      // Hiển thị thông báo lỗi nếu có
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-  }, []);
+    fetchPosts(page);
+  }, [page]);
+
+  const lastPostElementRef = useCallback(
+    (node) => {
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [hasMore]
+  );
+
   return (
     <Container maxW={'container.sm'} py={10} px={2}>
       {isLoading &&
@@ -27,13 +82,31 @@ const FeedPosts = () => {
             </Skeleton>
           </VStack>
         ))}
+
       {!isLoading && (
         <>
-          <FeedPost img="/img1.png" username="burkorkess" avatar="/img1.png" />
-          <FeedPost img="/img2.png" username="josh" avatar="/img2.png" />
-          <FeedPost img="/img3.png" username="johndoe" avatar="/img3.png" />
-          <FeedPost img="/img4.png" username="janedoe" avatar="/img4.png" />
+          {posts.map((post) => {
+            return (
+              <FeedPost
+                key={post.id}
+                postId={post.id}
+                timerAgo={post.createdAt}
+                isOwner={post.userId === currentUser.id}
+                media={post.media}
+                description={post.description}
+                username={post.User.name_tag}
+                avatar={post.User.avatar}
+                // ref={posts.length === index + 1 ? lastPostElementRef : null}
+              />
+            );
+          })}
         </>
+      )}
+
+      {!hasMore && !isLoading && (
+        <Box mt={4} textAlign="center">
+          <Text color={colorMode === 'dark' ? 'gray.400' : 'gray.600'}>No more posts to show</Text>
+        </Box>
       )}
     </Container>
   );
