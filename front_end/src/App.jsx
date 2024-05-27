@@ -26,7 +26,6 @@ function App() {
     <PageLayout>
       <Routes>
         <Route path="/auth" index={true} element={<AuthPage />} />
-
         <Route path="/" element={<PrivateRoute />}>
           <Route index={true} path="" element={<HomePage />} />
           <Route path=":username" element={<ProfilePage />} />

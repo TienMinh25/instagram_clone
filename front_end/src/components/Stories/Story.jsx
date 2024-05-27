@@ -14,7 +14,7 @@ function Story({ avatar, name, showAddIcon, onClick }) {
   };
 
   return (
-    <VStack spacing={1} maxW={'55px'} cursor={'pointer'}>
+    <VStack spacing={1} maxW={'55px'} cursor={'pointer'} onClick={handleClick}>
       <Box position="relative" width="fit-content" height="fit-content">
         <Box
           position="absolute"
@@ -22,7 +22,6 @@ function Story({ avatar, name, showAddIcon, onClick }) {
           left="0"
           borderRadius="full"
           bgGradient="linear(to-tr, #f99f00, #f953c6, #8a63d2)"
-          
           width="100%"
           height="100%"
           display="flex"
@@ -42,8 +41,7 @@ function Story({ avatar, name, showAddIcon, onClick }) {
           margin="2.5px"
           borderColor={colorMode === 'light' ? 'white' : 'black'}
           borderWidth={'2px'}
-          fallbackSrc="https://via.placeholder.com/150"
-          onClick={handleClick}
+          // fallbackSrc="https://via.placeholder.com/150"
           position="relative"
           zIndex={2}
         />
@@ -65,7 +63,6 @@ function Story({ avatar, name, showAddIcon, onClick }) {
           </Box>
         )}
       </Box>
-
       <Text fontSize={12} fontWeight={'medium'} isTruncated maxW="65px">
         {name}
       </Text>

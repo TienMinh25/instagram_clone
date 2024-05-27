@@ -1,8 +1,7 @@
 import { Container, Flex, Box } from '@chakra-ui/react';
 import FeedPosts from '../../components/FeedPosts/FeedPosts';
 import SuggestedUsers from '../../components/SuggestedUsers/SuggestedUsers';
-import Stories from '../../components/Stories/Stories';
-import AddStoryForm from '../../components/Stories/AddStoryForm';
+import StoriesListAvatar from '../../components/Stories/StoriesListAvatar';
 
 const HomePage = () => {
   return (
@@ -10,7 +9,7 @@ const HomePage = () => {
       <Flex gap={20} py={10}>
         <Flex flex={2} direction={'column'}>
           {/* Sau nay se them tin o tren bai, thi se ket hop voi box feed posts */}
-          <Stories mt={20}/>
+          <StoriesListAvatar mt={20}/>
           <Box w={'100%'}>
             <FeedPosts />
           </Box>
