@@ -113,6 +113,18 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "userId",
                 otherKey: "groupId",
             });
+
+            User.belongsToMany(models.User_post, {
+                through: models.Like,
+                foreignKey: 'userId',
+                otherKey: 'postId',
+            })
+
+            User.belongsToMany(models.User_post, {
+                through: models.Comment,
+                foreignKey: 'userId',
+                otherKey: 'postId',
+            })
         }
     }
     User.init(

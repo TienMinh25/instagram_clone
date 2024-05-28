@@ -1,16 +1,44 @@
 import { useState, useEffect } from 'react';
-import { Flex, Avatar, Text, Link } from '@chakra-ui/react';
+import { Flex, Avatar, Text, Link, useToast } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import fetchAvatar from '../../utils/fetchAvatar';
+import { makeRequest } from '../../axios';
 
 function SuggestedHeader() {
   const currentUser = JSON.parse(localStorage.getItem('user'));
   const [imgAvatar, setImgAvatar] = useState();
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchAvatar(currentUser.avatar, setImgAvatar);
   }, [currentUser.avatar]);
+
+  const handleLogout = async () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
+
+    try {
+      await makeRequest.post('/logout');
+
+      toast({
+        title: 'Logout successfully!',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+    } catch (e) {
+      toast({
+        title: 'Failed to logout',
+        description: e?.response?.data?.message || e.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+    }
+  };
 
   return (
     <Flex justifyContent={'space-between'} alignItems={'center'} w="full">
@@ -28,7 +56,7 @@ function SuggestedHeader() {
         color={'blue.400'}
         cursor={'pointer'}
         style={{ textDecoration: 'none' }}
-      >
+        onClick={handleLogout}>
         Log out
       </Link>
     </Flex>

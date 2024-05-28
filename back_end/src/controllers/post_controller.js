@@ -16,6 +16,7 @@ const addPost = async (req, res) => {
         const newPost = await db.User_post.create({
             userId: parseInt(req.query.user_id),
             media: mutiplePath === "" ? null : mutiplePath,
+            type: req.body?.type || 'post',
             createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             description: req.body.description === "" ? null : req.body.description,
@@ -31,6 +32,39 @@ const addPost = async (req, res) => {
     }
 };
 
+const getPostPagination = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const take = parseInt(req.query.limit) || 4;
+    const offset = (page - 1) * take;
+
+    const [data, itemCount] = await Promise.all([
+        db.User_post.findAll({
+            offset: offset,
+            limit: take,
+            order: [["createdAt", "DESC"]],
+            include: db.User,
+        }),
+        db.User_post.count(),
+    ]);
+
+    const pageCount = Math.ceil(itemCount / take);
+    const hasPreviousPage = page > 1;
+    const hasNextPage = page < pageCount;
+
+    return res.status(200).json({
+        data,
+        meta: {
+            page,
+            take,
+            itemCount,
+            pageCount,
+            hasPreviousPage,
+            hasNextPage,
+        },
+    });
+};
+
 module.exports = {
     addPost,
+    getPostPagination,
 };

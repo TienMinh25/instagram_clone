@@ -20,7 +20,7 @@ const registerController = async (req, res) => {
                 username: username,
                 email: email,
                 name_tag: email.split("@")[0],
-                avatar: path.join(__dirname, "../avatar/", "avatar_default.jpeg"),
+                avatar: "avatar/avatar_default.jpeg",
                 passwordHash: hashedPassword,
                 createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
                 updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
