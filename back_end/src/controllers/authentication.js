@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const db = require(path.resolve(__dirname, "../models/index.js"));
-
 /**
  * Middleware authentication for web login
  *
@@ -49,13 +48,8 @@ const loginWithEmalAndPassword = async (req, res, next) => {
     }
 };
 
-const logout = async () => {
-    const access_token = localStorage.getItem("access_token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("access_token");
-    document.cookie="access_token=;"
-
-    
-}
+const logout = async (req, res) => {
+    return res.status(200).cookie("access_token", "").end();
+};
 
 module.exports = { loginWithEmalAndPassword, logout };

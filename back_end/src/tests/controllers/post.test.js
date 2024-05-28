@@ -15,7 +15,7 @@ describe("new post", () => {
     beforeEach(() => {
         req = {
             query: { user_id: "1" },
-            body: { description: "test" },
+            body: { description: "test", type: "post" },
             files: [
                 {
                     fieldname: "multiple-files",
@@ -55,6 +55,7 @@ describe("new post", () => {
         const responsePost = {
             userId: 1,
             media: "/backend/src/uploads/1713021815074-instagram-Screenshot 2024-04-13 at 13.25.22.png$||$/backend/src/uploads/1713021815110-instagram-Screenshot 2024-04-09 at 07.28.57.png",
+            type: "post",
             createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             description: "test",

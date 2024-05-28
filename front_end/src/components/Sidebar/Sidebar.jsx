@@ -1,56 +1,17 @@
-import { Box, Flex, Link, Avatar, Tooltip, useColorMode } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { Box, Flex, Link, Tooltip, useColorMode } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { AiFillHome } from 'react-icons/ai';
 import { BiLogOut } from 'react-icons/bi';
 import { MdOutlineLightMode, MdDarkMode } from 'react-icons/md';
+import { InstagramLogo, InstagramMobileLogo } from '../../assets/constants';
 
-import {
-  InstagramLogo,
-  InstagramMobileLogo,
-  SearchLogo,
-  NotificationsLogo,
-  CreatePostLogo
-} from '../../assets/constants.jsx';
+import SidebarItems from './SidebarItems';
 
 import useLogout from '../../hooks/useLogout.js';
-import fetchAvatar from '../../utils/fetchAvatar.js';
 
 function Sidebar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { handleLogout } = useLogout();
-  const currentUser = JSON.parse(localStorage.getItem('user'));
-  const [imgAvatar, setImgAvatar] = useState();
 
-  useEffect(() => {
-    fetchAvatar(currentUser.avatar, setImgAvatar);
-  }, [currentUser.avatar]);
-
-  const sidebarItems = [
-    {
-      icon: <AiFillHome size={25} />,
-      text: 'Home',
-      link: '/'
-    },
-    {
-      icon: <SearchLogo colorMode={colorMode} />,
-      text: 'Search'
-    },
-    {
-      icon: <NotificationsLogo colorMode={colorMode} />,
-      text: 'Notifications'
-    },
-    {
-      icon: <CreatePostLogo colorMode={colorMode} />,
-      text: 'Create'
-    },
-    {
-      icon: <Avatar size={'sm'} name="Burak Orkmez" src={imgAvatar} />,
-      text: 'Profile',
-      // thay bang link cua du lieu duoc fetch
-      link: `${currentUser.username}`
-    }
-  ];
   return (
     <Box
       height={'100vh'}
@@ -60,16 +21,14 @@ function Sidebar() {
       position={'sticky'}
       top={0}
       left={0}
-      px={{ base: '2', md: 4 }}
-    >
+      px={{ base: '2', md: 4 }}>
       <Flex direction={'column'} gap={10} w="full" height={'full'}>
         <Link
           to={'/'}
           as={RouterLink}
           pl={2}
           display={{ base: 'none', md: 'block' }}
-          cursor={'pointer'}
-        >
+          cursor={'pointer'}>
           <InstagramLogo colorMode={colorMode} />
         </Link>
         <Link
@@ -82,40 +41,11 @@ function Sidebar() {
           _hover={{
             bg: 'whiteAlpha.200'
           }}
-          w={{ base: '10' }}
-        >
+          w={{ base: '10' }}>
           <InstagramMobileLogo colorMode={colorMode} />
         </Link>
         <Flex direction={'column'} gap={5} cursor={'pointer'}>
-          {sidebarItems.map((item, index) => (
-            <Tooltip
-              label={item.text}
-              hasArrow
-              placement="right"
-              key={index}
-              ml={1}
-              openDelay={500}
-              display={{ base: 'block', md: 'none' }}
-            >
-              <Link
-                display={'flex'}
-                to={item.link || null}
-                as={RouterLink}
-                alignItems={'center'}
-                gap={4}
-                _hover={{
-                  bg: colorMode === 'dark' ? 'whiteAlpha.400' : 'rgba(0, 0, 0, .05)'
-                }}
-                borderRadius={6}
-                p={2}
-                w={{ base: 10, md: 'full' }}
-                justifyContent={{ base: 'center', md: 'flex-start' }}
-              >
-                {item.icon}
-                <Box display={{ base: 'none', md: 'block' }}>{item.text}</Box>
-              </Link>
-            </Tooltip>
-          ))}
+          <SidebarItems />
         </Flex>
 
         <Flex ml={1} direction={'column'} gap={2} mt="auto">
@@ -129,8 +59,7 @@ function Sidebar() {
               }}
               p={2}
               borderRadius={6}
-              onClick={toggleColorMode}
-            >
+              onClick={toggleColorMode}>
               <MdOutlineLightMode size={'20px'} />
               <Box display={{ base: 'none', md: 'block' }}>Switch appearance</Box>
             </Flex>
@@ -142,8 +71,7 @@ function Sidebar() {
               _hover={{ bg: 'rgba(0, 0, 0, .05)' }}
               p={2}
               borderRadius={6}
-              onClick={toggleColorMode}
-            >
+              onClick={toggleColorMode}>
               <MdDarkMode size={'20px'} />
               <Box display={{ base: 'none', md: 'block' }}>Switch appearance</Box>
             </Flex>
@@ -153,8 +81,7 @@ function Sidebar() {
             hasArrow
             placement="right"
             openDelay={500}
-            display={{ base: 'block', md: 'none' }}
-          >
+            display={{ base: 'block', md: 'none' }}>
             {/* LOG OUT */}
             {/* Can xoa access_token trong cookie storage o day */}
             <Flex
@@ -167,8 +94,7 @@ function Sidebar() {
               borderRadius={6}
               p={2}
               w={{ base: 10, md: 'full' }}
-              justifyContent={{ base: 'center', md: 'flex-start' }}
-            >
+              justifyContent={{ base: 'center', md: 'flex-start' }}>
               <BiLogOut />
               <Box display={{ base: 'none', md: 'block' }}>Log out</Box>
             </Flex>

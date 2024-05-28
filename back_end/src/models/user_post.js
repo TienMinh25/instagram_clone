@@ -18,6 +18,18 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: "cascade",
                 onUpdate: "no action",
             });
+
+            User_post.belongsToMany(models.User, {
+                through: models.Like,
+                foreignKey: "postId",
+                otherKey: "userId",
+            });
+
+            User_post.belongsToMany(models.User, {
+                through: models.Comment,
+                foreignKey: 'postId',
+                otherKey: 'userId',
+            })
         }
     }
     User_post.init(
@@ -26,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
             userId: DataTypes.BIGINT,
             media: DataTypes.TEXT,
             description: DataTypes.TEXT,
+            type: DataTypes.TEXT,
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE,
         },

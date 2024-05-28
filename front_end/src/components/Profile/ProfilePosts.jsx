@@ -1,4 +1,4 @@
-import { Grid, GridItem, Spinner, CircularProgress } from '@chakra-ui/react';
+import { Grid, GridItem, CircularProgress } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 import ProfilePost from './ProfilePost';

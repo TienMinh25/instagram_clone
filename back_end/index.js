@@ -12,10 +12,12 @@ const app = express();
 dotenv.config();
 
 const routerRegister = require("./src/routes/register.js");
-const routerLogin = require("./src/routes/authentication_route.js");
+const routerAuthen = require("./src/routes/authentication_route.js");
 const routerPost = require("./src/routes/post_route.js");
-const oauth2Route = require("./src/routes/oauth2_route.js"); 
+const oauth2Route = require("./src/routes/oauth2_route.js");
 const userRoute = require("./src/routes/user_route.js");
+const likeRouter = require("./src/routes/like_route.js");
+const commentRouter = require("./src/routes/comment_route.js");
 
 const client = createClient({
     host: process.env.REDIS_HOST,
@@ -74,6 +76,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 // config cors for all path of application  => default path: "/", doc co ghi : ))
 app.use(cors(corOptions));
 
+app.use(express.static("public"));
+
 // Setup for secure api
 app.use(helmet({ crossOriginResourcePolicy: false }));
 
@@ -92,14 +96,17 @@ app.use(cookieParser());
 app.use("/api/v1", oauth2Route);
 
 // use middleware authentication
-app.use("/api/v1", routerLogin);
+app.use("/api/v1", routerAuthen);
 
 // register router
 app.use("/api/v1", routerRegister);
 
 app.use("/api/v1", routerPost);
 
-app.use("/api/v1", userRoute);
+app.use("/api/v1", likeRouter);
+
+app.use("/api/v1", commentRouter);
+
 // Catch 404 error (if user find some path not found on my app, it will generate status 404 for that)
 app.use((req, res, next) => {
     const err = new Error("Not found");
@@ -110,7 +117,6 @@ app.use((req, res, next) => {
 // handle for error path : ) but actually it should only handle for 404
 app.use((err, req, res, next) => {
     const error = err;
-
     const status = error.status || 500;
 
     return res.status(status).json({
