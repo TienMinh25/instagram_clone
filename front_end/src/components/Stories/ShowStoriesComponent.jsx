@@ -20,7 +20,7 @@ const ShowStoriesComponent = ({ story, onClose }) => {
   }
 
   return (
-    <Box width="100%" height="96vh" position="relative" bg="rgba(0, 0, 0, 0.8)" display="flex">
+    <Box width="100%" height="100vh" position="relative" bg="rgba(0, 0, 0, 0.8)" display="flex">
       <IconButton
         icon={<CloseIcon />}
         onClick={onClose}

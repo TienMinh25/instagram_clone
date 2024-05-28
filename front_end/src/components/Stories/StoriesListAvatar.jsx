@@ -1,5 +1,3 @@
-
-
 import {
   Box,
   Container,
@@ -18,7 +16,6 @@ import ShowStoriesComponent from './ShowStoriesComponent';
 import React from 'react';
 import ImageEditor from './ImageEditor';
 import ToolsEditor from './ToolsEditor';
-
 
 const storyData = [
   { avatar: '/img1.png', name: 'Sarah', url: 'https://i.imgur.com/QpUEcfi.jpg', type: 'image' },
@@ -40,6 +37,7 @@ function StoriesListAvatar() {
   const [selectedStory, setSelectedStory] = useState(null);
   const [canvas, setCanvas] = useState(null);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [isStoryModalOpen, setStoryModalOpen] = useState(false);
 
   const checkScrollPosition = () => {
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
@@ -67,7 +65,8 @@ function StoriesListAvatar() {
 
   const handleCloseEditor = () => {
     setShowAddStoryForm(false);
-  }
+  };
+
   const closeForm = () => {
     setConfirmModalOpen(true);
   };
@@ -78,10 +77,16 @@ function StoriesListAvatar() {
 
   const handleStoryClick = (story) => {
     setSelectedStory(story);
+    setStoryModalOpen(true);
   };
 
   const handleImageSelected = () => {
     setIsImageSelected(true);
+  };
+
+  const handleCloseStoryModal = () => {
+    setStoryModalOpen(false);
+    setSelectedStory(null);
   };
 
   return (
@@ -120,7 +125,7 @@ function StoriesListAvatar() {
           '&::-webkit-scrollbar-thumb:hover': {
             background: 'transparent',
           },
-          position: 'relative'
+          position: 'relative',
         }}
         px={3}
       >
@@ -155,17 +160,20 @@ function StoriesListAvatar() {
           <ModalCloseButton />
           <ModalBody display="flex" alignItems="center" justifyContent="center">
             <Box display="flex" height="680px">
-              <ImageEditor setCanvas={setCanvas} onImageSelected={handleImageSelected} triggerConfirmModal={isConfirmModalOpen} onConfirmModalClose={handleConfirmModalClose}  onCancel={handleCloseEditor}/>
+              <ImageEditor setCanvas={setCanvas} onImageSelected={handleImageSelected} triggerConfirmModal={isConfirmModalOpen} onConfirmModalClose={handleConfirmModalClose} onCancel={handleCloseEditor} />
               {isImageSelected && <ToolsEditor canvas={canvas} />}
             </Box>
           </ModalBody>
         </ModalContent>
       </Modal>
-      {selectedStory && (
-        <Box position="absolute" top="0" left="0" right="0" bottom="0" zIndex={10} bg="rgba(0,0,0,0.8)">
-          <ShowStoriesComponent story={selectedStory} onClose={() => setSelectedStory(null)} />
-        </Box>
-      )}
+      <Modal isOpen={isStoryModalOpen}size="full">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody display="flex" alignItems="center" justifyContent="center" bg="rgba(0,0,0,0.8)">
+            {selectedStory && <ShowStoriesComponent story={selectedStory} onClose={handleCloseStoryModal} />}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Container>
   );
 }
