@@ -11,9 +11,10 @@ import {
   Box,
   ModalHeader
 } from '@chakra-ui/react';
-import { SearchLogo } from '../../assets/constants';
+import { IoMdSearch } from 'react-icons/io';
+import { FaSearch } from 'react-icons/fa';
 
-function Search() {
+function Search({ isSelected, onClick }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
 
@@ -41,14 +42,22 @@ function Search() {
           p={2}
           w={{ base: 10, md: 'full' }}
           justifyContent={{ base: 'center', md: 'flex-start' }}
-          onClick={onOpen}>
-          <SearchLogo colorMode={colorMode}/>
-          <Box display={{ base: 'none', md: 'block' }}>Search</Box>
+          onClick={() => {
+            onOpen();
+            onClick();
+          }}>
+          {isSelected ? <FaSearch size={25} /> : <IoMdSearch size={28} />}
+          <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '800' : '500'}>
+            Search
+          </Box>
         </Flex>
       </Tooltip>
       <Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInLeft">
         <ModalOverlay />
-        <ModalContent bg={colorMode === 'dark' ? 'black' : 'white'} border={'1px solid gray'} maxW={'400px'}>
+        <ModalContent
+          bg={colorMode === 'dark' ? 'black' : 'white'}
+          border={'1px solid gray'}
+          maxW={'400px'}>
           <ModalHeader>Search user</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>

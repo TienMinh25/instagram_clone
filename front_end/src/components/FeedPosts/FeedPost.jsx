@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import fetchAvatar from '../../utils/fetchAvatar';
 import handlePathFile from '../../utils/handlePathFile';
 import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md';
-
 import PostHeader from './PostHeader';
 import PostFooter from './PostFooter';
 

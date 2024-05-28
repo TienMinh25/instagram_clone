@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import fetchAvatar from '../../utils/fetchAvatar.js';
 
-const ProfileLink = () => {
+const ProfileLink = ({ isSelected, onClick }) => {
   const { colorMode } = useColorMode();
   const currentUser = JSON.parse(localStorage.getItem('user'));
   const [imgAvatar, setImgAvatar] = useState();
@@ -26,6 +26,7 @@ const ProfileLink = () => {
         as={RouterLink}
         alignItems={'center'}
         gap={4}
+        onClick={onClick}
         _hover={{
           bg: colorMode === 'dark' ? 'whiteAlpha.400' : 'rgba(0, 0, 0, .05)'
         }}

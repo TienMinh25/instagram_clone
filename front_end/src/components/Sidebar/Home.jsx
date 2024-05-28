@@ -1,8 +1,9 @@
 import { Box, Link, Tooltip, useColorMode } from '@chakra-ui/react';
 import { AiFillHome } from 'react-icons/ai';
+import { MdOutlineHome } from 'react-icons/md';
 import { Link as RouterLink } from 'react-router-dom';
 
-const Home = () => {
+const Home = ({ isSelected, onClick }) => {
   const { colorMode } = useColorMode();
 
   return (
@@ -25,9 +26,12 @@ const Home = () => {
         borderRadius={6}
         p={2}
         w={{ base: 10, md: 'full' }}
+        onClick={onClick}
         justifyContent={{ base: 'center', md: 'flex-start' }}>
-        <AiFillHome size={25} />
-        <Box display={{ base: 'none', md: 'block' }}>Home</Box>
+        {isSelected ? <AiFillHome size={25} /> : <MdOutlineHome size={25} />}
+        <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '800' : '500'}>
+          Home
+        </Box>
       </Link>
     </Tooltip>
   );

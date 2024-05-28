@@ -1,15 +1,17 @@
 import {
-  Flex,
   Box,
-  Text,
-  InputGroup,
-  Input,
-  InputRightElement,
   Button,
+  Flex,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Text,
   useColorMode,
   useToast
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+
+import CommentModal from '../Comment/CommentModal';
 
 import { CommentLogo, NotificationsLogo, UnlikeLogo } from '../../assets/constants.jsx';
 import { makeRequest } from '../../axios.js';
@@ -22,6 +24,7 @@ function PostFooter({ isProfilePage, postId }) {
   const [comments, setComments] = useState([]);
   const [countComments, setCountComments] = useState(0);
   const [newComment, setNewComment] = useState('');
+  const [isModalOpenComment, setIsModalOpenComment] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -142,6 +145,14 @@ function PostFooter({ isProfilePage, postId }) {
     }
   };
 
+  const handleOpenModal = () => {
+    setIsModalOpenComment(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpenComment(false);
+  };
+
   return (
     <Box mb={10} mt="auto">
       <Flex alignItems={'center'} gap={4} w="full" pt={0} mb={2} mt={'4'}>
@@ -149,7 +160,7 @@ function PostFooter({ isProfilePage, postId }) {
           {!liked ? <NotificationsLogo colorMode={colorMode} /> : <UnlikeLogo />}
         </Box>
 
-        <Box cursor={'pointer'} fontSize={18}>
+        <Box cursor={'pointer'} fontSize={18} onClick={handleOpenModal}>
           <CommentLogo colorMode={colorMode} />
         </Box>
       </Flex>
@@ -201,6 +212,8 @@ function PostFooter({ isProfilePage, postId }) {
           </InputRightElement>
         </InputGroup>
       </Flex>
+
+      <CommentModal isOpen={isModalOpenComment} onClose={handleCloseModal} comments={comments} />
     </Box>
   );
 }
