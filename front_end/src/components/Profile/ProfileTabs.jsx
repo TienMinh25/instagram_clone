@@ -1,9 +1,17 @@
-import { Flex, Box, Text, useColorMode } from '@chakra-ui/react';
-import { BsGrid3X3, BsBookmark } from 'react-icons/bs';
+import { Box, Flex, Text, useColorMode } from '@chakra-ui/react';
+import { BsGrid3X3 } from 'react-icons/bs';
 import { PiUserRectangleLight } from 'react-icons/pi';
+import { RxVideo } from 'react-icons/rx';
+import { useState } from 'react';
 
-function ProfileTabs() {
+function ProfileTabs({ onTabChange }) {
   let { colorMode } = useColorMode();
+  const [activeTab, setActiveTab] = useState('posts');
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    onTabChange(tab);
+  };
 
   // Khi thay tabs thi nen dung useEffect de lay tung tab lien quan va hien thi, o day chua xu li logic do
   return (
@@ -12,35 +20,67 @@ function ProfileTabs() {
       justifyContent={'center'}
       gap={{ base: 4, sm: 10 }}
       textTransform={'uppercase'}
-      fontWeight={'bold'}
-    >
+      fontWeight={'bold'}>
       <Flex
-        borderTop={colorMode === 'dark' ? '1px solid white' : '1px solid black'}
+        minW={103}
+        borderTop={
+          activeTab === 'posts'
+            ? colorMode === 'dark'
+              ? '1px solid white'
+              : '1px solid black'
+            : 'none'
+        }
         alignItems={'center'}
         p={3}
         gap={1}
         cursor={'pointer'}
-      >
-        <Box fontSize={'20'} mr={2}>
-          <BsGrid3X3 />
+        onClick={() => handleTabClick('posts')}>
+        <Box fontSize={'16'} mr={2}>
+          <BsGrid3X3 size={14} />
         </Box>
         <Text fontSize={12} display={{ base: 'none', sm: 'block' }}>
           Posts
         </Text>
       </Flex>
 
-      <Flex alignItems={'center'} p={3} gap={1} cursor={'pointer'}>
-        <Box fontSize={'20'} mr={2}>
-          <BsBookmark />
+      <Flex
+        minW={103}
+        borderTop={
+          activeTab === 'reels'
+            ? colorMode === 'dark'
+              ? '1px solid white'
+              : '1px solid black'
+            : 'none'
+        }
+        alignItems={'center'}
+        p={3}
+        gap={1}
+        cursor={'pointer'}
+        onClick={() => handleTabClick('reels')}>
+        <Box fontSize={'16'} mr={2}>
+          <RxVideo size={16} />
         </Box>
         <Text fontSize={12} display={{ base: 'none', sm: 'block' }}>
-          saved
+          reels
         </Text>
       </Flex>
 
-      <Flex alignItems={'center'} p={3} gap={1} cursor={'pointer'}>
-        <Box fontSize={'20'} mr={2}>
-          <PiUserRectangleLight size={30} />
+      <Flex
+        minW={103}
+        borderTop={
+          activeTab === 'tagged'
+            ? colorMode === 'dark'
+              ? '1px solid white'
+              : '1px solid black'
+            : 'none'
+        }
+        alignItems={'center'}
+        p={3}
+        gap={1}
+        cursor={'pointer'}
+        onClick={() => handleTabClick('tagged')}>
+        <Box fontSize={'16'} mr={2}>
+          <PiUserRectangleLight size={16} />
         </Box>
         <Text fontSize={12} display={{ base: 'none', sm: 'block' }}>
           Tagged

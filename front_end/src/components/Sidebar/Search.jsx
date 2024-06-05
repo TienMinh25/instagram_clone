@@ -1,27 +1,43 @@
 import {
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  ModalBody,
-  useColorMode,
-  Flex,
-  Tooltip,
+  Avatar,
   Box,
-  ModalHeader
+  Flex,
+  FormControl,
+  Input,
+  List,
+  ListItem,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Spinner,
+  Text,
+  Tooltip,
+  useColorMode,
+  useDisclosure
 } from '@chakra-ui/react';
-import { IoMdSearch } from 'react-icons/io';
+import { useRef, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import { IoMdSearch } from 'react-icons/io';
 
 function Search({ isSelected, onClick }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
+  const searchRef = useRef();
+  const [searchResults, setSearchResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // const handleSearchUser = (e) => {
-  //   e.preventDefault();
-  //   getUserProfile(searchRef.current.value);
-  // };
+  const handleSearchUser = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    // Add search logic here, for example making a request to an API to get search results.
+    // Example:
+    // const results = await searchUsers(searchRef.current.value);
+    const results = []; // Replace with actual search results
+    setSearchResults(results);
+    setIsLoading(false);
+  };
 
   return (
     <>
@@ -58,22 +74,47 @@ function Search({ isSelected, onClick }) {
           bg={colorMode === 'dark' ? 'black' : 'white'}
           border={'1px solid gray'}
           maxW={'400px'}>
-          <ModalHeader>Search user</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}>
-            {/* <form onSubmit={handleSearchUser}>
-              <FormControl>
-                <FormLabel>Username</FormLabel>
-                <Input placeholder="asaprogrammer" ref={searchRef} />
-              </FormControl>
-
-              <Flex w={'full'} justifyContent={'flex-end'}>
-                <Button type="submit" ml={'auto'} size={'sm'} my={4} isLoading={isLoading}>
-                  Search
-                </Button>
+          <ModalBody pb={6} pt={4}>
+            <FormControl as="form" onSubmit={handleSearchUser} mb={4}>
+              <Input
+                placeholder="Search"
+                ref={searchRef}
+                onChange={handleSearchUser}
+                autoFocus
+                borderRadius="md"
+                variant="filled"
+                _focus={{
+                  borderColor: 'blue.500'
+                }}
+              />
+            </FormControl>
+            {isLoading ? (
+              <Flex justify="center" mt={4}>
+                <Spinner />
               </Flex>
-            </form>
-            {user && <SuggestedUser user={user} setUser={setUser} />} */}
+            ) : (
+              <List spacing={3}>
+                {searchResults.map((result) => (
+                  <ListItem
+                    key={result.id}
+                    display="flex"
+                    alignItems="center"
+                    p={2}
+                    _hover={{ bg: colorMode === 'dark' ? 'gray.700' : 'gray.200' }}
+                    borderRadius="md"
+                    cursor="pointer">
+                    <Avatar size="sm" src={result.avatar} name={result.username} mr={3} />
+                    <Box>
+                      <Text fontWeight="bold">{result.username}</Text>
+                      <Text fontSize="sm" color="gray.500">
+                        {result.fullName}
+                      </Text>
+                    </Box>
+                  </ListItem>
+                ))}
+              </List>
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>

@@ -1,32 +1,24 @@
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
   Box,
   Container,
   Flex,
   IconButton,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
   ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  SkeletonCircle,
+  useToast
 } from '@chakra-ui/react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import Story from './Story';
-import { useRef, useState, useEffect } from 'react';
-import ShowStoriesComponent from './ShowStoriesComponent';
-import React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { makeRequest } from '../../axios';
+import fetchAvatar from '../../utils/fetchAvatar';
 import ImageEditor from './ImageEditor';
+import ShowStoriesComponent from './ShowStoriesComponent';
+import Story from './Story';
 import ToolsEditor from './ToolsEditor';
-
-const storyData = [
-  { avatar: '/img1.png', name: 'Sarah', url: 'https://i.imgur.com/QpUEcfi.jpg', type: 'image' },
-  { avatar: '/img2.png', name: 'John Doe', url: 'https://i.imgur.com/in5Jr1h.jpg', type: 'image' },
-  { avatar: '/img3.png', name: 'James Harden', url: 'https://i.imgur.com/Zo5Kpnd.mp4', type: 'video' },
-  { avatar: '/img4.png', name: 'Tom John', url: 'https://i.imgur.com/LBRXhIq.jpg', type: 'image' },
-  { avatar: '/img2.png', name: 'Jane', url: 'https://i.imgur.com/ARMxyC4.png', type: 'image' },
-  { avatar: '/img3.png', name: 'xsmTradingForex', url: 'https://i.imgur.com/Zo5Kpnd.mp4', type: 'video' },
-  { avatar: '/img4.png', name: 'BabyTell', url: 'https://i.imgur.com/LBRXhIq.jpg', type: 'image' },
-  { avatar: '/img4.png', name: 'Lay', url: 'https://i.imgur.com/ARMxyC4.png', type: 'image' },
-];
 
 function StoriesListAvatar() {
   const scrollRef = useRef();
@@ -38,6 +30,79 @@ function StoriesListAvatar() {
   const [canvas, setCanvas] = useState(null);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isStoryModalOpen, setStoryModalOpen] = useState(false);
+  const currentUser = JSON.parse(localStorage.getItem('user'));
+  const [imgAvatar, setImgAvatar] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [stories, setStories] = useState([]);
+  const toast = useToast();
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchStories = async (pageNumber) => {
+    try {
+      const res = await makeRequest.get(`/story?page=${pageNumber}&limit=20`);
+      const { data, meta } = res.data;
+      if (!meta.hasNextPage) {
+        setHasMore(false);
+        setStories((prevPosts) => [...prevPosts, ...data]);
+      } else {
+        setStories((prevPosts) => [...prevPosts, ...data]);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      toast({
+        title: 'Cannot load story',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+      // Hiển thị thông báo lỗi nếu có
+      setIsLoading(false);
+    }
+  };
+
+  // const handleAddStory = async (event) => {
+  //   event.preventDefault();
+
+  //   try {
+  //     let postForm = new FormData();
+
+  //     postForm.append('description', description);
+  //     postForm.append('type', 'post');
+  //     for (let i = 0; i < selectedImageFiles.length; i++) {
+  //       postForm.append('multiple-files', selectedImageFiles[i]);
+  //     }
+
+  //     await makeRequest.post(`/posts?user_id=${currentUser.id}`, postForm, {
+  //       headers: { 'Content-Type': 'multipart/form-data' }
+  //     });
+
+  //     resetForm();
+  //     onClose();
+  //     toast({
+  //       title: 'Create post successfully',
+  //       status: 'success',
+  //       duration: 5000,
+  //       isClosable: true,
+  //       position: 'bottom'
+  //     });
+  //   } catch (e) {
+  //     toast({
+  //       title: 'Failed to create post',
+  //       description: e?.response?.data?.message || e.message,
+  //       status: 'error',
+  //       duration: 5000,
+  //       isClosable: true,
+  //       position: 'bottom'
+  //     });
+  //   }
+  // };
+
+  useEffect(() => {
+    fetchStories(page);
+  }, [page]);
 
   const checkScrollPosition = () => {
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
@@ -56,8 +121,12 @@ function StoriesListAvatar() {
   useEffect(() => {
     checkScrollPosition();
     scrollRef.current.addEventListener('scroll', checkScrollPosition);
-    return () => scrollRef.current.removeEventListener('scroll', checkScrollPosition);
+    // return () => scrollRef.current.removeEventListener('scroll', checkScrollPosition);
   }, []);
+
+  useEffect(() => {
+    fetchAvatar(currentUser.avatar, setImgAvatar);
+  }, [currentUser.avatar]);
 
   const showForm = () => {
     setShowAddStoryForm(true);
@@ -90,8 +159,15 @@ function StoriesListAvatar() {
   };
 
   return (
-    <Container maxW="70%" px={0} position="relative" p={1}>
-      {canScrollLeft && (
+    <Container minW="70%" px={0} position="relative" p={1}>
+      {isLoading &&
+        [0, 1, 2, 3, 4, 5, 6, 7, 8].map((_, idx) => (
+          <Flex gap={2} key={idx}>
+            <SkeletonCircle size="15" />
+          </Flex>
+        ))}
+
+      {!isLoading && canScrollLeft && (
         <IconButton
           icon={<ChevronLeftIcon />}
           position="absolute"
@@ -106,40 +182,51 @@ function StoriesListAvatar() {
           background="#aaa"
         />
       )}
-      <Flex
-        ref={scrollRef}
-        alignItems={'flex-start'}
-        gap={8}
-        overflowX={'auto'}
-        css={{
-          '&::-webkit-scrollbar': {
-            height: '0px',
-            background: 'transparent',
-          },
-          '&::-webkit-scrollbar-track': {
-            background: 'transparent',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: 'transparent',
-          },
-          '&::-webkit-scrollbar-thumb:hover': {
-            background: 'transparent',
-          },
-          position: 'relative',
-        }}
-        px={3}
-      >
-        <Story avatar="" name="Your story" showAddIcon={true} onClick={showForm} />
-        {storyData.map((story, index) => (
+      {!isLoading && (
+        <Flex
+          ref={scrollRef}
+          alignItems={'flex-start'}
+          gap={8}
+          overflowX={'auto'}
+          css={{
+            '&::-webkit-scrollbar': {
+              height: '0px',
+              background: 'transparent'
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'transparent'
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: 'transparent'
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: 'transparent'
+            },
+            position: 'relative'
+          }}
+          px={3}>
           <Story
-            key={index}
-            avatar={story.avatar}
-            name={story.name}
-            onClick={() => handleStoryClick(story)}
+            avatar={imgAvatar}
+            name={currentUser.username}
+            showAddIcon={true}
+            onClick={showForm}
           />
-        ))}
-      </Flex>
-      {canScrollRight && (
+          {stories
+            .filter((story) => {
+              return story.User.id !== currentUser.id;
+            })
+            .map((story, index) => (
+              <Story
+                key={index}
+                avatar={story.User.avatar}
+                name={story.User.name_tag}
+                onClick={() => handleStoryClick(story)}
+              />
+            ))}
+        </Flex>
+      )}
+
+      {!isLoading && canScrollRight && (
         <IconButton
           icon={<ChevronRightIcon />}
           position="absolute"
@@ -160,17 +247,29 @@ function StoriesListAvatar() {
           <ModalCloseButton />
           <ModalBody display="flex" alignItems="center" justifyContent="center">
             <Box display="flex" height="680px">
-              <ImageEditor setCanvas={setCanvas} onImageSelected={handleImageSelected} triggerConfirmModal={isConfirmModalOpen} onConfirmModalClose={handleConfirmModalClose} onCancel={handleCloseEditor} />
+              <ImageEditor
+                setCanvas={setCanvas}
+                onImageSelected={handleImageSelected}
+                triggerConfirmModal={isConfirmModalOpen}
+                onConfirmModalClose={handleConfirmModalClose}
+                onCancel={handleCloseEditor}
+              />
               {isImageSelected && <ToolsEditor canvas={canvas} />}
             </Box>
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isStoryModalOpen}size="full">
+      <Modal isOpen={isStoryModalOpen} size="full">
         <ModalOverlay />
         <ModalContent>
-          <ModalBody display="flex" alignItems="center" justifyContent="center" bg="rgba(0,0,0,0.8)">
-            {selectedStory && <ShowStoriesComponent story={selectedStory} onClose={handleCloseStoryModal} />}
+          <ModalBody
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            bg="rgba(0,0,0,0.8)">
+            {selectedStory && (
+              <ShowStoriesComponent story={selectedStory} onClose={handleCloseStoryModal} />
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>

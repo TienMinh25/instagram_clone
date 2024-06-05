@@ -1,6 +1,7 @@
 const moment = require("moment");
 const db = require("../models/index.js");
 const uploadFilesMiddleware = require("../utils/upload_files.js");
+const { where, Op } = require("sequelize");
 
 // Controller function to add a new post
 const addPost = async (req, res) => {
@@ -16,7 +17,7 @@ const addPost = async (req, res) => {
         const newPost = await db.User_post.create({
             userId: parseInt(req.query.user_id),
             media: mutiplePath === "" ? null : mutiplePath,
-            type: req.body?.type || 'post',
+            type: req.body?.type || "post",
             createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             description: req.body.description === "" ? null : req.body.description,
@@ -33,21 +34,26 @@ const addPost = async (req, res) => {
 };
 
 const getPostPagination = async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const take = parseInt(req.query.limit) || 4;
-    const offset = (page - 1) * take;
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const offset = (page - 1) * limit;
+    console.log(offset);
 
     const [data, itemCount] = await Promise.all([
         db.User_post.findAll({
-            offset: offset,
-            limit: take,
-            order: [["createdAt", "DESC"]],
-            include: db.User,
+            where: {
+                type: "post",
+                id: {
+                    [Op.gt]: offset,
+                },
+            },
+            limit: limit,
+            include: [{ model: db.User, attributes: { exclude: ["passwordHash"] } }],
         }),
         db.User_post.count(),
     ]);
 
-    const pageCount = Math.ceil(itemCount / take);
+    const pageCount = Math.ceil(itemCount / limit);
     const hasPreviousPage = page > 1;
     const hasNextPage = page < pageCount;
 
@@ -55,7 +61,7 @@ const getPostPagination = async (req, res) => {
         data,
         meta: {
             page,
-            take,
+            limit,
             itemCount,
             pageCount,
             hasPreviousPage,
@@ -64,7 +70,92 @@ const getPostPagination = async (req, res) => {
     });
 };
 
+const getPostOfUser = async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const posts = await db.User_post.findAll({
+            where: {
+                userId: parseInt(userId),
+            },
+            attributes: {
+                include: [
+                    [
+                        db.sequelize.literal(`(
+                        SELECT COUNT(*)
+                        FROM likes
+                        WHERE
+                          likes.postId = User_post.id
+                      )`),
+                        "likeCount",
+                    ],
+                    [
+                        db.sequelize.literal(`(
+                        SELECT COUNT(*)
+                        FROM comments AS comment
+                        WHERE
+                          comment.postId = User_post.id
+                      )`),
+                        "commentCount",
+                    ],
+                ],
+            },
+        });
+
+        return res.status(200).json({ data: posts });
+    } catch (e) {
+        return res.status(500).json({ message: e.message });
+    }
+};
+
+const getDetailPost = async (req, res) => {
+    const postId = req.params.postId;
+
+    try {
+        const data = await db.User_post.findOne({
+            where: {
+                id: parseInt(postId),
+            },
+            include: [
+                {
+                    model: db.User,
+                    attributes: {
+                        exclude: "passwordHash",
+                    },
+                },
+                {
+                    model: db.Comment,
+                    as: "comments",
+                    attributes: [],
+                },
+                {
+                    model: db.Like,
+                    as: "likes",
+                },
+            ],
+            attributes: {
+                include: [
+                    // Tính tổng số lượng comment
+                    [db.sequelize.fn("COUNT", db.sequelize.col("comments.id")), "commentCount"],
+                    // Tính tổng số lượng tym
+                    [db.sequelize.fn("COUNT", db.sequelize.col("likes.id")), "likeCount"],
+                ],
+            },
+            group: ["User_post.id", "User.id", "likes.id"],
+        });
+
+        return res.status(200).json({ data: data });
+    } catch (e) {
+        return res.status(500).json({ message: e.message });
+    }
+};
+
+const deletePost = async (req, res) => {};
+
 module.exports = {
     addPost,
     getPostPagination,
+    getPostOfUser,
+    getDetailPost,
+    deletePost,
 };

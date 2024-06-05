@@ -1,6 +1,6 @@
 import { Avatar, Box, Link, Tooltip, useColorMode } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import fetchAvatar from '../../utils/fetchAvatar.js';
 
 const ProfileLink = ({ isSelected, onClick }) => {

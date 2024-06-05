@@ -4,17 +4,17 @@ const util = require("util");
 
 var storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, path.join(__dirname, "../../public/post"));
+        callback(null, path.join(__dirname, "../../public/avatar"));
     },
     filename: async (req, file, callback) => {
-        const match = ["image/png", "image/jpeg"];
+        const match = ["image/png", "image/jpeg", "image/jpg"];
 
         if (match.indexOf(file.mimetype) === -1) {
             var message = `${file.originalname} is invalid. Only accept png/jpeg.`;
             return callback(message, null);
         }
 
-        let filename = `${Date.now()}-instagram-${file.originalname}`;
+        let filename = `${Date.now()}-instagram-avatar-${file.originalname}`;
 
         callback(null, filename);
     },

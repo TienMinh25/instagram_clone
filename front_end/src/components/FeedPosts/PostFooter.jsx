@@ -11,12 +11,11 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
-import CommentModal from '../Comment/CommentModal';
-
 import { CommentLogo, NotificationsLogo, UnlikeLogo } from '../../assets/constants.jsx';
 import { makeRequest } from '../../axios.js';
+import ProfilePostModal from '../Profile/ProfilePostModal.jsx';
 
-function PostFooter({ isProfilePage, postId }) {
+function PostFooter({ isProfilePage, postId, imgMediaList, isOpen, onClose, onOpen }) {
   const currentUser = JSON.parse(localStorage.getItem('user'));
   const { colorMode } = useColorMode();
   const [liked, setLiked] = useState(false);
@@ -24,13 +23,12 @@ function PostFooter({ isProfilePage, postId }) {
   const [comments, setComments] = useState([]);
   const [countComments, setCountComments] = useState(0);
   const [newComment, setNewComment] = useState('');
-  const [isModalOpenComment, setIsModalOpenComment] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
     const fetchLikes = async () => {
       try {
-        const response = await makeRequest(`likes?postId=${postId}`);
+        const response = await makeRequest.get(`likes?postId=${postId}`);
         let isLiked = false;
         let { likes, data } = response.data;
 
@@ -57,7 +55,7 @@ function PostFooter({ isProfilePage, postId }) {
 
     const fetchComments = async () => {
       try {
-        const response = await makeRequest(`comments?postId=${postId}`);
+        const response = await makeRequest.get(`comments?postId=${postId}`);
         let { data, meta } = response.data;
 
         setCountComments(meta.itemCount);
@@ -104,6 +102,14 @@ function PostFooter({ isProfilePage, postId }) {
       });
       setCountComments((prev) => prev + 1);
       setNewComment('');
+      toast({
+        title: 'Post comment',
+        description: 'Comment successfully!',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
     } catch (error) {
       toast({
         title: 'Cannot post comment',
@@ -145,76 +151,87 @@ function PostFooter({ isProfilePage, postId }) {
     }
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpenComment(true);
-  };
+  const handleOpenModal = (e) => {
+    e.preventDefault();
 
-  const handleCloseModal = () => {
-    setIsModalOpenComment(false);
+    if (isProfilePage) {
+      return;
+    }
+
+    onOpen();
   };
 
   return (
-    <Box mb={10} mt="auto">
-      <Flex alignItems={'center'} gap={4} w="full" pt={0} mb={2} mt={'4'}>
-        <Box onClick={handleLike} cursor={'pointer'} fontSize={18}>
-          {!liked ? <NotificationsLogo colorMode={colorMode} /> : <UnlikeLogo />}
-        </Box>
+    <>
+      <Box mb={10} mt="auto">
+        <Flex alignItems={'center'} gap={4} w="full" pt={0} mb={2} mt={'4'}>
+          <Box onClick={handleLike} cursor={'pointer'} fontSize={18}>
+            {!liked ? <NotificationsLogo colorMode={colorMode} /> : <UnlikeLogo />}
+          </Box>
 
-        <Box cursor={'pointer'} fontSize={18} onClick={handleOpenModal}>
-          <CommentLogo colorMode={colorMode} />
-        </Box>
-      </Flex>
-      <Text fontWeight={600} fontSize={'sm'}>
-        {likes} likes
-      </Text>
-      {!isProfilePage && (
-        <>
-          <Text fontSize={'sm'} fontWeight={700}>
-            {comments[0] && (
-              <>
-                {comments[0].User.name_tag}{' '}
-                <Text as="span" fontWeight={400}>
-                  {comments[0].content}
-                </Text>
-              </>
-            )}
-          </Text>
-          {countComments > 0 && (
-            <Text fontSize={'sm'} color={'gray'}>
-              View all {countComments} comments
+          <Box cursor={'pointer'} fontSize={18} onClick={handleOpenModal}>
+            <CommentLogo colorMode={colorMode} />
+          </Box>
+        </Flex>
+        <Text fontWeight={600} fontSize={'sm'}>
+          {likes} likes
+        </Text>
+        {!isProfilePage && (
+          <>
+            <Text fontSize={'sm'} fontWeight={700}>
+              {comments[0] && (
+                <>
+                  {comments[0].User.name_tag}{' '}
+                  <Text as="span" fontWeight={400}>
+                    {comments[0].content}
+                  </Text>
+                </>
+              )}
             </Text>
-          )}
-        </>
-      )}
+            {countComments > 0 && (
+              <Text fontSize={'sm'} color={'gray'} onClick={handleOpenModal} cursor={'pointer'}>
+                View all {countComments} comments
+              </Text>
+            )}
+          </>
+        )}
 
-      <Flex alignItems={'center'} gap={2} justifyContent={'space-between'} w="full">
-        <InputGroup>
-          <Input
-            onChange={handleCommentChange}
-            variant={'flushed'}
-            value={newComment}
-            placeholder="Add a comment..."
-            fontSize={14}
-          />
-          <InputRightElement>
-            <Button
+        <Flex alignItems={'center'} gap={2} justifyContent={'space-between'} w="full">
+          <InputGroup>
+            <Input
+              onChange={handleCommentChange}
+              variant={'flushed'}
+              value={newComment}
+              placeholder="Add a comment..."
               fontSize={14}
-              color={'blue.500'}
-              fontWeight={600}
-              cursor={'pointer'}
-              _hover={{
-                color: 'white'
-              }}
-              onClick={handleCommentPost}
-              bg="transparent">
-              Post
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-      </Flex>
+            />
+            <InputRightElement>
+              <Button
+                fontSize={14}
+                color={'blue.500'}
+                fontWeight={600}
+                cursor={'pointer'}
+                _hover={{
+                  color: colorMode === 'dark' ? 'blue.400' : 'blue.800'
+                }}
+                onClick={handleCommentPost}
+                bg="transparent">
+                Post
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+        </Flex>
+      </Box>
 
-      <CommentModal isOpen={isModalOpenComment} onClose={handleCloseModal} comments={comments} />
-    </Box>
+      {isOpen && !isProfilePage && (
+        <ProfilePostModal
+          postId={postId}
+          isOpen={isOpen}
+          onClose={onClose}
+          imgMediaList={imgMediaList}
+        />
+      )}
+    </>
   );
 }
 

@@ -1,7 +1,6 @@
 import { Box, Flex, Tooltip, useColorMode } from '@chakra-ui/react';
-import { NotificationsLogo } from '../../assets/constants';
-import { FaRegHeart } from 'react-icons/fa6';
 import { FaHeart } from 'react-icons/fa';
+import { FaRegHeart } from 'react-icons/fa6';
 
 const Notifications = ({ isSelected, onClick }) => {
   const { colorMode } = useColorMode();
@@ -25,11 +24,7 @@ const Notifications = ({ isSelected, onClick }) => {
         p={2}
         w={{ base: 10, md: 'full' }}
         justifyContent={{ base: 'center', md: 'flex-start' }}>
-        {isSelected ? (
-          <FaHeart size={25} colorMode={colorMode} />
-        ) : (
-          <FaRegHeart size={25} colorMode={colorMode} />
-        )}
+        {isSelected ? <FaHeart size={25} /> : <FaRegHeart size={25} />}
         <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '800' : '500'}>
           Notifications
         </Box>
