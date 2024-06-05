@@ -4,15 +4,34 @@ const moment = require("moment");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        /**
-         * Add seed commands here.
-         *
-         * Example:
-         * await queryInterface.bulkInsert('People', [{
-         *   name: 'John Doe',
-         *   isBetaMember: false
-         * }], {});
-         */
+        const posts = [];
+        const numberOfPosts = 300;
+        const userIds = Array.from({ length: 16 }, (_, i) => i + 1);
+        const mediaFiles = Array.from(
+            { length: 21 },
+            (_, i) => `/backend/public/post/test${i + 1}.jpeg`,
+        );
+
+        for (let i = 0; i < numberOfPosts; i++) {
+            const userId = userIds[Math.floor(Math.random() * userIds.length)];
+            const mediaCount = Math.floor(Math.random() * 5) + 1;
+            const selectedMedia = Array.from(
+                { length: mediaCount },
+                () => mediaFiles[Math.floor(Math.random() * mediaFiles.length)],
+            ).join("$||$");
+            const description = `Test ${i + 1}`;
+            const timestamp = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss");
+
+            posts.push({
+                userId: userId,
+                media: selectedMedia,
+                description: description,
+                type: "post",
+                createdAt: timestamp,
+                updatedAt: timestamp,
+            });
+        }
+
         await queryInterface.bulkInsert("user_posts", [
             {
                 userId: 16,
@@ -22,110 +41,7 @@ module.exports = {
                 createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
                 updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             },
-            {
-                userId: 1,
-                media: "/backend/public/post/test1.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 2,
-                media: "/backend/public/post/test2.jpeg$||$/backend/public/post/test3.jpeg",
-                description: "Test 2, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 1,
-                media: "/backend/public/post/test3.jpeg$||$/backend/public/post/test1.jpeg$||$/backend/public/post/test2.jpeg$||$/backend/public/post/test4.jpeg",
-                description: "Test 3, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 3,
-                media: "/backend/public/post/test2.jpeg$||$/backend/public/post/test3.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 8,
-                media: "/backend/public/post/test2.jpeg$||$/backend/public/post/test3.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 5,
-                media: "/backend/public/post/test2.jpeg$||$/backend/public/post/test3.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 7,
-                media: "/backend/public/post/test4.jpeg$||$/backend/public/post/test1.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 12,
-                media: "/backend/public/post/test2.jpeg$||$/backend/public/post/test3.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 14,
-                media: "/backend/public/post/test4.jpeg$||$/backend/public/post/test3.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 4,
-                media: "/backend/public/post/test3.jpeg$||$/backend/public/post/test1.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 10,
-                media: "/backend/public/post/test1.jpeg$||$/backend/public/post/test3.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 12,
-                media: "/backend/public/post/test3.jpeg$||$/backend/public/post/test4.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 11,
-                media: "/backend/public/post/test4.jpeg$||$/backend/public/post/test2.jpeg",
-                description: "Test 1, media default!",
-                type: "post",
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
+            ...posts,
         ]);
     },
 

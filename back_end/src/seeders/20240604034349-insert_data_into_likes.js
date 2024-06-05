@@ -4,98 +4,28 @@ const moment = require("moment");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        /**
-         * Add seed commands here.
-         *
-         * Example:
-         * await queryInterface.bulkInsert('People', [{
-         *   name: 'John Doe',
-         *   isBetaMember: false
-         * }], {});
-         */
-        await queryInterface.bulkInsert("likes", [
-            {
-                userId: 10,
-                postId: 10,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 9,
-                postId: 10,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 9,
-                postId: 11,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 9,
-                postId: 12,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 3,
-                postId: 10,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 4,
-                postId: 10,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 8,
-                postId: 10,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 1,
-                postId: 10,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 9,
-                postId: 9,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 9,
-                postId: 8,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 3,
-                postId: 8,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-            {
-                userId: 3,
-                postId: 9,
-                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            },
-        ]);
+        const likes = [];
+        const numberOfLikes = 600;
+        const userIds = Array.from({ length: 16 }, (_, i) => i + 1);
+        const postIds = Array.from({ length: 14 }, (_, i) => i + 1);
+
+        for (let i = 0; i < numberOfLikes; i++) {
+            const userId = userIds[Math.floor(Math.random() * userIds.length)];
+            const postId = postIds[Math.floor(Math.random() * postIds.length)];
+            const timestamp = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss");
+
+            likes.push({
+                userId,
+                postId,
+                createdAt: timestamp,
+                updatedAt: timestamp,
+            });
+        }
+
+        await queryInterface.bulkInsert("likes", likes);
     },
 
     async down(queryInterface, Sequelize) {
-        /**
-         * Add commands to revert seed here.
-         *
-         * Example:
-         * await queryInterface.bulkDelete('People', null, {});
-         */
         await queryInterface.bulkDelete("likes", null, {});
     },
 };
