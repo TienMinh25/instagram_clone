@@ -11,13 +11,10 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
-import CommentModal from '../Comment/CommentModal';
-
 import { CommentLogo, NotificationsLogo, UnlikeLogo } from '../../assets/constants.jsx';
 import { makeRequest } from '../../axios.js';
-import { color } from 'framer-motion';
 
-function PostFooter({ isProfilePage, username, postId, avatar, timerAgo, isOwner }) {
+function CommentModalFooter({username, postId, avatar, timerAgo, isOwner }) {
   const currentUser = JSON.parse(localStorage.getItem('user'));
   const { colorMode } = useColorMode();
   const [liked, setLiked] = useState(false);
@@ -146,53 +143,22 @@ function PostFooter({ isProfilePage, username, postId, avatar, timerAgo, isOwner
     }
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpenComment(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpenComment(false);
-  };
 
   return (
-    <Box mb={10} mt="auto">
-      <Flex alignItems={'center'} gap={4} w="full" pt={0} mb={2} mt={'4'}>
+    <Box >
+      <Flex alignItems={'center'} gap={4} w="full" mb={2} borderTop={'1px solid #414141'}>
         <Box onClick={handleLike} cursor={'pointer'} fontSize={18}>
-          {!liked ? <NotificationsLogo colorMode={colorMode} _hover={{color:'gray'}}/> : <UnlikeLogo />}
+          {!liked ? <NotificationsLogo colorMode={colorMode} /> : <UnlikeLogo />}
         </Box>
 
-        <Box cursor={'pointer'} fontSize={18} onClick={handleOpenModal}>
-          <CommentLogo colorMode={colorMode} _hover={{color:'gray'}}/>
+        <Box cursor={'pointer'} fontSize={18}>
+          <CommentLogo colorMode={colorMode} />
         </Box>
       </Flex>
       <Text fontWeight={600} fontSize={'sm'}>
         {likes} {likes > 1 ? 'likes' : 'like'}
       </Text>
-      {!isProfilePage && (
-        <>
-          <Text fontSize={'sm'} fontWeight={700}>
-            {comments[0] && (
-              <>
-                {comments[0].User.name_tag}{' '}
-                <Text as="span" fontWeight={400}>
-                  {comments[0].content}
-                </Text>
-              </>
-            )}
-          </Text>
-          {countComments > 1 && (
-            <Text
-              fontSize={'sm'} color={'gray'}
-              onClick={handleOpenModal}
-              cursor="pointer"
-              >
-              View all {countComments} {countComments > 1 ? 'comments' : 'comment'}
-            </Text>
-          )}
-        </>
-      )}
-
-      <Flex alignItems={'center'} gap={2} justifyContent={'space-between'} w="full">
+      <Flex alignItems={'center'} gap={2} justifyContent={'space-between'} w="full" borderTop="#414141 1px solid" borderBottom={'none'} padding="8px">
         <InputGroup>
           <Input
             onChange={handleCommentChange}
@@ -200,6 +166,8 @@ function PostFooter({ isProfilePage, username, postId, avatar, timerAgo, isOwner
             value={newComment}
             placeholder="Add a comment..."
             fontSize={14}
+            borderBottom={'none'}
+            focusBorderColor="transparent"
           />
           <InputRightElement>
             <Button
@@ -217,10 +185,8 @@ function PostFooter({ isProfilePage, username, postId, avatar, timerAgo, isOwner
           </InputRightElement>
         </InputGroup>
       </Flex>
-
-      <CommentModal isOpen={isModalOpenComment} onClose={handleCloseModal} comments={comments} avatar={avatar} username={username} timerAgo={timerAgo} isOwner={isOwner} postId={postId}/>
     </Box>
   );
 }
 
-export default PostFooter;
+export default CommentModalFooter;

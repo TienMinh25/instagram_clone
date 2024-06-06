@@ -30,7 +30,7 @@ const Notifications = ({ isSelected, onClick }) => {
         ) : (
           <FaRegHeart size={25} colorMode={colorMode} />
         )}
-        <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '800' : '500'}>
+        <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '700' : '400'}>
           Notifications
         </Box>
       </Flex>

@@ -113,7 +113,7 @@ const FeedPost = ({ media, username, avatar, description, isOwner, timerAgo, pos
           )}
         </Flex>
       </Flex>
-      <PostFooter username={username} postId={postId} />
+      <PostFooter username={username} postId={postId} avatar={avatar} timerAgo={timerAgo} isOwner={isOwner}/>
     </>
   );
 };

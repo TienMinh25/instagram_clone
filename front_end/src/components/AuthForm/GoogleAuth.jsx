@@ -16,7 +16,8 @@ const GoogleAuth = ({ prefix }) => {
       const { data } = await makeRequest.get('/oauth/url');
       window.location.href = data.url;
     } catch (e) {
-      alert(JSON.stringify(e));
+      // alert(JSON.stringify(e));
+      console.log(e.message);
     }
   };
 

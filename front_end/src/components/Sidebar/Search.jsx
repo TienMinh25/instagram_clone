@@ -47,7 +47,7 @@ function Search({ isSelected, onClick }) {
             onClick();
           }}>
           {isSelected ? <FaSearch size={25} /> : <IoMdSearch size={28} />}
-          <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '800' : '500'}>
+          <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '700' : '400'}>
             Search
           </Box>
         </Flex>

@@ -7,10 +7,10 @@ function PostHeader({ username, avatar, isOwner, timerAgo }) {
   return (
     <Flex justifyContent={'space-between'} alignItems={'center'} w={'full'} my={2}>
       <Flex alignItems={'center'} gap={2}>
-        <Avatar src={avatar} alt="user profile pic" size={'sm'} />
-        <Flex fontSize={12} fontWeight={'bold'} gap={2}>
-          {username}
-          <Box color={'gray.500'}>• {timerShowUp}</Box>
+        <Avatar src={avatar} alt="user profile pic" size={'sm'} cursor={'pointer'}/>
+        <Flex fontSize={12} fontWeight={'bold'} gap={1} >
+          {username} •
+          <Box color={'gray.500'}> {timerShowUp}</Box>
         </Flex>
       </Flex>
       {!isOwner && (

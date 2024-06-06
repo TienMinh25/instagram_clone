@@ -38,6 +38,7 @@ function StoriesListAvatar() {
   const [canvas, setCanvas] = useState(null);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isStoryModalOpen, setStoryModalOpen] = useState(false);
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
 
   const checkScrollPosition = () => {
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
@@ -75,8 +76,9 @@ function StoriesListAvatar() {
     setConfirmModalOpen(false);
   };
 
-  const handleStoryClick = (story) => {
+  const handleStoryClick = (story, index) => {
     setSelectedStory(story);
+    setCurrentStoryIndex(index);
     setStoryModalOpen(true);
   };
 
@@ -135,7 +137,7 @@ function StoriesListAvatar() {
             key={index}
             avatar={story.avatar}
             name={story.name}
-            onClick={() => handleStoryClick(story)}
+            onClick={() => handleStoryClick(story, index)}
           />
         ))}
       </Flex>
@@ -166,11 +168,17 @@ function StoriesListAvatar() {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isStoryModalOpen}size="full">
+      <Modal isOpen={isStoryModalOpen} onClose={handleCloseStoryModal} size="full">
         <ModalOverlay />
         <ModalContent>
           <ModalBody display="flex" alignItems="center" justifyContent="center" bg="rgba(0,0,0,0.8)">
-            {selectedStory && <ShowStoriesComponent story={selectedStory} onClose={handleCloseStoryModal} />}
+            {selectedStory && (
+              <ShowStoriesComponent
+                storyData={storyData}
+                initialIndex={currentStoryIndex}
+                onClose={handleCloseStoryModal}
+              />
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>

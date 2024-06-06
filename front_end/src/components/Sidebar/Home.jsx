@@ -29,7 +29,7 @@ const Home = ({ isSelected, onClick }) => {
         onClick={onClick}
         justifyContent={{ base: 'center', md: 'flex-start' }}>
         {isSelected ? <AiFillHome size={25} /> : <MdOutlineHome size={25} />}
-        <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '800' : '500'}>
+        <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '700' : '400'}>
           Home
         </Box>
       </Link>
