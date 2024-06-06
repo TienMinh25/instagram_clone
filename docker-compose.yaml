@@ -24,6 +24,7 @@ services:
     container_name: backend_node
     restart: always
     volumes:
+      - ./back_end/public:/backend/public
       - ./back_end/src:/backend/src
       - ./back_end/package.json:/backend/package.json
       - ./back_end/package-lock.json:/backend/package-lock.json

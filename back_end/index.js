@@ -18,6 +18,8 @@ const oauth2Route = require("./src/routes/oauth2_route.js");
 const userRoute = require("./src/routes/user_route.js");
 const likeRouter = require("./src/routes/like_route.js");
 const commentRouter = require("./src/routes/comment_route.js");
+const storyRouter = require("./src/routes/story_route.js");
+const routerRelationship = require("./src/routes/relationship.route.js");
 
 const client = createClient({
     host: process.env.REDIS_HOST,
@@ -106,6 +108,12 @@ app.use("/api/v1", routerPost);
 app.use("/api/v1", likeRouter);
 
 app.use("/api/v1", commentRouter);
+
+app.use("/api/v1", storyRouter);
+
+app.use("/api/v1", routerRelationship);
+
+app.use("/api/v1", userRoute);
 
 // Catch 404 error (if user find some path not found on my app, it will generate status 404 for that)
 app.use((req, res, next) => {

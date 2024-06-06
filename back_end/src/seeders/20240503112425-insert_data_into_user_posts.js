@@ -1,64 +1,57 @@
-'use strict';
+"use strict";
 const moment = require("moment");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    /**
-     * Add seed commands here.
-     *
-     * Example:
-     * await queryInterface.bulkInsert('People', [{
-     *   name: 'John Doe',
-     *   isBetaMember: false
-     * }], {});
-    */
-    await queryInterface.bulkInsert('users', [
-      {
-        userId: 1,
-        media: "/backend/src/upload/test.png",
-        description: "Test 1, media default!",
-        createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-        updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-      },
-      {
-        userId: 2,
-        media: "/backend/src/upload/test.png",
-        description: "Test 2, media default!",
-        createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-        updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-      },
-      {
-        userId: 1,
-        media: "/backend/src/upload/test.png",
-        description: "Test 3, media default!",
-        createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-        updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-      },
-      {
-        userId: 3,
-        media: "/backend/src/upload/test.png",
-        description: "Test 1, media default!",
-        createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-        updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-      },
-      {
-        userId: 2,
-        media: "/backend/src/upload/test.png$||$/backend/src/upload/test1.png",
-        description: "Test 1, media default!",
-        createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-        updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-      }
-    ])
-  },
+    async up(queryInterface, Sequelize) {
+        const posts = [];
+        const numberOfPosts = 300;
+        const userIds = Array.from({ length: 16 }, (_, i) => i + 1);
+        const mediaFiles = Array.from(
+            { length: 21 },
+            (_, i) => `/backend/public/post/test${i + 1}.jpeg`,
+        );
 
-  async down (queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
-    await queryInterface.bulkDelete('user_posts', null, {});
-  }
+        for (let i = 0; i < numberOfPosts; i++) {
+            const userId = userIds[Math.floor(Math.random() * userIds.length)];
+            const mediaCount = Math.floor(Math.random() * 5) + 1;
+            const selectedMedia = Array.from(
+                { length: mediaCount },
+                () => mediaFiles[Math.floor(Math.random() * mediaFiles.length)],
+            ).join("$||$");
+            const description = `Test ${i + 1}`;
+            const timestamp = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss");
+
+            posts.push({
+                userId: userId,
+                media: selectedMedia,
+                description: description,
+                type: "post",
+                createdAt: timestamp,
+                updatedAt: timestamp,
+            });
+        }
+
+        await queryInterface.bulkInsert("user_posts", [
+            {
+                userId: 16,
+                media: "/backend/public/post/postluongbui.jpg",
+                description: "Vịu ơ 😘",
+                type: "post",
+                createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+                updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+            },
+            ...posts,
+        ]);
+    },
+
+    async down(queryInterface, Sequelize) {
+        /**
+         * Add commands to revert seed here.
+         *
+         * Example:
+         * await queryInterface.bulkDelete('People', null, {});
+         */
+        await queryInterface.bulkDelete("user_posts", null, {});
+    },
 };

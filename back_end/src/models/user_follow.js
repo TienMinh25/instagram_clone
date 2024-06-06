@@ -29,7 +29,6 @@ module.exports = (sequelize, DataTypes) => {
                     key: "id",
                 },
             },
-            type: DataTypes.SMALLINT(6),
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE,
         },

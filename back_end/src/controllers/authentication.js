@@ -52,4 +52,8 @@ const logout = async (req, res) => {
     return res.status(200).cookie("access_token", "").end();
 };
 
-module.exports = { loginWithEmalAndPassword, logout };
+const authenticate = async (req, res) => {
+    return res.status(200).end();
+}
+
+module.exports = { loginWithEmalAndPassword, logout, authenticate };

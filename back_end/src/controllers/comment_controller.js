@@ -147,23 +147,42 @@ const editComment = async (req, res) => {
 const getComment = async (req, res) => {
     const postId = req.query.postId;
     const page = parseInt(req.query?.page) || 1;
-    const take = parseInt(req.query?.limit) || 8;
+    const take = parseInt(req.query?.take) || 8;
+    const commentParent = req.query?.commentParent ? parseInt(req.query?.commentParent) : null;
     const offset = (page - 1) * take;
-
+    
     if (!postId) {
         return res.status(400).json({ message: "Required postId on the query" });
     }
-
+    
     try {
         const [data, itemCount] = await Promise.all([
             db.Comment.findAll({
                 where: {
-                    postId: postId,
+                    postId: parseInt(postId),
+                    parentComment: commentParent,
                 },
                 offset: offset,
                 limit: take,
-                order: [["createdAt", "DESC"]],
-                include: [{ model: db.User, as: "User" }],
+                include: [{ 
+                    model: db.User, 
+                    as: "User", 
+                    attributes: {
+                        exclude: "passwordHash",
+                    } 
+                }],
+                attributes: {
+                    include: [
+                        [
+                            db.sequelize.literal(`(
+                            SELECT COUNT(*)
+                            FROM comments AS childrenComments
+                            WHERE childrenComments.parentComment = Comment.id
+                        )`),
+                            "childrenCommentCount",
+                        ],
+                    ],
+                },
             }),
             db.Comment.count({
                 where: {

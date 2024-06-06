@@ -37,7 +37,7 @@ function Story({ avatar, name, showAddIcon, onClick }) {
           src={avatar}
           name={name}
           size={'lg'}
-          showBorder={true}
+          // showBorder={true}
           margin="2.5px"
           borderColor={colorMode === 'light' ? 'white' : 'black'}
           borderWidth={'2px'}

@@ -1,11 +1,10 @@
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { decode } from 'js-base64';
 
-import HomePage from './pages/HomePage/HomePage.jsx';
-import AuthPage from './pages/AuthPage/AuthPage.jsx';
 import PageLayout from './Layouts/PageLayout/PageLayout.jsx';
+import AuthPage from './pages/AuthPage/AuthPage.jsx';
+import HomePage from './pages/HomePage/HomePage.jsx';
 import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
-
 function PrivateRoute() {
   let checkNotExpired = true;
   const access_token = localStorage.getItem('access_token');

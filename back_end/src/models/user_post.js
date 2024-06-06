@@ -17,19 +17,32 @@ module.exports = (sequelize, DataTypes) => {
                 targetKey: "id",
                 onDelete: "cascade",
                 onUpdate: "no action",
+                // as: "creator",
             });
 
             User_post.belongsToMany(models.User, {
                 through: models.Like,
+                // as: 'likers',
                 foreignKey: "postId",
                 otherKey: "userId",
             });
 
             User_post.belongsToMany(models.User, {
                 through: models.Comment,
-                foreignKey: 'postId',
-                otherKey: 'userId',
-            })
+                // as: "commenters",
+                foreignKey: "postId",
+                otherKey: "userId",
+            });
+
+            User_post.hasMany(models.Comment, {
+                as: "comments",
+                foreignKey: "postId",
+            });
+
+            User_post.hasMany(models.Like, {
+                as: "likes",
+                foreignKey: "postId",
+            });
         }
     }
     User_post.init(

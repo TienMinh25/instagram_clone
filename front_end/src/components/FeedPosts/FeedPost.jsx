@@ -1,14 +1,15 @@
-import { Flex, Text, Box, useColorMode, IconButton, Image } from '@chakra-ui/react';
+import { Box, Flex, IconButton, Image, Text, useColorMode, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md';
 import fetchAvatar from '../../utils/fetchAvatar';
 import handlePathFile from '../../utils/handlePathFile';
-import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md';
-import PostHeader from './PostHeader';
 import PostFooter from './PostFooter';
+import PostHeader from './PostHeader';
 
-const FeedPost = ({ media, username, avatar, description, isOwner, timerAgo, postId }) => {
+const FeedPost = ({ media, username, avatar, description, timerAgo, postId, targetId }) => {
   const [imgAvatar, setImgAvatar] = useState();
   const [imgMediaList, setImgMediaList] = useState([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const { colorMode } = useColorMode();
@@ -32,7 +33,7 @@ const FeedPost = ({ media, username, avatar, description, isOwner, timerAgo, pos
 
   return (
     <>
-      <PostHeader username={username} avatar={imgAvatar} isOwner={isOwner} timerAgo={timerAgo} />
+      <PostHeader username={username} avatar={imgAvatar} timerAgo={timerAgo} targetId={targetId}/>
       <Flex my={2} borderRadius={4} overflow={'hidden'} flexDirection={'column'}>
         <Text flex={0.5}>{description}</Text>
         <Flex
@@ -113,7 +114,14 @@ const FeedPost = ({ media, username, avatar, description, isOwner, timerAgo, pos
           )}
         </Flex>
       </Flex>
-      <PostFooter username={username} postId={postId} />
+      <PostFooter
+        isProfilePage={false}
+        postId={postId}
+        onOpen={onOpen}
+        isOpen={isOpen}
+        onClose={onClose}
+        imgMediaList={imgMediaList}
+      />
     </>
   );
 };

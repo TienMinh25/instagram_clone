@@ -1,33 +1,36 @@
-import { useState, useEffect } from 'react';
-import { Flex, Avatar, Text, Link, useToast } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
-
-import fetchAvatar from '../../utils/fetchAvatar';
+import { Avatar, Flex, Link, Text, useToast } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { makeRequest } from '../../axios';
+import fetchAvatar from '../../utils/fetchAvatar';
 
-function SuggestedHeader() {
-  const currentUser = JSON.parse(localStorage.getItem('user'));
+function SuggestedHeader({ currentUser }) {
   const [imgAvatar, setImgAvatar] = useState();
-  const { toast } = useToast();
-
+  const toast = useToast();
+  const navigate = useNavigate();
   useEffect(() => {
     fetchAvatar(currentUser.avatar, setImgAvatar);
   }, [currentUser.avatar]);
 
-  const handleLogout = async () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('access_token');
+  const handleLogout = async (e) => {
+    e.preventDefault();
 
     try {
-      await makeRequest.post('/logout');
+      const data = await makeRequest.post('/logout');
 
-      toast({
-        title: 'Logout successfully!',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom'
-      });
+      if (data.status === 200) {
+        toast({
+          title: 'Logout successfully!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'bottom'
+        });
+
+        localStorage.removeItem('user');
+        localStorage.removeItem('access_token');
+        navigate('/auth');
+      }
     } catch (e) {
       toast({
         title: 'Failed to logout',
@@ -50,7 +53,7 @@ function SuggestedHeader() {
       </Flex>
       <Link
         as={RouterLink}
-        to="/auth"
+        // to="/auth"
         fontSize={14}
         fontWeight={'medium'}
         color={'blue.400'}

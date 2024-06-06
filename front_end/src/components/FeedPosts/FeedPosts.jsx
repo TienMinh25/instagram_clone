@@ -1,39 +1,36 @@
 import {
-  Container,
-  VStack,
-  Flex,
-  SkeletonCircle,
-  Skeleton,
   Box,
-  useToast,
-  Text,
-  useColorMode
+  Container,
+  Flex,
+  Skeleton,
+  SkeletonCircle,
+  Spinner,
+  VStack,
+  useToast
 } from '@chakra-ui/react';
-import { useEffect, useState, useRef, useCallback } from 'react';
-import FeedPost from './FeedPost';
+import { useCallback, useEffect, useState } from 'react';
 import { makeRequest } from '../../axios';
+import FeedPost from './FeedPost';
 
 const FeedPosts = () => {
-  const currentUser = JSON.parse(localStorage.getItem('user'));
-  const [isLoading, setIsLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(false);
+  const [fetchingMore, setFetchingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const observer = useRef();
-  const { colorMode } = useColorMode();
   const toast = useToast();
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(2);
   const [posts, setPosts] = useState([]);
 
-  const fetchPosts = async (pageNumber) => {
+  const fetchMorePosts = useCallback(async () => {
+    if (fetchingMore) return;
+
+    setFetchingMore(true);
+
     try {
-      const res = await makeRequest.get(`/posts?page=${pageNumber}&limit=4`);
+      const res = await makeRequest.get(`/posts?page=${page}&limit=4`);
       const { data, meta } = res.data;
-      if (!meta.hasNextPage) {
-        setHasMore(false);
-        setPosts((prevPosts) => [...prevPosts, ...data]);
-      } else {
-        setPosts((prevPosts) => [...prevPosts, ...data]);
-      }
-      setIsLoading(false);
+      setHasMore(meta.hasNextPage);
+      setPosts((prevPosts) => [...prevPosts, ...data]);
+      setPage((prevPage) => prevPage + 1);
     } catch (error) {
       toast({
         title: 'Cannot load posts',
@@ -43,31 +40,49 @@ const FeedPosts = () => {
         isClosable: true,
         position: 'bottom'
       });
+      setHasMore(false);
       // Hiển thị thông báo lỗi nếu có
-      setIsLoading(false);
+    } finally {
+      setFetchingMore(false);
     }
-  };
+  }, [page, fetchingMore, toast]);
 
   useEffect(() => {
-    fetchPosts(page);
-  }, [page]);
+    const getData = async () => {
+      setInitialLoading(true);
+      try {
+        const response = await makeRequest.get(`/posts?page=1&limit=4`);
+        setPosts(response.data.data);
+        setHasMore(response.data.meta.hasNextPage);
+        setPage(2);
+      } catch (e) {
+        console.log(e);
+        setHasMore(false);
+      } finally {
+        setInitialLoading(false);
+      }
+    };
 
-  const lastPostElementRef = useCallback(
-    (node) => {
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          setPage((prevPage) => prevPage + 1);
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [hasMore]
-  );
+    getData();
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - 100 && hasMore) {
+        fetchMorePosts();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [fetchMorePosts, hasMore]);
 
   return (
     <Container maxW={'container.sm'} py={10} px={2}>
-      {isLoading &&
+      {initialLoading &&
         [0, 1, 2, 3].map((_, idx) => (
           <VStack key={idx} gap={4} alignItems={'flex-start'} mb={10}>
             <Flex gap={2}>
@@ -83,30 +98,29 @@ const FeedPosts = () => {
           </VStack>
         ))}
 
-      {!isLoading && (
+      {!initialLoading && (
         <>
           {posts.map((post) => {
             return (
               <FeedPost
                 key={post.id}
+                targetId={post.User.id}
                 postId={post.id}
                 timerAgo={post.createdAt}
-                isOwner={post.userId === currentUser.id}
                 media={post.media}
                 description={post.description}
                 username={post.User.name_tag}
                 avatar={post.User.avatar}
-                // ref={posts.length === index + 1 ? lastPostElementRef : null}
               />
             );
           })}
         </>
       )}
 
-      {!hasMore && !isLoading && (
-        <Box mt={4} textAlign="center">
-          <Text color={colorMode === 'dark' ? 'gray.400' : 'gray.600'}>No more posts to show</Text>
-        </Box>
+      {fetchingMore && (
+        <Flex justifyContent="center" my={4}>
+          <Spinner size="lg" />
+        </Flex>
       )}
     </Container>
   );
