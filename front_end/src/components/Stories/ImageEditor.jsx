@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { fabric } from 'fabric';
-import { Box, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button } from '@chakra-ui/react';
+import { Box, useColorMode, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button } from '@chakra-ui/react';
 import DragNdrop from './DragNDrop';
 
 const ImageEditor = ({ setCanvas, onImageSelected, triggerConfirmModal, onConfirmModalClose, onCancel }) => {
@@ -8,6 +8,7 @@ const ImageEditor = ({ setCanvas, onImageSelected, triggerConfirmModal, onConfir
   const canvas = useRef(null);
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [files, setFiles] = useState([]);
+  const { colorMode } = useColorMode();
 
   useEffect(() => {
     const initCanvas = () => {
@@ -121,7 +122,8 @@ const ImageEditor = ({ setCanvas, onImageSelected, triggerConfirmModal, onConfir
 
       <Modal isOpen={isConfirmationModalOpen} onClose={handleCancel}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent
+          bg={colorMode === 'dark' ? '#262626' : 'white'}>
           <ModalHeader textAlign="center">Discard your story</ModalHeader>
           <ModalCloseButton />
           <ModalBody textAlign="center">
