@@ -10,7 +10,8 @@ import {
   ModalContent,
   ModalOverlay,
   SkeletonCircle,
-  useToast
+  useToast,
+  useColorMode
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { makeRequest } from '../../axios';
@@ -37,6 +38,7 @@ function StoriesListAvatar() {
   const [stories, setStories] = useState([]);
   const toast = useToast();
   const [hasMore, setHasMore] = useState(true);
+  const {colorMode} = useColorMode();
 
   const fetchStories = async (pageNumber) => {
     try {
@@ -243,7 +245,8 @@ function StoriesListAvatar() {
       )}
       <Modal isOpen={isShowAddStoryForm} onClose={closeForm} size="full">
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent
+          bg={colorMode === 'dark' ? 'black' : 'white'}>
           <ModalCloseButton />
           <ModalBody display="flex" alignItems="center" justifyContent="center">
             <Box display="flex" height="680px">
