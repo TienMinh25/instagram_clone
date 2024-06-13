@@ -33,12 +33,12 @@ export const UserContextProvider = ({ children }) => {
         setErr(null);
 
         let { access_token, ...info } = response.data;
-        
+
         info.avatar = info.avatar.slice(20);
 
         localStorage.setItem('user', JSON.stringify(info));
         localStorage.setItem('access_token', JSON.stringify(access_token));
-        
+
         setLoading(false);
         navigate('/');
       } else throw new Error('Vui lòng nhập đầy đủ dữ liệu!');
@@ -58,16 +58,14 @@ export const UserContextProvider = ({ children }) => {
       if (
         inputs.username.trim() !== '' &&
         inputs.email.trim() !== '' &&
-        inputs.password.trim() !== '' &&
-        inputs.fullname.trim() !== ''
+        inputs.password.trim() !== ''
       ) {
         const response = await makeRequest.post(
           '/register',
           {
             username: inputs.username,
             email: inputs.email,
-            password: inputs.password,
-            fullname: inputs.fullname
+            password: inputs.password
           },
           {
             headers: {
@@ -79,9 +77,9 @@ export const UserContextProvider = ({ children }) => {
         );
 
         let { access_token, ...info } = response.data;
-        
+
         setErr(null);
-        
+
         info.avatar = info.avatar.slice(20);
         localStorage.setItem('user', JSON.stringify(info));
         localStorage.setItem('access_token', JSON.stringify(access_token));

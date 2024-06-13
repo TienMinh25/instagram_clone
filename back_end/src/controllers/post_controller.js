@@ -37,7 +37,6 @@ const getPostPagination = async (req, res) => {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
     const offset = (page - 1) * limit;
-    console.log(offset);
 
     const [data, itemCount] = await Promise.all([
         db.User_post.findAll({

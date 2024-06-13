@@ -1,5 +1,26 @@
-import { Avatar, AvatarGroup, Button, Flex, Skeleton, Text, VStack, useColorMode, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, FormLabel, Input, Textarea, useDisclosure, Center, Box, ModalFooter, } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import {
+  Avatar,
+  AvatarGroup,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalOverlay,
+  Skeleton,
+  Text,
+  Textarea,
+  VStack,
+  useColorMode,
+  useDisclosure,
+  useToast
+} from '@chakra-ui/react';
+import { useCallback, useEffect, useState } from 'react';
 import { FaCamera } from 'react-icons/fa';
 
 import { makeRequest } from '../../axios';
@@ -10,47 +31,57 @@ function ProfileHeader({ userId, isOwnerProfile }) {
   const [profileData, setProfileData] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const { colorMode } = useColorMode();
+  const toast = useToast();
 
   // State for the edit modal
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [username, setUsername] = useState('');
   const [nameTag, setNameTag] = useState('');
   const [bio, setBio] = useState('');
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
 
+  const fetchProfileData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await makeRequest.get(`/users/${userId}`);
+      setProfileData(response.data);
+      fetchAvatar(response.data.user.avatar, setImgAvatar);
+      // Set initial values for the modal
+      setNameTag(response.data.user.name_tag);
+      setUsername(response.data.user.username);
+      setBio(response.data.user.intro);
+    } catch (error) {
+      console.error('Error fetching profile data', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userId]);
+
   useEffect(() => {
-    const fetchProfileData = async () => {
-      setIsLoading(true);
-      try {
-        const response = await makeRequest.get(`/users/${userId}`);
-        console.log(response);
-        setProfileData(response.data);
-        fetchAvatar(response.data.user.avatar, setImgAvatar);
-        // Set initial values for the modal
-        setNameTag(response.data.user.name_tag);
-        setBio(response.data.user.intro);
-      } catch (error) {
-        console.error('Error fetching profile data', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-
     fetchProfileData();
-  }, []);
+  }, [userId, fetchProfileData]);
 
   const handleEditProfile = async () => {
     try {
       const formData = new FormData();
       formData.append('name_tag', nameTag);
       formData.append('intro', bio);
+      formData.append('username', username);
       if (avatarFile) {
         formData.append('avatar', avatarFile, avatarFile.name);
       }
-      const response = await makeRequest.put(`/users/${userId}`, formData);
-      setProfileData(response.data);
-      fetchAvatar(response.data.user.avatar, setImgAvatar);
+      await makeRequest.put(`/users/${userId}`, formData);
+
+      toast({
+        title: 'Update successfully!',
+        description: 'Update information user succesfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+      await fetchProfileData();
       onClose();
     } catch (error) {
       console.error('Error updating profile', error);
@@ -79,7 +110,6 @@ function ProfileHeader({ userId, isOwnerProfile }) {
     setImgAvatar(newAvatarUrl); // Update the imgAvatar state
     setAvatarPreview(newAvatarUrl); // Update the avatarPreview state
   };
-
 
   return (
     <Flex gap={{ base: 4, sm: 10 }} py={10} direction={{ base: 'column', sm: 'row' }}>
@@ -196,19 +226,13 @@ function ProfileHeader({ userId, isOwnerProfile }) {
             </Flex>
           </VStack>
           {/* Edit Profile Modal */}
-          <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            isCentered>
+          <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
-            <ModalContent
-              bg={colorMode === 'dark' ? '#262626' : 'white'}>
+            <ModalContent bg={colorMode === 'dark' ? '#262626' : 'white'}>
               <ModalCloseButton />
               <ModalBody>
                 <Flex alignItems="center" justifyContent="center" mb={4} mt={4}>
-                  <Flex
-                    position="relative"
-                  >
+                  <Flex position="relative">
                     <AvatarGroup
                       size={{ base: 'xl', md: '2xl' }}
                       justifySelf={'center'}
@@ -250,11 +274,16 @@ function ProfileHeader({ userId, isOwnerProfile }) {
                   </Flex>
                 </Flex>
                 <FormControl>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Name tag</FormLabel>
+                  <Input type="text" value={nameTag} onChange={(e) => setNameTag(e.target.value)} />
+                </FormControl>
+
+                <FormControl mt={4}>
+                  <FormLabel>Username</FormLabel>
                   <Input
                     type="text"
-                    value={nameTag}
-                    onChange={(e) => setNameTag(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                 </FormControl>
 
@@ -264,7 +293,7 @@ function ProfileHeader({ userId, isOwnerProfile }) {
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                     css={{
-                      resize: "none"
+                      resize: 'none'
                     }}
                   />
                 </FormControl>
@@ -277,7 +306,6 @@ function ProfileHeader({ userId, isOwnerProfile }) {
             </ModalContent>
           </Modal>
         </>
-
       )}
     </Flex>
   );
