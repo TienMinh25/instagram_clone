@@ -42,14 +42,16 @@ const getPostPagination = async (req, res) => {
         db.User_post.findAll({
             where: {
                 type: "post",
-                id: {
-                    [Op.gt]: offset,
-                },
             },
+            offset: offset,
             limit: limit,
             include: [{ model: db.User, attributes: { exclude: ["passwordHash"] } }],
         }),
-        db.User_post.count(),
+        db.User_post.count({
+            where: {
+                type: "post",
+            },
+        }),
     ]);
 
     const pageCount = Math.ceil(itemCount / limit);

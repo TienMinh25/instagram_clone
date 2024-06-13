@@ -33,7 +33,7 @@ const FeedPost = ({ media, username, avatar, description, timerAgo, postId, targ
 
   return (
     <>
-      <PostHeader username={username} avatar={imgAvatar} timerAgo={timerAgo} targetId={targetId}/>
+      <PostHeader username={username} avatar={imgAvatar} timerAgo={timerAgo} targetId={targetId} />
       <Flex my={2} borderRadius={4} overflow={'hidden'} flexDirection={'column'}>
         <Text flex={0.5}>{description}</Text>
         <Flex
@@ -49,6 +49,7 @@ const FeedPost = ({ media, username, avatar, description, timerAgo, postId, targ
             <Image
               src={`http://${import.meta.env.VITE_BACKEND_HOST}:${import.meta.env.VITE_BACKEND_PORT}/${imgMediaList[currentImageIndex]}`}
               objectFit="cover"
+              maxH={'585px'}
               position={'center'}
             />
           )}
