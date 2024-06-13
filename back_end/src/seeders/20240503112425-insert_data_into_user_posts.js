@@ -6,9 +6,9 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         const posts = [];
         const numberOfPosts = 300;
-        const userIds = Array.from({ length: 16 }, (_, i) => i + 1);
+        const userIds = Array.from({ length: 30 }, (_, i) => i + 1);
         const mediaFiles = Array.from(
-            { length: 21 },
+            { length: 150 },
             (_, i) => `/backend/public/post/test${i + 1}.jpeg`,
         );
 
@@ -52,6 +52,12 @@ module.exports = {
          * Example:
          * await queryInterface.bulkDelete('People', null, {});
          */
-        await queryInterface.bulkDelete("user_posts", null, {});
+        await queryInterface.bulkDelete(
+            "user_posts",
+            {
+                type: "post",
+            },
+            {},
+        );
     },
 };

@@ -1,4 +1,6 @@
+const { where } = require("sequelize");
 const db = require("../models/index.js");
+const uploadAvatarFilesMiddleware = require("../utils/upload_avatar.js");
 
 const getUser = async (req, res) => {
     const userId = parseInt(req.params.userId);
@@ -37,7 +39,45 @@ const getUser = async (req, res) => {
     }
 };
 
-const editUser = async (req, res) => {};
+const editUser = async (req, res) => {
+    const userId = parseInt(req.params.userId);
+
+    await uploadAvatarFilesMiddleware(req, res);
+    try {
+        if (req.file) {
+            await db.User.update(
+                {
+                    username: req.body.username,
+                    name_tag: req.body.name_tag,
+                    intro: req.body.intro,
+                    avatar: req.file.path,
+                },
+                {
+                    where: {
+                        id: userId,
+                    },
+                },
+            );
+        } else {
+            await db.User.update(
+                {
+                    username: req.body.username,
+                    name_tag: req.body.name_tag,
+                    intro: req.body.intro,
+                },
+                {
+                    where: {
+                        id: userId,
+                    },
+                },
+            );
+        }
+
+        return res.status(200).end();
+    } catch (error) {
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
 
 const getFollower = async (req, res) => {};
 

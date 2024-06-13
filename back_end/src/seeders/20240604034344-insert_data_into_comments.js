@@ -6,8 +6,8 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         const comments = [];
         const numberOfComments = 300;
-        const userIds = Array.from({ length: 16 }, (_, i) => i + 1);
-        const postIds = Array.from({ length: 20 }, (_, i) => i + 1);
+        const userIds = Array.from({ length: 30 }, (_, i) => i + 1);
+        const postIds = Array.from({ length: 300 }, (_, i) => i + 1);
 
         const contentTemplates = [
             "Thật ra người muốn hiểu thì không cần bạn nói ra họ vẫn sẽ hỏi, còn người đã không hiểu thì bạn có dùng hết lòng để giải thích thì họ vẫn sẽ mặc định và đánh giá bạn theo cách của họ muốn mà thôi. Đôi khi im lặng là cách tốt nhất để bạn giữ cho bản thân chút năng lượng cuối cùng",

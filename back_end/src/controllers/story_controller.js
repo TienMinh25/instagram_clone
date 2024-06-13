@@ -5,20 +5,14 @@ const uploadStoryFilesMiddleware = require("../utils/upload_story.js");
 const addStory = async (req, res) => {
     try {
         await uploadStoryFilesMiddleware(req, res);
-        let mutiplePath = "";
-        const lengthOfFiles = req.files.length;
 
-        for (let i = 0; i < lengthOfFiles; i++) {
-            if (i != lengthOfFiles - 1) mutiplePath += req.files[i].path + "$||$";
-            else mutiplePath += req.files[i].path;
-        }
         const newStory = await db.User_post.create({
-            userId: parseInt(req.query.user_id),
-            media: mutiplePath === "" ? null : mutiplePath,
+            userId: parseInt(req.query.userId),
+            media: req.file.path,
             type: req.body?.type || "story",
             createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             updatedAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            description: req.body.description === "" ? null : req.body.description,
+            description: req.body.description ? null : req.body.description,
         });
 
         return res.status(201).json({ data: newStory });
@@ -32,9 +26,9 @@ const addStory = async (req, res) => {
 };
 
 const getStoryPagination = async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const take = parseInt(req.query.limit) || 20;
-    const offset = (page - 1) * take;
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const offset = (page - 1) * limit;
 
     const [data, itemCount] = await Promise.all([
         db.User_post.findAll({
@@ -42,14 +36,17 @@ const getStoryPagination = async (req, res) => {
                 type: "story",
             },
             offset: offset,
-            limit: take,
-            order: [["createdAt", "DESC"]],
-            include: db.User,
+            limit: limit,
+            include: [{ model: db.User, attributes: { exclude: ["passwordHash"] } }],
         }),
-        db.User_post.count(),
+        db.User_post.count({
+            where: {
+                type: "story",
+            },
+        }),
     ]);
 
-    const pageCount = Math.ceil(itemCount / take);
+    const pageCount = Math.ceil(itemCount / limit);
     const hasPreviousPage = page > 1;
     const hasNextPage = page < pageCount;
 
@@ -57,7 +54,7 @@ const getStoryPagination = async (req, res) => {
         data,
         meta: {
             page,
-            take,
+            limit,
             itemCount,
             pageCount,
             hasPreviousPage,

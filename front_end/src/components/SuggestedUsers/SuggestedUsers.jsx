@@ -25,7 +25,6 @@ function SuggestedUsers() {
     try {
       const res = await makeRequest.get(`/follower?userId=${currentUser.id}`);
       const { data } = res.data;
-      console.log(data);
       setSuggestedUsers((prevSuggestedUsers) => [...prevSuggestedUsers, ...data]);
       setIsLoading(false);
     } catch (error) {

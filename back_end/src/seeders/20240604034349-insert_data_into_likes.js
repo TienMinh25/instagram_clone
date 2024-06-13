@@ -6,8 +6,8 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         const likes = [];
         const numberOfLikes = 600;
-        const userIds = Array.from({ length: 16 }, (_, i) => i + 1);
-        const postIds = Array.from({ length: 14 }, (_, i) => i + 1);
+        const userIds = Array.from({ length: 30 }, (_, i) => i + 1);
+        const postIds = Array.from({ length: 300 }, (_, i) => i + 1);
 
         for (let i = 0; i < numberOfLikes; i++) {
             const userId = userIds[Math.floor(Math.random() * userIds.length)];

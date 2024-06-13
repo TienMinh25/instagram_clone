@@ -150,11 +150,11 @@ const getComment = async (req, res) => {
     const take = parseInt(req.query?.take) || 8;
     const commentParent = req.query?.commentParent ? parseInt(req.query?.commentParent) : null;
     const offset = (page - 1) * take;
-    
+
     if (!postId) {
         return res.status(400).json({ message: "Required postId on the query" });
     }
-    
+
     try {
         const [data, itemCount] = await Promise.all([
             db.Comment.findAll({
@@ -164,13 +164,15 @@ const getComment = async (req, res) => {
                 },
                 offset: offset,
                 limit: take,
-                include: [{ 
-                    model: db.User, 
-                    as: "User", 
-                    attributes: {
-                        exclude: "passwordHash",
-                    } 
-                }],
+                include: [
+                    {
+                        model: db.User,
+                        as: "User",
+                        attributes: {
+                            exclude: "passwordHash",
+                        },
+                    },
+                ],
                 attributes: {
                     include: [
                         [
