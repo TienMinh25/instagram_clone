@@ -15,7 +15,7 @@ import { CommentLogo, NotificationsLogo, UnlikeLogo } from '../../assets/constan
 import { makeRequest } from '../../axios.js';
 import ProfilePostModal from '../Profile/ProfilePostModal.jsx';
 
-function PostFooter({ isProfilePage, postId, imgMediaList, isOpen, onClose, onOpen }) {
+function PostFooter({ isProfilePage, postId, imgMediaList, isOpen, onClose, onOpen, onDelete }) {
   const currentUser = JSON.parse(localStorage.getItem('user'));
   const { colorMode } = useColorMode();
   const [liked, setLiked] = useState(false);
@@ -225,10 +225,12 @@ function PostFooter({ isProfilePage, postId, imgMediaList, isOpen, onClose, onOp
 
       {isOpen && !isProfilePage && (
         <ProfilePostModal
+          onDelete={onDelete}
           postId={postId}
           isOpen={isOpen}
           onClose={onClose}
           imgMediaList={imgMediaList}
+          setCountComments={setCountComments}
         />
       )}
     </>

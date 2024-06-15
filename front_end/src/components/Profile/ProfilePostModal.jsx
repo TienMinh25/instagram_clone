@@ -27,12 +27,12 @@ import fetchAvatar from '../../utils/fetchAvatar.js';
 import Comments from '../Comment/Comments.jsx';
 import PostFooter from '../FeedPosts/PostFooter.jsx';
 
-function ProfilePostModal({ isOpen, onClose, imgMediaList, postId }) {
+function ProfilePostModal({ isOpen, onClose, imgMediaList, postId, setCountComments, onDelete }) {
   const currentUser = JSON.parse(localStorage.getItem('user'));
   const { colorMode } = useColorMode();
   const [imgAvatar, setImgAvatar] = useState();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState({});
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [metaComments, setMetaComments] = useState();
@@ -111,7 +111,7 @@ function ProfilePostModal({ isOpen, onClose, imgMediaList, postId }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true} size={{ base: '3xl', md: '6xl' }}>
       <ModalOverlay />
-      <ModalContent >
+      <ModalContent>
         <ModalCloseButton />
         <ModalBody bg={colorMode === 'dark' ? 'black' : 'white'} pb={5} borderRadius={6}>
           <Flex gap="4" w={{ base: '90%', sm: '70%', md: 'full' }} mx="auto">
@@ -256,22 +256,20 @@ function ProfilePostModal({ isOpen, onClose, imgMediaList, postId }) {
                       </Text>
                     </Flex>
 
-                    {currentUser.id === posts.User.id ? (
-                      <Box
-                        _hover={{
-                          bg: colorMode === 'dark' ? 'whiteAlpha.300' : 'rgba(0, 0, 0, .05)',
-                          color: 'red.600'
-                        }}
-                        borderRadius={4}
-                        p={1}>
-                        <MdDelete size={20} cursor="pointer" />
-                      </Box>
-                    ) : null}
+                    {currentUser.id === posts.User.id && (
+                      <IconButton
+                        aria-label="Delete post"
+                        icon={<MdDelete />}
+                        colorScheme="red"
+                        size="sm"
+                        onClick={onDelete}
+                      />
+                    )}
                   </Flex>
                   <Divider my={4} bg={'gray.500'} />
 
                   <VStack
-                  position={'relative'}
+                    position={'relative'}
                     w="full"
                     alignItems={'start'}
                     maxH="400px"
@@ -283,7 +281,13 @@ function ProfilePostModal({ isOpen, onClose, imgMediaList, postId }) {
                         background: 'transparent'
                       }
                     }}>
-                    <Comments comments={comments}/>
+                    <Comments
+                      comments={comments}
+                      currentUser={currentUser}
+                      onwerPostId={posts.userId}
+                      setComments={setComments}
+                      setCountComments={setCountComments}
+                    />
                     {metaComments?.hasNextPage && (
                       <>
                         {loadingMore ? (
@@ -305,6 +309,7 @@ function ProfilePostModal({ isOpen, onClose, imgMediaList, postId }) {
                   <Divider my={4} bg={'gray.800'} />
 
                   <PostFooter
+                    onDelete={onDelete}
                     isProfilePage={true}
                     postId={postId}
                     isOpen={isOpen}

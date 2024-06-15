@@ -1,13 +1,49 @@
-import { Flex, GridItem, Image, Text, useDisclosure } from '@chakra-ui/react';
+import { Flex, GridItem, Image, Text, useDisclosure, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { AiFillHeart } from 'react-icons/ai';
 import { FaComment } from 'react-icons/fa';
+import { makeRequest } from '../../axios.js';
 import handlePathFile from '../../utils/handlePathFile';
 import ProfilePostModal from './ProfilePostModal.jsx';
 
-function ProfilePost({ media, likeCount, commentCount, description, postId }) {
+function ProfilePost({
+  media,
+  likeCount,
+  commentCount,
+  description,
+  postId,
+  currentUser,
+  setPosts
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
   const [imgMediaList, setImgMediaList] = useState([]);
+
+  const handleDelete = async () => {
+    try {
+      await makeRequest.delete(`/posts/${postId}?userId=${currentUser.id}`);
+      toast({
+        title: 'Delete post!',
+        description: 'Delete post successfully!',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+      setPosts((prevPosts) => prevPosts.filter((prevPost) => prevPost.id !== postId));
+    } catch (error) {
+      toast({
+        title: 'Cannot delete this post',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      });
+    } finally {
+      onClose();
+    }
+  };
 
   useEffect(() => {
     if (media && media.length > 0) {
@@ -65,6 +101,7 @@ function ProfilePost({ media, likeCount, commentCount, description, postId }) {
 
       {isOpen && (
         <ProfilePostModal
+          onDelete={handleDelete}
           postId={postId}
           isOpen={isOpen}
           onClose={onClose}

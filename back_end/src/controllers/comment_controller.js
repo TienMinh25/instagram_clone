@@ -80,18 +80,16 @@ const addComment = async (req, res) => {
 
 const removeComment = async (req, res) => {
     const postId = req.query.postId;
-    const userId = req.query.userId;
     const commentId = req.params.comment_id;
 
     try {
-        if (!postId || !userId) {
-            return res.status(400).json({ message: "Required userId and postId on the query" });
+        if (!postId) {
+            return res.status(400).json({ message: "Required postId on the query" });
         }
 
         const data = await db.Comment.destroy({
             where: {
                 id: parseInt(commentId),
-                userId: parseInt(userId),
                 postId: parseInt(postId),
             },
         });
@@ -103,10 +101,9 @@ const removeComment = async (req, res) => {
 };
 
 const editComment = async (req, res) => {
-    const postId = req.query.postId;
-    const userId = req.query.postId;
-    const commentId = req.params.comment_id;
-    const data = req.body;
+    const postId = parseInt(req.query.postId);
+    const userId = parseInt(req.query.userId);
+    const commentId = parseInt(req.params.comment_id);
 
     if (!postId || !userId || !commentId) {
         return res
@@ -114,7 +111,6 @@ const editComment = async (req, res) => {
             .json({ message: "Required postId and userId on the query, commentId in path" });
     }
 
-    const t = await sequelize.transaction();
     try {
         await db.Comment.update(
             {
@@ -123,23 +119,38 @@ const editComment = async (req, res) => {
             },
             {
                 where: { id: commentId, postId: postId, userId: userId },
-                transaction: t,
             },
         );
 
-        const data = await db.Comment.findOne(
-            {
-                where: {
-                    commentId: parseInt(commentId),
+        const data = await db.Comment.findOne({
+            where: {
+                id: parseInt(commentId),
+            },
+            include: [
+                {
+                    model: db.User,
+                    as: "User",
+                    attributes: {
+                        exclude: "passwordHash",
+                    },
                 },
+            ],
+            attributes: {
+                include: [
+                    [
+                        db.sequelize.literal(`(
+                        SELECT COUNT(*)
+                        FROM comments AS childrenComments
+                        WHERE childrenComments.parentComment = Comment.id
+                    )`),
+                        "childrenCommentCount",
+                    ],
+                ],
             },
-            { transaction: t },
-        );
+        });
 
-        await t.commit();
         return res.status(200).json(data);
     } catch (e) {
-        await t.rollback();
         return res.status(500).json({ message: "Cannot edit comment" });
     }
 };

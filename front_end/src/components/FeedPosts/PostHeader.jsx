@@ -1,8 +1,9 @@
-import { Avatar, Box, Flex } from '@chakra-ui/react';
+import { Avatar, Box, Flex, IconButton } from '@chakra-ui/react';
 import formatTimeAgo from '../../utils/formatTimeAgo';
 import { useNavigate } from 'react-router-dom';
+import { MdDelete } from 'react-icons/md';
 
-function PostHeader({ username, avatar, timerAgo, targetId }) {
+function PostHeader({ username, avatar, timerAgo, targetId, onDelete, currentUser }) {
   const timerShowUp = formatTimeAgo(timerAgo);
   const navigate = useNavigate();
 
@@ -19,6 +20,15 @@ function PostHeader({ username, avatar, timerAgo, targetId }) {
           <Box color={'gray.500'}>• {timerShowUp}</Box>
         </Flex>
       </Flex>
+      {currentUser.id === targetId && (
+        <IconButton
+          aria-label="Delete post"
+          icon={<MdDelete />}
+          colorScheme="red"
+          size="sm"
+          onClick={onDelete}
+        />
+      )}
     </Flex>
   );
 }

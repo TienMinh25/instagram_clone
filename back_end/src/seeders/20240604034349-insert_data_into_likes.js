@@ -5,7 +5,7 @@ const moment = require("moment");
 module.exports = {
     async up(queryInterface, Sequelize) {
         const likes = [];
-        const numberOfLikes = 600;
+        const numberOfLikes = 4000;
         const userIds = Array.from({ length: 30 }, (_, i) => i + 1);
         const postIds = Array.from({ length: 300 }, (_, i) => i + 1);
 
