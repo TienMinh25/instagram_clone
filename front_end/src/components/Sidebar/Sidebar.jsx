@@ -1,15 +1,15 @@
 import { Box, Flex, Link, Tooltip, useColorMode } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { useState } from 'react';
 import { BiLogOut } from 'react-icons/bi';
-import { MdOutlineLightMode, MdDarkMode } from 'react-icons/md';
+import { MdDarkMode, MdOutlineLightMode } from 'react-icons/md';
+import { Link as RouterLink } from 'react-router-dom';
 import { InstagramLogo, InstagramMobileLogo } from '../../assets/constants';
-
+import useLogout from '../../hooks/useLogout.js';
 import SidebarItems from './SidebarItems';
 
-import useLogout from '../../hooks/useLogout.js';
-
-function Sidebar() {
+function Sidebar({ isCollapsed }) {
   const { colorMode, toggleColorMode } = useColorMode();
+  const [selectedItem, setSelectedItem] = useState('');
   const { handleLogout } = useLogout();
 
   return (
@@ -21,82 +21,132 @@ function Sidebar() {
       position={'sticky'}
       top={0}
       left={0}
-      px={{ base: '2', md: 4 }}>
+      px={4}>
       <Flex direction={'column'} gap={10} w="full" height={'full'}>
-        <Link
-          to={'/'}
-          as={RouterLink}
-          pl={2}
-          display={{ base: 'none', md: 'block' }}
-          cursor={'pointer'}>
-          <InstagramLogo colorMode={colorMode} />
-        </Link>
-        <Link
-          to={'/'}
-          as={RouterLink}
-          pl={2}
-          display={{ base: 'block', md: 'none' }}
-          cursor={'pointer'}
-          borderRadius={6}
-          _hover={{
-            bg: 'whiteAlpha.200'
-          }}
-          w={{ base: '10' }}>
-          <InstagramMobileLogo colorMode={colorMode} />
-        </Link>
-        <Flex direction={'column'} gap={5} cursor={'pointer'}>
-          <SidebarItems />
-        </Flex>
-
-        <Flex ml={1} direction={'column'} gap={2} mt="auto">
-          {colorMode === 'dark' ? (
-            <Flex
-              direction={'row'}
-              gap={5}
+        {isCollapsed ? (
+          <Tooltip
+            hasArrow
+            label={'Home'}
+            placement="right"
+            ml={1}
+            openDelay={500}
+            display={{ base: 'block', md: 'none' }}>
+            <Link
+              to={'/'}
+              as={RouterLink}
+              onClick={() => setSelectedItem('')}
+              alignItems={'center'}
+              display="flex"
+              padding={'8px'}
               cursor={'pointer'}
+              borderRadius={6}
+              minW={'40px'}
+              minH={'40px'}
               _hover={{
-                bg: 'whiteAlpha.400'
+                bg: colorMode === 'dark' ? 'whiteAlpha.400' : 'rgba(0, 0, 0, .05)'
               }}
-              p={2}
-              borderRadius={6}
-              onClick={toggleColorMode}>
+              w={{ base: '10px' }}>
+              <InstagramMobileLogo colorMode={colorMode} />
+            </Link>
+          </Tooltip>
+        ) : (
+          <>
+            <Tooltip
+              hasArrow
+              label={'Home'}
+              placement="right"
+              ml={1}
+              openDelay={500}
+              display={{ base: 'block', md: 'none' }}>
+              <Link
+                to={'/'}
+                as={RouterLink}
+                onClick={() => setSelectedItem('')}
+                display={isCollapsed ? 'flex' : { base: 'none', md: 'block' }}
+                cursor={'pointer'}>
+                <InstagramLogo colorMode={colorMode} />
+              </Link>
+            </Tooltip>
+            <Tooltip
+              hasArrow
+              label={'Home'}
+              placement="right"
+              ml={1}
+              openDelay={500}
+              display={{ base: 'block', md: 'none' }}>
+              <Link
+                to={'/'}
+                as={RouterLink}
+                onClick={() => setSelectedItem('')}
+                alignItems={'center'}
+                display={{ base: 'flex', md: 'none' }}
+                padding={'8px'}
+                cursor={'pointer'}
+                borderRadius={6}
+                minW={'40px'}
+                minH={'40px'}
+                _hover={{
+                  bg: colorMode === 'dark' ? 'whiteAlpha.400' : 'rgba(0, 0, 0, .05)'
+                }}
+                w={{ base: '10px' }}>
+                <InstagramMobileLogo colorMode={colorMode} />
+              </Link>
+            </Tooltip>
+          </>
+        )}
+
+        <Flex
+          direction={'column'}
+          gap={5}
+          cursor={'pointer'}
+          justifyContent={'center'}
+          alignItems={'center'}>
+          <SidebarItems
+            isCollapsed={isCollapsed}
+            setSelectedItem={setSelectedItem}
+            selectedItem={selectedItem}
+          />
+        </Flex>
+        <Flex
+          ml={1}
+          direction={'column'}
+          gap={2}
+          mt="auto"
+          justifyContent={'center'}
+          alignItems={'center'}>
+          <Flex
+            direction={'row'}
+            gap={5}
+            cursor={'pointer'}
+            _hover={{ bg: colorMode === 'dark' ? 'whiteAlpha.400' : 'rgba(0, 0, 0, .05)' }}
+            p={2}
+            borderRadius={6}
+            onClick={toggleColorMode}>
+            {colorMode === 'dark' ? (
               <MdOutlineLightMode size={'20px'} />
-              <Box display={{ base: 'none', md: 'block' }}>Switch appearance</Box>
-            </Flex>
-          ) : (
-            <Flex
-              direction={'row'}
-              gap={5}
-              cursor={'pointer'}
-              _hover={{ bg: 'rgba(0, 0, 0, .05)' }}
-              p={2}
-              borderRadius={6}
-              onClick={toggleColorMode}>
+            ) : (
               <MdDarkMode size={'20px'} />
-              <Box display={{ base: 'none', md: 'block' }}>Switch appearance</Box>
-            </Flex>
-          )}
+            )}
+            {!isCollapsed && <Box display={{ base: 'none', md: 'block' }}>Switch appearance</Box>}
+          </Flex>
           <Tooltip
             label={'Logout'}
             hasArrow
             placement="right"
             openDelay={500}
             display={{ base: 'block', md: 'none' }}>
-            {/* LOG OUT */}
-            {/* Can xoa access_token trong cookie storage o day */}
             <Flex
               onClick={handleLogout}
               alignItems={'center'}
               gap={4}
-              _hover={{
-                bg: colorMode === 'dark' ? 'whiteAlpha.400' : 'rgba(0, 0, 0, .05)'
-              }}
+              _hover={{ bg: colorMode === 'dark' ? 'whiteAlpha.400' : 'rgba(0, 0, 0, .05)' }}
               borderRadius={6}
               p={2}
               w={{ base: 10, md: 'full' }}
-              justifyContent={{ base: 'center', md: 'flex-start' }}>
-              <BiLogOut />
-              <Box display={{ base: 'none', md: 'block' }}>Log out</Box>
+              justifyContent={{ base: 'center', md: 'flex-start' }}
+              cursor={'pointer'}>
+              <BiLogOut size={'20px'} />
+              {!isCollapsed && <Box display={{ base: 'none', md: 'block' }}>Log out</Box>}
             </Flex>
           </Tooltip>
         </Flex>

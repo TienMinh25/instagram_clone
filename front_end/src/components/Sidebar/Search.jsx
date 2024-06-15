@@ -21,7 +21,7 @@ import { useRef, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { IoMdSearch } from 'react-icons/io';
 
-function Search({ isSelected, onClick }) {
+function Search({ isSelected, onClick, isCollapsed }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
   const searchRef = useRef();
@@ -62,10 +62,12 @@ function Search({ isSelected, onClick }) {
             onOpen();
             onClick();
           }}>
-          {isSelected ? <FaSearch size={25} /> : <IoMdSearch size={28} />}
-          <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '800' : '500'}>
-            Search
-          </Box>
+          {isSelected ? <FaSearch size={25} /> : <IoMdSearch size={30} />}
+          {!isCollapsed && (
+            <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '800' : '500'}>
+              Search
+            </Box>
+          )}
         </Flex>
       </Tooltip>
       <Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInLeft">
