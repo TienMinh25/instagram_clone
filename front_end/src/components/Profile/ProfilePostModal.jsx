@@ -111,7 +111,7 @@ function ProfilePostModal({ isOpen, onClose, imgMediaList, postId }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true} size={{ base: '3xl', md: '6xl' }}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent >
         <ModalCloseButton />
         <ModalBody bg={colorMode === 'dark' ? 'black' : 'white'} pb={5} borderRadius={6}>
           <Flex gap="4" w={{ base: '90%', sm: '70%', md: 'full' }} mx="auto">
@@ -234,6 +234,7 @@ function ProfilePostModal({ isOpen, onClose, imgMediaList, postId }) {
                     alignItems={'start'}
                     maxH="400px"
                     overflowY={'auto'}
+                    overflowX={'visible'}
                     css={{
                       '&::-webkit-scrollbar': {
                         width: '0px',
@@ -270,6 +271,7 @@ function ProfilePostModal({ isOpen, onClose, imgMediaList, postId }) {
                   <Divider my={4} bg={'gray.500'} />
 
                   <VStack
+                  position={'relative'}
                     w="full"
                     alignItems={'start'}
                     maxH="400px"
@@ -281,7 +283,7 @@ function ProfilePostModal({ isOpen, onClose, imgMediaList, postId }) {
                         background: 'transparent'
                       }
                     }}>
-                    <Comments comments={comments} />
+                    <Comments comments={comments}/>
                     {metaComments?.hasNextPage && (
                       <>
                         {loadingMore ? (
