@@ -151,7 +151,44 @@ const getDetailPost = async (req, res) => {
     }
 };
 
-const deletePost = async (req, res) => {};
+const deletePost = async (req, res) => {
+    const postId = parseInt(req.params.postId);
+    const userId = parseInt(req.query.userId);
+
+    try {
+        if (!postId) {
+            return res.status(400).json({ message: "Required postId on the param" });
+        }
+
+        if (!userId) {
+            return res.status(400).json({ message: "Required userId on the query" });
+        }
+
+        await Promise.all([
+            db.Comment.destroy({
+                where: {
+                    postId: postId,
+                },
+            }),
+            db.Like.destroy({
+                where: {
+                    postId: postId,
+                },
+            }),
+        ]);
+
+        const data = await db.User_post.destroy({
+            where: {
+                id: postId,
+                userId: userId,
+            },
+        });
+
+        return res.status(200).json(data);
+    } catch (e) {
+        return res.status(500).json({ message: e.message });
+    }
+};
 
 module.exports = {
     addPost,

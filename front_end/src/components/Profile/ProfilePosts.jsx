@@ -15,6 +15,7 @@ import { makeRequest } from '../../axios';
 import ProfilePost from './ProfilePost';
 
 function ProfilePosts({ activeTab, userId, isOwnerProfile }) {
+  const currentUser = JSON.parse(localStorage.getItem('user'));
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const toast = useToast();
@@ -124,6 +125,8 @@ function ProfilePosts({ activeTab, userId, isOwnerProfile }) {
             <>
               {posts.map((post) => (
                 <ProfilePost
+                  setPosts={setPosts}
+                  currentUser={currentUser}
                   key={post.id}
                   postId={post.id}
                   description={post.description}

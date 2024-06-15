@@ -103,6 +103,7 @@ const FeedPosts = () => {
           {posts.map((post) => {
             return (
               <FeedPost
+                setPosts={setPosts}
                 key={post.id}
                 targetId={post.User.id}
                 postId={post.id}

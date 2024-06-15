@@ -34,8 +34,6 @@ export const UserContextProvider = ({ children }) => {
 
         let { access_token, ...info } = response.data;
 
-        info.avatar = info.avatar.slice(20);
-
         localStorage.setItem('user', JSON.stringify(info));
         localStorage.setItem('access_token', JSON.stringify(access_token));
 
@@ -79,8 +77,7 @@ export const UserContextProvider = ({ children }) => {
         let { access_token, ...info } = response.data;
 
         setErr(null);
-
-        info.avatar = info.avatar.slice(20);
+        
         localStorage.setItem('user', JSON.stringify(info));
         localStorage.setItem('access_token', JSON.stringify(access_token));
         setLoading(false);

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import fetchAvatar from '../../utils/fetchAvatar.js';
 
-const ProfileLink = ({ isSelected, onClick }) => {
+const ProfileLink = ({ onClick }) => {
   const { colorMode } = useColorMode();
   const currentUser = JSON.parse(localStorage.getItem('user'));
   const [imgAvatar, setImgAvatar] = useState();
