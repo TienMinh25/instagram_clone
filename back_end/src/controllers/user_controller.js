@@ -1,4 +1,4 @@
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 const db = require("../models/index.js");
 const uploadAvatarFilesMiddleware = require("../utils/upload_avatar.js");
 
@@ -79,8 +79,43 @@ const editUser = async (req, res) => {
     }
 };
 
+const searchUser = async (req, res) => {
+    const tag_name = req.body.search;
+    const userId = parseInt(req.body.userId);
+
+    try {
+        const data = await db.User.findAll({
+            where: {
+                name_tag: {
+                    [Op.like]: `%${tag_name}%`,
+                },
+                id: {
+                    [Op.ne]: userId,
+                },
+            },
+            attributes: {
+                include: [
+                    [
+                        db.sequelize.literal(`(
+                        SELECT count(*)
+                        from user_follows
+                        where user_follows.targetId = User.id
+                        )`),
+                        "followerCount",
+                    ],
+                ],
+                exclude: ["passwordHash"],
+            },
+        });
+
+        return res.status(200).json(data);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 const getFollower = async (req, res) => {};
 
 const getFollowing = async (req, res) => {};
 
-module.exports = { getUser, editUser, getFollower, getFollowing };
+module.exports = { getUser, editUser, getFollower, getFollowing, searchUser };

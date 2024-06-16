@@ -93,6 +93,7 @@ const FeedPost = ({
           justifyContent={'center'}
           position="relative"
           p={0}
+          border={colorMode === 'dark' ? '1px solid rgb(38, 38, 38)' : '0.75px solid rgb(219, 219, 219)'}
           w={'100%'}
           aspectRatio={'1/1'}
           borderBottomLeftRadius={'6px'}>

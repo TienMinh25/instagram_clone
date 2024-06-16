@@ -3,7 +3,13 @@ import { AiFillHome } from 'react-icons/ai';
 import { MdOutlineHome } from 'react-icons/md';
 import { Link as RouterLink } from 'react-router-dom';
 
-const Home = ({ isSelected, onClick, isCollapsed }) => {
+const Home = ({
+  isSelected,
+  onClick,
+  isCollapsed,
+  setIsSidebarCollapsed,
+  setShowSidebarContent
+}) => {
   const { colorMode } = useColorMode();
 
   return (
@@ -26,7 +32,11 @@ const Home = ({ isSelected, onClick, isCollapsed }) => {
         borderRadius={6}
         p={2}
         w={{ base: 10, md: 'full' }}
-        onClick={onClick}
+        onClick={() => {
+          onClick();
+          setIsSidebarCollapsed(false);
+          setShowSidebarContent(false);
+        }}
         justifyContent={{ base: 'center', md: 'flex-start' }}>
         {isSelected ? <AiFillHome size={25} /> : <MdOutlineHome size={25} />}
         {!isCollapsed && (

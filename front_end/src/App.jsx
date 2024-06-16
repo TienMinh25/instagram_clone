@@ -35,7 +35,7 @@ function App() {
   }, [location.pathname]);
 
   return (
-    <PageLayout isCollapsed={isSidebarCollapsed}>
+    <PageLayout isCollapsed={isSidebarCollapsed} setIsSidebarCollapsed={setIsSidebarCollapsed}>
       <Routes>
         <Route path="/auth" index={true} element={<AuthPage />} />
         <Route path="/" element={<PrivateRoute />}>

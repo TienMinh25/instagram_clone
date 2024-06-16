@@ -7,10 +7,13 @@ import { InstagramLogo, InstagramMobileLogo } from '../../assets/constants';
 import useLogout from '../../hooks/useLogout.js';
 import SidebarItems from './SidebarItems';
 
-function Sidebar({ isCollapsed }) {
+function Sidebar({ isCollapsed, setIsSidebarCollapsed }) {
   const { colorMode, toggleColorMode } = useColorMode();
   const [selectedItem, setSelectedItem] = useState('');
+  const [showSidebarContent, setShowSidebarContent] = useState(false);
   const { handleLogout } = useLogout();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isClicked, setIsClicked] = useState(false);
 
   return (
     <Box
@@ -19,6 +22,8 @@ function Sidebar({ isCollapsed }) {
       borderColor={colorMode === 'dark' ? 'whiteAlpha.300' : 'rgba(0,0,0,0.2)'}
       py={8}
       position={'sticky'}
+      className={`sidebar ${isCollapsed ? 'collapsed' : 'expanded'}`}
+      zIndex={1000}
       top={0}
       left={0}
       px={4}>
@@ -34,7 +39,13 @@ function Sidebar({ isCollapsed }) {
             <Link
               to={'/'}
               as={RouterLink}
-              onClick={() => setSelectedItem('')}
+              onClick={() => {
+                setSelectedItem('');
+                setShowSidebarContent(false);
+                setIsSidebarCollapsed(false);
+                setIsClicked(false);
+                setSearchQuery('');
+              }}
               alignItems={'center'}
               display="flex"
               padding={'8px'}
@@ -61,7 +72,13 @@ function Sidebar({ isCollapsed }) {
               <Link
                 to={'/'}
                 as={RouterLink}
-                onClick={() => setSelectedItem('')}
+                onClick={() => {
+                  setSelectedItem('');
+                  setShowSidebarContent(false);
+                  setIsSidebarCollapsed(false);
+                  setIsClicked(false);
+                  setSearchQuery('');
+                }}
                 display={isCollapsed ? 'flex' : { base: 'none', md: 'block' }}
                 cursor={'pointer'}>
                 <InstagramLogo colorMode={colorMode} />
@@ -77,7 +94,13 @@ function Sidebar({ isCollapsed }) {
               <Link
                 to={'/'}
                 as={RouterLink}
-                onClick={() => setSelectedItem('')}
+                onClick={() => {
+                  setSelectedItem('');
+                  setShowSidebarContent(false);
+                  setIsSidebarCollapsed(false);
+                  setIsClicked(false);
+                  setSearchQuery('');
+                }}
                 alignItems={'center'}
                 display={{ base: 'flex', md: 'none' }}
                 padding={'8px'}
@@ -102,9 +125,16 @@ function Sidebar({ isCollapsed }) {
           justifyContent={'center'}
           alignItems={'center'}>
           <SidebarItems
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+            setIsClicked={setIsClicked}
+            isClicked={isClicked}
+            showSidebarContent={showSidebarContent}
+            setShowSidebarContent={setShowSidebarContent}
             isCollapsed={isCollapsed}
             setSelectedItem={setSelectedItem}
             selectedItem={selectedItem}
+            setIsSidebarCollapsed={setIsSidebarCollapsed}
           />
         </Flex>
         <Flex

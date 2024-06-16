@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import Wait from '../../components/Wait/Wait';
 import { UserContext } from '../../context/userContext';
 
-function PageLayout({ isCollapsed, children }) {
+function PageLayout({ isCollapsed, children, setIsSidebarCollapsed }) {
   const { pathname } = useLocation();
   const { loading } = useContext(UserContext);
 
@@ -13,18 +13,9 @@ function PageLayout({ isCollapsed, children }) {
     <Wait />
   ) : (
     <Flex>
-      {/* {pathname !== '/auth' && (
-        <Box w={{ base: '10px', md: '240px' }}>
-          <Sidebar isCollapsed={isCollapsed} />
-        </Box>
-      )}
-
-      <Box flex={1} w={{ base: 'calc(100%-70px)', md: 'calc(100%-240px)' }}>
-        {children}
-      </Box> */}
       {pathname !== '/auth' && (
         <Box w={isCollapsed ? '70px' : { base: '70px', md: '240px' }}>
-          <Sidebar isCollapsed={isCollapsed} />
+          <Sidebar isCollapsed={isCollapsed} setIsSidebarCollapsed={setIsSidebarCollapsed}/>
         </Box>
       )}
       <Box
