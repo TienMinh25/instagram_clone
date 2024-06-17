@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import fetchAvatar from '../../utils/fetchAvatar.js';
 
-const ProfileLink = ({ onClick }) => {
+const ProfileLink = ({ onClick, isCollapsed, setIsSidebarCollapsed, setShowSidebarContent }) => {
   const { colorMode } = useColorMode();
   const currentUser = JSON.parse(localStorage.getItem('user'));
   const [imgAvatar, setImgAvatar] = useState();
@@ -26,16 +26,20 @@ const ProfileLink = ({ onClick }) => {
         as={RouterLink}
         alignItems={'center'}
         gap={4}
-        onClick={onClick}
+        onClick={() => {
+          onClick();
+          setIsSidebarCollapsed(false);
+          setShowSidebarContent(false);
+        }}
         _hover={{
           bg: colorMode === 'dark' ? 'whiteAlpha.400' : 'rgba(0, 0, 0, .05)'
         }}
         borderRadius={6}
         p={2}
         w={{ base: 10, md: 'full' }}
-        justifyContent={{ base: 'center', md: 'flex-start' }}>
+        justifyContent={isCollapsed ? 'center' : { base: 'center', md: 'flex-start' }}>
         <Avatar size={'sm'} src={imgAvatar} />
-        <Box display={{ base: 'none', md: 'block' }}>Profile</Box>
+        {!isCollapsed && <Box display={{ base: 'none', md: 'block' }}>Profile</Box>}
       </Link>
     </Tooltip>
   );

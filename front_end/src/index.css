@@ -1,0 +1,76 @@
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-2%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes collapsed {
+  from {
+    opacity: 0;
+    width: 233px;
+  }
+  to {
+    opacity: 1;
+    width: 100%;
+  }
+}
+
+@keyframes expand {
+  from {
+    opacity: 0;
+    width: 120px;
+  }
+  to {
+    opacity: 1;
+    width: 100%;
+  }
+}
+
+.sidebar {
+  width: 100%;
+}
+
+.sidebar.expanded {
+  animation: expand 1s forwards;
+}
+
+.sidebar.collapsed {
+  animation: collapsed 0.5s forwards;
+}
+
+.sidebar-search {
+  opacity: 0;
+  visibility: hidden;
+  display: none;
+  transition:
+    visibility 0s 2s,
+    opacity 2s,
+    transform 2s;
+}
+
+.sidebar-search.visible {
+  opacity: 1;
+  visibility: visible;
+  display: flex;
+  animation: slideIn 1s forwards;
+}
+
+.sidebar-content:not(.visible) {
+  animation: slideOut 1s forwards;
+}

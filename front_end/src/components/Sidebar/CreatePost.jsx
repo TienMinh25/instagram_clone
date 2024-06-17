@@ -30,7 +30,7 @@ import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-i
 import fetchAvatar from '../../utils/fetchAvatar.js';
 import { makeRequest } from '../../axios';
 
-function CreatePost() {
+function CreatePost({ isCollapsed }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
   const toast = useToast();
@@ -158,7 +158,7 @@ function CreatePost() {
           justifyContent={{ base: 'center', md: 'flex-start' }}
           onClick={onOpen}>
           <CreatePostLogo colorMode={colorMode} />
-          <Box display={{ base: 'none', md: 'block' }}>Create</Box>
+          {!isCollapsed && <Box display={{ base: 'none', md: 'block' }}>Create</Box>}
         </Flex>
       </Tooltip>
 

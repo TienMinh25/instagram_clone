@@ -1,8 +1,15 @@
-import { Box, Flex, Tooltip, useColorMode } from '@chakra-ui/react';
+import { Box, Flex, Link, Tooltip, useColorMode } from '@chakra-ui/react';
 import { FaHeart } from 'react-icons/fa';
+import { Link as RouterLink } from 'react-router-dom';
 import { FaRegHeart } from 'react-icons/fa6';
 
-const Notifications = ({ isSelected, onClick }) => {
+const Notifications = ({
+  isSelected,
+  onClick,
+  isCollapsed,
+  setIsSidebarCollapsed,
+  setShowSidebarContent
+}) => {
   const { colorMode } = useColorMode();
 
   return (
@@ -13,22 +20,31 @@ const Notifications = ({ isSelected, onClick }) => {
       ml={1}
       openDelay={500}
       display={{ base: 'block', md: 'none' }}>
-      <Flex
+      <Link
+        display={'flex'}
         alignItems={'center'}
         gap={4}
         _hover={{
           bg: colorMode === 'dark' ? 'whiteAlpha.400' : 'rgba(0, 0, 0, .05)'
         }}
         borderRadius={6}
-        onClick={onClick}
+        to={`/`}
+        as={RouterLink}
+        onClick={() => {
+          onClick();
+          setIsSidebarCollapsed(false);
+          setShowSidebarContent(false);
+        }}
         p={2}
         w={{ base: 10, md: 'full' }}
         justifyContent={{ base: 'center', md: 'flex-start' }}>
         {isSelected ? <FaHeart size={25} /> : <FaRegHeart size={25} />}
-        <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '800' : '500'}>
-          Notifications
-        </Box>
-      </Flex>
+        {!isCollapsed && (
+          <Box display={{ base: 'none', md: 'block' }} fontWeight={isSelected ? '800' : '500'}>
+            Notifications
+          </Box>
+        )}
+      </Link>
     </Tooltip>
   );
 };

@@ -8,8 +8,23 @@ const helmet = require("helmet");
 var morgan = require("morgan");
 var dotenv = require("dotenv");
 const { createClient } = require("redis");
+const { Server } = require("socket.io");
+const { createServer } = require("node:http");
 const app = express();
+const server = createServer(app);
 dotenv.config();
+
+const io = require("socket.io")(server, {
+    cors: {
+        origin: "*",
+    },
+    path: "/api/v1/message",
+    credentials: true,
+});
+
+io.on("connection", (socket) => {
+    console.log("a user connected");
+});
 
 const routerRegister = require("./src/routes/register.js");
 const routerAuthen = require("./src/routes/authentication_route.js");
