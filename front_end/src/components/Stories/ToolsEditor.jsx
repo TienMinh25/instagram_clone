@@ -123,6 +123,7 @@ const ToolsEditor = ({ canvas }) => {
   };
 
   const onEmojiClick = (emojiObject) => {
+    console.log(emojiObject)
     const emojiImage = new Image();
     emojiImage.src = emojiObject.imageUrl;
     emojiImage.onload = () => {
