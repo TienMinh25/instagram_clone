@@ -1,17 +1,48 @@
-import { Box, Flex, Link, Tooltip, useColorMode } from '@chakra-ui/react';
+import { Box, Flex, Link, Tooltip, useColorMode, useToast } from '@chakra-ui/react';
 import { useState } from 'react';
 import { BiLogOut } from 'react-icons/bi';
 import { MdDarkMode, MdOutlineLightMode } from 'react-icons/md';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { InstagramLogo, InstagramMobileLogo } from '../../assets/constants';
-import useLogout from '../../hooks/useLogout.js';
 import SidebarItems from './SidebarItems';
+import { makeRequest } from '../../axios';
 
 function Sidebar({ isCollapsed, setIsSidebarCollapsed }) {
   const { colorMode, toggleColorMode } = useColorMode();
+  const toast = useToast();
+  const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState('');
   const [showSidebarContent, setShowSidebarContent] = useState(false);
-  const { handleLogout } = useLogout();
+  const handleLogout = async (e) => {
+      e.preventDefault();
+  
+      try {
+        const data = await makeRequest.post('/logout');
+  
+        if (data.status === 200) {
+          toast({
+            title: 'Logout successfully!',
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+            position: 'bottom'
+          });
+  
+          localStorage.removeItem('user');
+          localStorage.removeItem('access_token');
+          navigate('/auth');
+        }
+      } catch (e) {
+        toast({
+          title: 'Failed to logout',
+          description: e?.response?.data?.message || e.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'bottom'
+        });
+      }
+    };
   const [searchQuery, setSearchQuery] = useState('');
   const [isClicked, setIsClicked] = useState(false);
 
